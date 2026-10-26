@@ -48,3 +48,9 @@ Camera fit rewritten for national and county views; county extrusions reduced to
 
 ## v4.7 Hawaii inset correction
 The prior Hawaii GeoJSON included tiny, far-flung northwestern atolls, making the inset appear scattered even after scaling. This version removes those distant micro-polygons from the **display geometry only** and keeps the recognizable main island group, enlarged 1.65x and centered beside Alaska. The source `states-raw.geojson` is unchanged. Alaska, camera settings, county lift, and election data are unchanged. Static SVG previews remain from the prior version.
+
+
+Version 5.1: Increased visual separation between the nine main Hawaiian island polygons, preserving the overall Hawaii inset bounding box and position. No other tracker code changed.
+
+## v5.2
+Increased visible water separation by shrinking each island outline to 68% about its own center, then restoring the overall Hawaii inset bounding box. Hawaii inset position, total size, Alaska, and all other code unchanged.
