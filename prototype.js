@@ -14,9 +14,9 @@ function project(p){
   // Transform whole state consistently, including Aleutian islands crossing the date line.
   if(projectionRegion==='Alaska'){
    const lon=p[0]>0?p[0]-360:p[0];
-   return [(lon+153)*.245-16.8,(p[1]-64)*.245-10.2];
+   return [(lon+153)*.145-11.0,(p[1]-64)*.145-10.1];
   }
-  if(projectionRegion==='Hawaii')return [(p[0]+157)*.68-6.0,(p[1]-20.5)*.68-11.8];
+  if(projectionRegion==='Hawaii')return [(p[0]+157)*.50-5.8,(p[1]-20.5)*.50-10.65];
   return [(p[0]+98)*.62,(p[1]-38)*.76];
  }
  return [(p[0]-projection.lon)*projection.sx,(p[1]-projection.lat)*projection.sy];
@@ -102,7 +102,7 @@ function cameraView(overhead=false){
   // The perspective foreshortening of the tilted map is included in the fit.
   const projectedHeight=size.y*Math.abs(direction.z)+size.z*Math.abs(direction.y);
   const fit=Math.max(projectedHeight/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hfov/2)));
-  zoomFar=fit*1.19;zoomNear=Math.max(2,zoomFar*.065);
+  zoomFar=fit*1.12;zoomNear=Math.max(2,zoomFar*.065);
   controls.maxDistance=Math.max(120,zoomFar*1.5);
   controls.target.set(center.x,center.y,0);
   camera.position.copy(controls.target).addScaledVector(direction,zoomFar);

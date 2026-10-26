@@ -27,3 +27,6 @@ Known limitations: Requires internet for geometry and Three.js. Geographic simul
 - Hover card leading/gain labels appear next to the corresponding party.
 - State-to-county transitions retain the current camera position; return to national restores national framing.
 - All simulated results remain fictional; national call counters are demonstration-only and not connected to the map.
+
+### v2.4 map inset correction
+Alaska is reduced and relocated directly below the western continental states; Hawaii is placed immediately east of Alaska, at visible scale. National default camera is the 0% baseline and fits the inset geography with padding.
