@@ -12,3 +12,13 @@ Reduced OrbitControls sensitivity and constrained vertical orbit; half-height ex
 
 ## v1.5
 Z-up orbit camera with genuine polar-angle constraints, slower rotation, closer zoom, smooth selection framing for every county and district, and soft pearl-white raised geography with pale cavity illumination. Hard-refresh after deploying to bypass cached JavaScript.
+
+
+## v1.6 refinements
+- Default/reset framing now fills substantially more of the viewport.
+- County/district selection uses contextual camera distance instead of extreme close-ups.
+- Darker midnight-blue geography increases contrast with pearl-white raised selections.
+- Bright white and subtle icy-blue cavity rim remain visible even in shadow.
+- Close manual zoom and double-click zoom are preserved.
+
+After uploading, hard-refresh the GitHub Pages site (Ctrl+Shift+R) to avoid cached JavaScript.
