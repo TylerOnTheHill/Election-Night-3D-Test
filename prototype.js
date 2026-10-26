@@ -4,7 +4,7 @@ const $=id=>document.getElementById(id), stage=$('stage'), load=$('loading'), mo
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;stage.prepend(renderer.domElement);
 const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(38,1,.1,500);camera.up.set(0,0,1);camera.position.set(0,-38,45);const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.055;controls.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};controls.rotateSpeed=.19;controls.zoomSpeed=.72;controls.panSpeed=.6;controls.minDistance=.65;controls.maxDistance=120;controls.minPolarAngle=.16;controls.maxPolarAngle=.94;controls.target.set(0,0,0);
 scene.add(new THREE.HemisphereLight(0xd6e5ff,0x101e38,1.55));const sun=new THREE.DirectionalLight(0xffffff,2.25);sun.position.set(-16,20,36);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-38;sun.shadow.camera.right=38;sun.shadow.camera.top=38;sun.shadow.camera.bottom=-38;sun.shadow.bias=-.0006;scene.add(sun);
-const rim=new THREE.DirectionalLight(0x70a9ff,.85);rim.position.set(18,-10,16);scene.add(rim);
+const rim=new THREE.DirectionalLight(0x70a9ff,1.25);rim.position.set(18,-10,16);scene.add(rim);
 // Floating sculpture: no ground plane or grid.
 let projectionRegion='';let trackerMode='night';window.setTrackerMode=(v)=>{trackerMode=v;setMapColor();refreshPanel();};let demoMode=true;let backdropNames=new Set();let clickTimer=null;let transitionLock=false;let senateCalls={D:0,R:0};let houseCalls={D:0,R:0};let group=new THREE.Group();scene.add(group);let meshes=[], selected=null, rows=new Map(), activeState='Texas', activeStateFips='48', view='state', projection={lon:-99.5,lat:31,sx:.85,sy:1.05}, stateFeatures=null, countyFeatures=null, stateMap=new Map(), regionNames=[];const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();const ease=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?1:.14;
 function clean(x){return String(x||'').trim().toUpperCase()}function number(x){return Number(x).toLocaleString('en-US')}
@@ -14,15 +14,18 @@ function project(p){
   // Transform whole state consistently, including Aleutian islands crossing the date line.
   if(projectionRegion==='Alaska'){
    const lon=p[0]>0?p[0]-360:p[0];
-   return [(lon+153)*.125-9.2,(p[1]-64)*.125-9.8];
+   // Mockup-style compact, upright Alaska inset. Longitude wraps across the date line.
+   // The x and y scales are deliberately independent: the prior uniform scale
+   // flattened Alaska into a long horizontal ribbon.
+   return [(lon+153)*.132-12.8,(p[1]-64)*.235-12.15];
   }
-  if(projectionRegion==='Hawaii')return [(p[0]+157)*.53-3.1,(p[1]-20.5)*.53-10.9];
+  if(projectionRegion==='Hawaii')return [(p[0]+157)*.60-6.1,(p[1]-20.5)*.60-12.65];
   return [(p[0]+98)*.62,(p[1]-38)*.76];
  }
  return [(p[0]-projection.lon)*projection.sx,(p[1]-projection.lat)*projection.sy];
 }
 function eachPoly(feature,fn){const g=feature.geometry;if(!g)return;if(g.type==='Polygon')fn(g.coordinates);else if(g.type==='MultiPolygon')g.coordinates.forEach(fn)}
-function makeRegion(feature,name){projectionRegion=name;const shapes=[];eachPoly(feature,rings=>{const s=polygonToShape(rings);if(s)shapes.push(s)});if(!shapes.length)return;const geom=new THREE.ExtrudeGeometry(shapes,{depth:.28,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.025,bevelThickness:.035,curveSegments:1});const color='#35373c';const mesh=new THREE.Mesh(geom,[new THREE.MeshStandardMaterial({color,metalness:.36,roughness:.52,emissive:'#0c0f16'}),new THREE.MeshStandardMaterial({color:'#1c2633',metalness:.38,roughness:.52})]);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData={name,baseColor:color,level:0,target:0,selected:false,isBackdrop:backdropNames.has(name)};group.add(mesh);meshes.push(mesh);const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geom,24),new THREE.LineBasicMaterial({color:0x777a80,transparent:true,opacity:.48}));mesh.add(edges);mesh.userData.edges=edges;edges.renderOrder=4;
+function makeRegion(feature,name){projectionRegion=name;const shapes=[];eachPoly(feature,rings=>{const s=polygonToShape(rings);if(s)shapes.push(s)});if(!shapes.length)return;const geom=new THREE.ExtrudeGeometry(shapes,{depth:.36,bevelEnabled:true,bevelSegments:3,steps:1,bevelSize:.035,bevelThickness:.055,curveSegments:1});const color='#35373c';const mesh=new THREE.Mesh(geom,[new THREE.MeshStandardMaterial({color,metalness:.28,roughness:.66,emissive:'#070b12'}),new THREE.MeshStandardMaterial({color:'#152a46',metalness:.56,roughness:.42})]);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData={name,baseColor:color,level:0,target:0,selected:false,isBackdrop:backdropNames.has(name)};group.add(mesh);meshes.push(mesh);const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geom,24),new THREE.LineBasicMaterial({color:0x777a80,transparent:true,opacity:.48}));mesh.add(edges);mesh.userData.edges=edges;edges.renderOrder=4;
 // Keep a subtly illuminated footprint beneath the raised geographic piece.
 const cavity=new THREE.Group();
 const glow=new THREE.Mesh(new THREE.ShapeGeometry(shapes),new THREE.MeshBasicMaterial({color:0x7e848c,transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}));glow.position.z=.165;cavity.add(glow);
@@ -102,7 +105,7 @@ function cameraView(overhead=false){
   // The perspective foreshortening of the tilted map is included in the fit.
   const projectedHeight=size.y*Math.abs(direction.z)+size.z*Math.abs(direction.y);
   const fit=Math.max(projectedHeight/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hfov/2)));
-  zoomFar=fit*1.10;zoomNear=Math.max(2,zoomFar*.065);
+  zoomFar=fit*1.035;zoomNear=Math.max(2,zoomFar*.065);
   controls.maxDistance=Math.max(120,zoomFar*1.5);
   controls.target.set(center.x,center.y,0);
   camera.position.copy(controls.target).addScaledVector(direction,zoomFar);
