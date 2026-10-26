@@ -1,13 +1,15 @@
-# Election Tracker 3D — Mockup-match v3
+# Election Tracker 3D — Verified projection update v4
 
-Focused update to the unified two-tab GitHub Pages test prototype.
+Two tabs: Election Night (fictional simulation) and Early Vote (verified Texas Oct 23 snapshot).
 
-- Alaska uses a compact upright inset projection, with longitude wrapping across the dateline, instead of the earlier flattened horizontal strip.
-- Hawaii is moved to the right of Alaska. Both insets are intended to follow the approved visual reference, not their real-world positions.
-- National 0% zoom and initial camera are the same fitted camera position.
-- Refined map depth, lighting, dark navy dashboard proportions and spacing.
-- Preserves the Election Night / Early Vote tabs and underlying interactions.
-- All election results and calls are fictional demo data; no live results are connected.
-- Bundled Texas early vote CSV is unchanged (254 counties; 3,724,290 cumulative ballots on Oct 23, 2026).
+## Geography
+- `states-raw.geojson`: locally bundled state outlines derived from Basemap UScounties shapefile for geographic lookup.
+- `states-projected.geojson`: projected map coordinates. CONUS uses EPSG:5070, Alaska EPSG:3338, Hawaii EPSG:26905, each scaled into standard map insets. No longitude-wrap stretching.
+- `map-preview.svg`: offline static fallback and visual verification of inset geography. Actual interactive WebGL map is provided by `prototype.js` when Three.js CDN loads.
+- The county layer still loads from an external service, as in the prior prototype.
 
-This is a code-level implementation; exact rendered match and responsive behavior still require browser comparison. Internet access required for Three.js and GeoJSON. Upload all files in the ZIP root to the test repository root.
+## QA
+Run `node --check prototype.js` and `node --check unified-ui.js`. Run a local web server to test; do not open `index.html` via file:// because fetch is required.
+
+## Data
+Election-night votes and calls are entirely fictional. The Texas county CSV is unchanged. No live national turnout data is connected.
