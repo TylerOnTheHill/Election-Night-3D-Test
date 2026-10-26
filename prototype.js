@@ -83,19 +83,35 @@ function racePanel(level,name){const races=$('race-select').value==='all'?['sena
 function makeStripes(mesh,color){
  if(mesh.userData.stripes){mesh.remove(mesh.userData.stripes);mesh.userData.stripes.geometry.dispose();mesh.userData.stripes.material.dispose();mesh.userData.stripes=null}
  // Fine stripes are evaluated in the geography's own local coordinates and clipped to its exact top surface.
- const geo=mesh.geometry.clone();const mat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,uniforms:{uColor:{value:new THREE.Color(color)},uFrequency:{value:view==='national'?2.8:6.8}},vertexShader:`varying vec3 p;varying float topFace;void main(){p=position;topFace=normal.z;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform vec3 uColor;uniform float uFrequency;varying vec3 p;varying float topFace;void main(){if(topFace<0.7)discard;float stripe=fract((p.x+p.y)*uFrequency);if(stripe>0.20)discard;gl_FragColor=vec4(uColor,0.52);}`});const m=new THREE.Mesh(geo,mat);m.position.z=.003;mesh.add(m);mesh.userData.stripes=m;
+ const geo=mesh.geometry.clone();const mat=new THREE.ShaderMaterial({transparent:true,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-3,uniforms:{uColor:{value:new THREE.Color(color)},uFrequency:{value:view==='national'?2.8:6.8}},vertexShader:`varying vec3 p;varying float topFace;void main(){p=position;topFace=normal.z;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform vec3 uColor;uniform float uFrequency;varying vec3 p;varying float topFace;void main(){if(topFace<0.7)discard;float stripe=fract((p.x+p.y)*uFrequency);if(stripe>0.26)discard;gl_FragColor=vec4(uColor,0.72);}`});const m=new THREE.Mesh(geo,mat);m.position.z=.003;mesh.add(m);mesh.userData.stripes=m;
 }
-function setMapColor(){for(const mesh of meshes){const name=mesh.userData.name;if(mesh.userData.isBackdrop){mesh.material[0].color.set('#222327');mesh.userData.edges.material.opacity=.12;continue;}const race=raceChoice();const available=raceAvailable(name,race);const x=fakeResult(name,race);const earlyRow=rows.get(clean(name));const total=earlyRow?Number(earlyRow.cumulative_total):0;const color=trackerMode==='early'?(view==='national'?(name==='Texas'?'#2867CF':'#273242'):(earlyRow?new THREE.Color('#152B51').lerp(new THREE.Color('#5397FF'),Math.min(1,Math.sqrt(total/250000))).getStyle():'#273242')):(!available?'#1C1D20':x.awaiting?'#3A3D42':partyColor(x.party));mesh.material[0].color.set(color);mesh.userData.baseColor=color;mesh.userData.edges.material.opacity=mesh.userData.selected?1:(available?.40:.13);if(trackerMode!=='early'&&available&&x.flip)makeStripes(mesh,x.party==='D'?'#6698E0':'#DA7982');else if(mesh.userData.stripes){mesh.remove(mesh.userData.stripes);mesh.userData.stripes.geometry.dispose();mesh.userData.stripes.material.dispose();mesh.userData.stripes=null}}}
-function refreshPanel(){if(trackerMode==='early'){const r=rows.get(clean(selected||''));detail.innerHTML=`<div class="sub">EARLY VOTE · VERIFIED TEXAS SNAPSHOT</div><h2>${selected|| (view==='national'?'United States':activeState)}</h2><p class="muted">${r?'Cumulative early ballots: '+number(r.cumulative_total):'No verified county turnout available for this selection.'}</p><p class="notice">Source: Texas county CSV · October 23, 2026. No partisan election results.</p>`;return;}if(view==='national')detail.innerHTML=racePanel(selected?'state':'national',selected||'United States');else detail.innerHTML=racePanel(selected?'county':'state',selected||activeState);attachChamberButtons();const explore=$('explore-state');if(explore)explore.onclick=()=>enterState(selected);}
+function setMapColor(){for(const mesh of meshes){const name=mesh.userData.name;if(mesh.userData.isBackdrop){mesh.material[0].color.set('#222327');mesh.userData.edges.material.opacity=.12;continue;}const race=raceChoice();const available=raceAvailable(name,race);const x=fakeResult(name,race);const earlyRow=rows.get(clean(name));const total=earlyRow?Number(earlyRow.cumulative_total):0;const color=trackerMode==='early'?(view==='national'?(name==='Texas'?'#2867CF':'#273242'):(earlyRow?new THREE.Color('#152B51').lerp(new THREE.Color('#5397FF'),Math.min(1,Math.sqrt(total/250000))).getStyle():'#273242')):(!available?'#1C1D20':x.awaiting?'#3A3D42':partyColor(x.party));mesh.material[0].color.set(color);mesh.userData.baseColor=color;mesh.userData.edges.material.opacity=mesh.userData.selected?1:(available?.40:.13);if(trackerMode!=='early'&&available&&x.flip)makeStripes(mesh,x.party==='D'?'#9BBEF4':'#F1A1AA');else if(mesh.userData.stripes){mesh.remove(mesh.userData.stripes);mesh.userData.stripes.geometry.dispose();mesh.userData.stripes.material.dispose();mesh.userData.stripes=null}}}
+function refreshPanel(){if(selected)updateFloatingPanel();if(trackerMode==='early'){const r=rows.get(clean(selected||''));detail.innerHTML=`<div class="sub">EARLY VOTE · VERIFIED TEXAS SNAPSHOT</div><h2>${selected|| (view==='national'?'United States':activeState)}</h2><p class="muted">${r?'Cumulative early ballots: '+number(r.cumulative_total):'No verified county turnout available for this selection.'}</p><p class="notice">Source: Texas county CSV · October 23, 2026. No partisan election results.</p>`;return;}if(view==='national')detail.innerHTML=racePanel(selected?'state':'national',selected||'United States');else detail.innerHTML=racePanel(selected?'county':'state',selected||activeState);attachChamberButtons();const explore=$('explore-state');if(explore)explore.onclick=()=>enterState(selected);}
 function choose(name,{focus=true}={}){
  if(selected===name)name=null;
+ panelRace=null;
  selected=name;search.value=name||'';suggestions.hidden=true;
  for(const mesh of meshes){const on=mesh.userData.name===name&&!mesh.userData.isBackdrop;mesh.userData.target=on?(view==='state'?.19:.58):0;mesh.userData.selected=on;mesh.userData.cavity.visible=on||mesh.userData.level>.025;mesh.userData.sheen.visible=on;mesh.userData.edges.material.color.set(on?'#e3e9f6':'#777a80');mesh.userData.edges.material.opacity=on?1:.4;mesh.userData.cavity.children.forEach(c=>{if(c.material)c.material.opacity=on?.9:.22});}
  setMapColor();
  if(name&&focus){const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active)}
  if(!name&&view==='national'&&focus)cameraView(false);
- refreshPanel();
+ refreshPanel();updateFloatingPanel();
 }
+let panelRace=null;
+const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content');
+function updateFloatingPanel(){
+ const open=!!selected;
+ floatingPanel.hidden=!open;
+ if(!open){panelRace=null;return;}
+ if(!panelRace)panelRace=raceChoice();
+ const options=[['senate','U.S. Senate'],['governor','Governor'],['house','U.S. House']];
+ const level=view==='national'?'state':'county';
+ const label=level==='county'?selected+' County':selected;
+ floatingContent.innerHTML=`<h2>${label}</h2><label for="panel-race-select" class="sub">Race results</label><select id="panel-race-select" class="panel-race-select">${options.map(([key,name])=>`<option value="${key}" ${panelRace===key?'selected':''}>${name}</option>`).join('')}</select><p class="muted">Fictional demonstration · No live returns</p>${resultsMarkup(selected,panelRace)}${level==='state'?`<button type="button" class="panel-back" id="panel-explore">Explore counties</button>`:''}`;
+ floatingContent.querySelector('#panel-race-select').onchange=e=>{panelRace=e.target.value;updateFloatingPanel()};
+ const explore=floatingContent.querySelector('#panel-explore');if(explore)explore.onclick=()=>enterState(selected);
+}
+$('map-panel-close').onclick=()=>{choose(null,{focus:false});cameraView(false)};
 let zoomNear=1.5,zoomFar=78;
 function cameraView(overhead=false){
  focusTween=null;controls.enabled=true;camera.up.set(0,0,1);
@@ -126,7 +142,7 @@ function frameRegion(mesh){
  // A deliberately contextual view: no extreme close-ups on small counties.
  // County widths vary dramatically, so cap both ends of the framing distance.
  const distance=THREE.MathUtils.clamp(4.6+span*1.25,7,31);
- const target=new THREE.Vector3(center.x,center.y,0);
+ const target=new THREE.Vector3(center.x+distance*.24,center.y,0);
  const direction=new THREE.Vector3(0,-.72,1.18).normalize();
  animateCamera(target,target.clone().addScaledVector(direction,distance),850);
 }
