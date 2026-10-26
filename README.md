@@ -13,3 +13,10 @@ Run `node --check prototype.js` and `node --check unified-ui.js`. Run a local we
 
 ## Data
 Election-night votes and calls are entirely fictional. The Texas county CSV is unchanged. No live national turnout data is connected.
+
+## v4.1 correction
+Declared `projectedStates` in the ES module. In v4 this undeclared assignment caused a ReferenceError during `showNational()`, preventing WebGL state meshes from loading while the static SVG fallback remained visible.
+
+
+## v4.2 inset placement
+Alaska moved upward 1.45 projected map units. Hawaii enlarged 50% around its original center and moved upward 1.75 projected units. Static SVG fallback insets were repositioned to match. The 3D interaction code is otherwise unchanged from v4.1.
