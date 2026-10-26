@@ -29,3 +29,10 @@ Alaska moved upward 1.45 projected map units. Hawaii enlarged 50% around its ori
 
 ## v4.4 changes
 Camera fit rewritten for national and county views; county extrusions reduced to 0.095 map units, with fine bevels; selected lift capped to 0.24 map units. Static fallback remains only while WebGL initializes.
+
+
+## v4.5 adjustments
+- County base extrusion 0.042; selected lift 0.065.
+- County 0% framing is closer (factor 0.87); national camera unchanged.
+- Alaska 11% larger; Hawaii islands locally enlarged and clustered in their inset.
+- The interactive map uses states-projected.geojson; the older SVG files are only fallback previews.

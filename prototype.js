@@ -27,8 +27,8 @@ function project(p){
 }
 function eachPoly(feature,fn){const g=feature.geometry;if(!g)return;if(g.type==='Polygon')fn(g.coordinates);else if(g.type==='MultiPolygon')g.coordinates.forEach(fn)}
 function makeRegion(feature,name){projectionRegion=name;projectedGeometry=!!feature.properties.projected;const shapes=[];eachPoly(feature,rings=>{const s=polygonToShape(rings);if(s)shapes.push(s)});if(!shapes.length)return;const isCounty=view==='state'&&!backdropNames.has(name);
-const baseDepth=isCounty?.095:.30;
-const geom=new THREE.ExtrudeGeometry(shapes,{depth:baseDepth,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:isCounty?.009:.028,bevelThickness:isCounty?.012:.038,curveSegments:1});const color='#35373c';const mesh=new THREE.Mesh(geom,[new THREE.MeshStandardMaterial({color,metalness:.28,roughness:.66,emissive:'#070b12'}),new THREE.MeshStandardMaterial({color:'#152a46',metalness:.56,roughness:.42})]);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData={name,baseColor:color,level:0,target:0,selected:false,isBackdrop:backdropNames.has(name),baseDepth};group.add(mesh);meshes.push(mesh);const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geom,24),new THREE.LineBasicMaterial({color:0x777a80,transparent:true,opacity:.48}));mesh.add(edges);mesh.userData.edges=edges;edges.renderOrder=4;
+const baseDepth=isCounty?.042:.30;
+const geom=new THREE.ExtrudeGeometry(shapes,{depth:baseDepth,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:isCounty?.004:.028,bevelThickness:isCounty?.005:.038,curveSegments:1});const color='#35373c';const mesh=new THREE.Mesh(geom,[new THREE.MeshStandardMaterial({color,metalness:.28,roughness:.66,emissive:'#070b12'}),new THREE.MeshStandardMaterial({color:'#152a46',metalness:.56,roughness:.42})]);mesh.castShadow=true;mesh.receiveShadow=true;mesh.userData={name,baseColor:color,level:0,target:0,selected:false,isBackdrop:backdropNames.has(name),baseDepth};group.add(mesh);meshes.push(mesh);const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geom,24),new THREE.LineBasicMaterial({color:0x777a80,transparent:true,opacity:.48}));mesh.add(edges);mesh.userData.edges=edges;edges.renderOrder=4;
 // Keep a subtly illuminated footprint beneath the raised geographic piece.
 const cavity=new THREE.Group();
 const glow=new THREE.Mesh(new THREE.ShapeGeometry(shapes),new THREE.MeshBasicMaterial({color:0x7e848c,transparent:true,opacity:.22,depthWrite:false,side:THREE.DoubleSide}));glow.position.z=baseDepth*.47;cavity.add(glow);
@@ -90,7 +90,7 @@ function refreshPanel(){if(trackerMode==='early'){const r=rows.get(clean(selecte
 function choose(name,{focus=true}={}){
  if(selected===name)name=null;
  selected=name;search.value=name||'';suggestions.hidden=true;
- for(const mesh of meshes){const on=mesh.userData.name===name&&!mesh.userData.isBackdrop;mesh.userData.target=on?(view==='state'?.22:.58):0;mesh.userData.selected=on;mesh.userData.cavity.visible=on||mesh.userData.level>.025;mesh.userData.sheen.visible=on;mesh.userData.edges.material.color.set(on?'#e3e9f6':'#777a80');mesh.userData.edges.material.opacity=on?1:.4;mesh.userData.cavity.children.forEach(c=>{if(c.material)c.material.opacity=on?.9:.22});}
+ for(const mesh of meshes){const on=mesh.userData.name===name&&!mesh.userData.isBackdrop;mesh.userData.target=on?(view==='state'?.065:.58):0;mesh.userData.selected=on;mesh.userData.cavity.visible=on||mesh.userData.level>.025;mesh.userData.sheen.visible=on;mesh.userData.edges.material.color.set(on?'#e3e9f6':'#777a80');mesh.userData.edges.material.opacity=on?1:.4;mesh.userData.cavity.children.forEach(c=>{if(c.material)c.material.opacity=on?.9:.22});}
  setMapColor();
  if(name&&focus){const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active)}
  if(!name&&view==='national'&&focus)cameraView(false);
@@ -109,7 +109,7 @@ function cameraView(overhead=false){
  const direction=new THREE.Vector3(0,overhead?-.0001:-.28,1).normalize();
  const projectedHeight=size.y*Math.abs(direction.z)+size.z*Math.abs(direction.y);
  const distance=Math.max(projectedHeight/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hfov/2)));
- zoomFar=distance*(view==='national'?1.16:1.19);
+ zoomFar=distance*(view==='national'?1.16:.87);
  zoomNear=Math.max(view==='national'?2:.65,zoomFar*.075);
  controls.maxDistance=Math.max(120,zoomFar*1.8);
  controls.target.set(center.x,center.y,0);
