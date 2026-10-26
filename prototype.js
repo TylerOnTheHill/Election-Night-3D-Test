@@ -8,15 +8,15 @@ const rim=new THREE.DirectionalLight(0xd4d6da,.55);rim.position.set(18,-10,16);s
 // Floating sculpture: no ground plane or grid.
 let projectionRegion='';let demoMode=true;let backdropNames=new Set();let clickTimer=null;let transitionLock=false;let senateCalls={D:0,R:0};let houseCalls={D:0,R:0};let group=new THREE.Group();scene.add(group);let meshes=[], selected=null, rows=new Map(), activeState='Texas', activeStateFips='48', view='state', projection={lon:-99.5,lat:31,sx:.85,sy:1.05}, stateFeatures=null, countyFeatures=null, stateMap=new Map(), regionNames=[];const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();const ease=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?1:.14;
 function clean(x){return String(x||'').trim().toUpperCase()}function number(x){return Number(x).toLocaleString('en-US')}
-function polygonToShape(rings){if(projectionRegion==='Alaska'&&rings[0]?.some((p,i,a)=>i&&Math.abs(p[0]-a[i-1][0])>170))return null;const outer=rings[0];if(!outer||outer.length<4)return null;const shape=new THREE.Shape();outer.forEach((p,i)=>i?shape.lineTo(...project(p)):shape.moveTo(...project(p)));for(const hole of rings.slice(1)){if(hole.length<4)continue;const path=new THREE.Path();hole.forEach((p,i)=>i?path.lineTo(...project(p)):path.moveTo(...project(p)));shape.holes.push(path)}return shape}
+function polygonToShape(rings){const outer=rings[0];if(!outer||outer.length<4)return null;const shape=new THREE.Shape();outer.forEach((p,i)=>i?shape.lineTo(...project(p)):shape.moveTo(...project(p)));for(const hole of rings.slice(1)){if(hole.length<4)continue;const path=new THREE.Path();hole.forEach((p,i)=>i?path.lineTo(...project(p)):path.moveTo(...project(p)));shape.holes.push(path)}return shape}
 function project(p){
  if(view==='national'||view==='state'){
   // Transform whole state consistently, including Aleutian islands crossing the date line.
   if(projectionRegion==='Alaska'){
    const lon=p[0]>0?p[0]-360:p[0];
-   return [(lon+153)*.205-17.2,(p[1]-64)*.205-9.1];
+   return [(lon+153)*.245-16.8,(p[1]-64)*.245-10.2];
   }
-  if(projectionRegion==='Hawaii')return [(p[0]+157)*.46-7.3,(p[1]-20.5)*.46-11.1];
+  if(projectionRegion==='Hawaii')return [(p[0]+157)*.68-6.0,(p[1]-20.5)*.68-11.8];
   return [(p[0]+98)*.62,(p[1]-38)*.76];
  }
  return [(p[0]-projection.lon)*projection.sx,(p[1]-projection.lat)*projection.sy];
@@ -87,7 +87,7 @@ function choose(name,{focus=true}={}){
  for(const mesh of meshes){const on=mesh.userData.name===name&&!mesh.userData.isBackdrop;mesh.userData.target=on?.76:0;mesh.userData.selected=on;mesh.userData.cavity.visible=on||mesh.userData.level>.025;mesh.userData.sheen.visible=on;mesh.userData.edges.material.color.set(on?'#e3e9f6':'#777a80');mesh.userData.edges.material.opacity=on?1:.4;mesh.userData.cavity.children.forEach(c=>{if(c.material)c.material.opacity=on?.9:.22});}
  setMapColor();
  if(name&&focus){const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active)}
- if(!name&&view==='national')cameraView(false);
+ if(!name&&view==='national'&&focus)cameraView(false);
  refreshPanel();
 }
 let zoomNear=1.5,zoomFar=78;
@@ -96,14 +96,29 @@ function cameraView(overhead=false){
  if(view==='national'){
   const bounds=new THREE.Box3();for(const m of meshes)bounds.expandByObject(m);
   const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());
-  const aspect=Math.max(.65,stage.clientWidth/Math.max(stage.clientHeight,1));
-  const vfov=THREE.MathUtils.degToRad(camera.fov),hFov=2*Math.atan(Math.tan(vfov/2)*aspect);
-  const distance=Math.max(size.y/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hFov/2)))*1.30;
-  zoomFar=Math.max(60,distance*1.2);controls.maxDistance=Math.max(120,zoomFar*1.5);
-  controls.target.set(center.x,center.y,0);const dir=new THREE.Vector3(0,overhead?-.0001:-.18,1).normalize();camera.position.copy(controls.target).addScaledVector(dir,distance);
- }else{zoomFar=78;controls.target.set(0,1.6,0);camera.position.set(0,overhead?-.001:-10,overhead?28:26)}
- controls.update();controls.saveState();
+  const aspect=Math.max(.5,stage.clientWidth/Math.max(stage.clientHeight,1));
+  const vfov=THREE.MathUtils.degToRad(camera.fov),hfov=2*Math.atan(Math.tan(vfov/2)*aspect);
+  const direction=new THREE.Vector3(0,overhead?-.0001:-.20,1).normalize();
+  // The perspective foreshortening of the tilted map is included in the fit.
+  const projectedHeight=size.y*Math.abs(direction.z)+size.z*Math.abs(direction.y);
+  const fit=Math.max(projectedHeight/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hfov/2)));
+  zoomFar=fit*1.19;zoomNear=Math.max(2,zoomFar*.065);
+  controls.maxDistance=Math.max(120,zoomFar*1.5);
+  controls.target.set(center.x,center.y,0);
+  camera.position.copy(controls.target).addScaledVector(direction,zoomFar);
+ }else{
+  const bounds=new THREE.Box3();for(const m of meshes)if(!m.userData.isBackdrop)bounds.expandByObject(m);
+  const center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+  const aspect=Math.max(.5,stage.clientWidth/Math.max(stage.clientHeight,1));
+  const vfov=THREE.MathUtils.degToRad(camera.fov),hfov=2*Math.atan(Math.tan(vfov/2)*aspect);
+  const direction=new THREE.Vector3(0,overhead?-.0001:-.20,1).normalize();
+  zoomFar=Math.max(size.y/(2*Math.tan(vfov/2)),size.x/(2*Math.tan(hfov/2)))*1.24;
+  zoomNear=Math.max(.6,zoomFar*.065);
+  controls.target.copy(center);camera.position.copy(center).addScaledVector(direction,zoomFar);
+ }
+ controls.update();controls.saveState();syncZoom(0);
 }
+function syncZoom(value){const v=Math.round(THREE.MathUtils.clamp(value,0,100));zoom.value=v;if(document.activeElement!==$('zoom-number'))$('zoom-number').value=v;}
 function animateCamera(toTarget,toCamera,duration=700){focusTween={start:performance.now(),duration,fromCamera:camera.position.clone(),fromTarget:controls.target.clone(),toTarget,toCamera};}
 function frameRegion(mesh){
  const bounds=new THREE.Box3().setFromObject(mesh);
@@ -123,7 +138,7 @@ function updateSuggestions(){const q=search.value.trim().toLowerCase();matches=q
 search.addEventListener('input',updateSuggestions);
 search.addEventListener('keydown',e=>{if(e.key==='Enter'&&matches.length){e.preventDefault();choose(matches[0]);suggestions.hidden=true}if(e.key==='Escape'){choose(null,{focus:false});suggestions.hidden=true}});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.activeElement!==search)choose(null,{focus:false});if(e.key==='/'&&document.activeElement!==search){e.preventDefault();search.focus()}});
 search.addEventListener('blur',()=>setTimeout(()=>suggestions.hidden=true,180));
-function setZoom(value){const distance=THREE.MathUtils.lerp(zoomFar,zoomNear,Number(value)/100);const dir=camera.position.clone().sub(controls.target).normalize();animateCamera(controls.target.clone(),controls.target.clone().addScaledVector(dir,distance),280)}
+function setZoom(value){syncZoom(value);const distance=THREE.MathUtils.lerp(zoomFar,zoomNear,Number(value)/100);const dir=camera.position.clone().sub(controls.target).normalize();animateCamera(controls.target.clone(),controls.target.clone().addScaledVector(dir,distance),280)}
 zoom.addEventListener('input',()=>setZoom(zoom.value));
 $('zoom-in').onclick=()=>setZoom(Math.min(100,Number(zoom.value)+1));
 $('zoom-out').onclick=()=>setZoom(Math.max(0,Number(zoom.value)-1));
@@ -139,7 +154,7 @@ function stateProjection(name){const feat=stateMap.get(name);if(!feat)return;con
 function resetGroup(){scene.remove(group);group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==metalTop&&o.material!==metalSide){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});group=new THREE.Group();scene.add(group);meshes=[];selected=null;}
 function finishBuild(data,{preserveCamera=false}={}){resetGroup();data.forEach(({feature,name})=>makeRegion(feature,name));regionNames=data.map(d=>d.name).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));search.value='';suggestions.hidden=true;choose(null,{focus:false});if(!preserveCamera)cameraView(false);load.style.display='none';$('national').hidden=view==='national';$('state-name').textContent=view==='national'?'United States':activeState;$('mode-control').hidden=view==='national';$('race-select').value='all';setMapColor();refreshPanel();}
 async function showNational(){view='national';load.style.display='flex';load.textContent='Loading all 50 state outlines…';try{if(!stateFeatures){const raw=await json(statesURL);stateFeatures=raw.features.filter(f=>statesList.includes(f.properties.name));if(stateFeatures.length!==50)throw Error('Expected 50 states, found '+stateFeatures.length);stateMap=new Map(stateFeatures.map(f=>[f.properties.name,f]));}backdropNames.clear();finishBuild(stateFeatures.map(feature=>({feature,name:feature.properties.name})));}catch(e){load.textContent='Unable to load national map: '+e.message;console.error(e)}}
-async function enterState(name){transitionLock=view==='national';activeState=name;activeStateFips=stateFips.get(name);view='state';mode.value='county';await show()}
+async function enterState(name){focusTween=null;transitionLock=view==='national';activeState=name;activeStateFips=stateFips.get(name);view='state';mode.value='county';await show()}
 async function show(){view='state';load.style.display='flex';load.textContent='Building '+activeState+' county geography…';try{
  if(!countyFeatures){const raw=await json(countyURL);countyFeatures=raw.features;}
  const data=mode.value==='county'?countyFeatures.filter(f=>String(f.properties.STATE).padStart(2,'0')===activeStateFips).map(f=>({feature:f,name:clean(f.properties.NAME)})):activeState==='Texas'?await districtFeatures():[];
@@ -162,9 +177,9 @@ let down=null;renderer.domElement.addEventListener('pointerdown',e=>{down={x:e.c
 renderer.domElement.addEventListener('pointerup',e=>{if(!down)return;const moved=Math.hypot(e.clientX-down.x,e.clientY-down.y)>5;down=null;if(moved||e.button!==0)return;const hit=hitAt(e,true);if(view==='state'&&(!hit||hit.object.userData.isBackdrop)){showNational();return}if(!hit)return;const name=hit.object.userData.name;if(clickTimer)clearTimeout(clickTimer);clickTimer=setTimeout(()=>{clickTimer=null;choose(name)},240)});
 renderer.domElement.addEventListener('dblclick',e=>{e.preventDefault();if(clickTimer){clearTimeout(clickTimer);clickTimer=null}const hit=hitAt(e,true);if(view==='state'&&(!hit||hit.object.userData.isBackdrop)){showNational();return}if(view==='national'&&hit){enterState(hit.object.userData.name);return}if(view==='state'&&hit){choose(hit.object.userData.name)}});
 const hover=$('hover-info');let hoverName='';
-renderer.domElement.addEventListener('pointermove',e=>{if(e.buttons){hover.hidden=true;return}const hit=hitAt(e);const name=hit?.object.userData.name||'';if(!name){hover.hidden=true;renderer.domElement.style.cursor='grab';return}renderer.domElement.style.cursor='pointer';hover.hidden=false;hover.style.left=Math.min(e.offsetX+16,stage.clientWidth-230)+'px';hover.style.top=Math.max(8,e.offsetY-12)+'px';const race=raceChoice(),x=fakeResult(name,race),available=raceAvailable(name,race);const dp=(100*x.D/(x.D+x.R)).toFixed(1),rp=(100*x.R/(x.D+x.R)).toFixed(1);hover.innerHTML=`<strong>${name}${view==='state'&&!hit.object.userData.isBackdrop?' County':''}</strong><span>SIMULATED ${raceTitle(race).toUpperCase()}</span>${!available?'<span>Not on ballot</span>':x.awaiting?'<span>Awaiting Results</span>':`<div class="hover-row ${x.party==='D'?'lead':''}" style="color:#80A9EE"><b>D</b><b>${dp}%</b></div><div class="hover-row ${x.party==='R'?'lead':''}" style="color:#E1848C"><b>R</b><b>${rp}%</b></div><div class="hover-track"><i style="width:${dp}%;background:#1E488A"></i><i style="width:${rp}%;background:#8A232D"></i></div><span>${x.called?'Called':x.party==='T'?'Tied':'Leading: '+(x.party==='D'?'Democratic':'Republican')} · ${x.reported}% reporting${x.flip?' · '+(x.party==='D'?'Democratic':'Republican')+' gain':''}</span>`}`;});
+renderer.domElement.addEventListener('pointermove',e=>{if(e.buttons){hover.hidden=true;return}const hit=hitAt(e);const name=hit?.object.userData.name||'';if(!name){hover.hidden=true;renderer.domElement.style.cursor='grab';return}renderer.domElement.style.cursor='pointer';hover.hidden=false;hover.style.left=Math.min(e.offsetX+16,stage.clientWidth-230)+'px';hover.style.top=Math.max(8,e.offsetY-12)+'px';const race=raceChoice(),x=fakeResult(name,race),available=raceAvailable(name,race);const dp=(100*x.D/(x.D+x.R)).toFixed(1),rp=(100*x.R/(x.D+x.R)).toFixed(1);hover.innerHTML=`<strong>${name}${view==='state'&&!hit.object.userData.isBackdrop?' County':''}</strong><span>SIMULATED ${raceTitle(race).toUpperCase()}</span>${!available?'<span>Not on ballot</span>':x.awaiting?'<span>Awaiting Results</span>':`<div class="hover-row ${x.party==='D'?'lead':''}" style="color:#80A9EE"><b>D${!x.called&&x.party==='D'?' · Leading':x.called&&x.flip&&x.party==='D'?' · Democratic gain':''}</b><b>${dp}%</b></div><div class="hover-row ${x.party==='R'?'lead':''}" style="color:#E1848C"><b>R${!x.called&&x.party==='R'?' · Leading':x.called&&x.flip&&x.party==='R'?' · Republican gain':''}</b><b>${rp}%</b></div><div class="hover-track"><i style="width:${dp}%;background:#1E488A"></i><i style="width:${rp}%;background:#8A232D"></i></div><span>${x.called?'Called':'Not called'} · ${x.reported}% reporting</span>`}`;});
 renderer.domElement.addEventListener('pointerleave',()=>hover.hidden=true);
 $('race-select').addEventListener('change',()=>{setMapColor();refreshPanel();$('race-note').textContent='DEMO DATA · Entirely fictional returns · Map colors represent the selected simulated race';});
-function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(stage);resize();function tick(){requestAnimationFrame(tick);if(focusTween){controls.enabled=false;const t=Math.min(1,(performance.now()-focusTween.start)/focusTween.duration);const k=t*t*(3-2*t);camera.position.lerpVectors(focusTween.fromCamera,focusTween.toCamera,k);controls.target.lerpVectors(focusTween.fromTarget,focusTween.toTarget,k);if(t===1){focusTween=null;controls.enabled=true;}}for(const mesh of meshes){const t=mesh.userData.target;mesh.userData.level+=(t-mesh.userData.level)*ease();mesh.position.z=mesh.userData.level;if(!mesh.userData.selected&&mesh.userData.level<.025)mesh.userData.cavity.visible=false;}controls.update();const d=camera.position.distanceTo(controls.target);const z=Math.round(THREE.MathUtils.clamp((zoomFar-d)/(zoomFar-zoomNear)*100,0,100));zoom.value=z;if(document.activeElement!==$('zoom-number'))$('zoom-number').value=z;zoomLabel.textContent='%';for(const mesh of meshes){if(mesh.userData.sheen)mesh.userData.sheen.material.uniforms.uTime.value=performance.now()/1000;}renderer.render(scene,camera)}tick();
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(stage);resize();function tick(){requestAnimationFrame(tick);if(focusTween){controls.enabled=false;const t=Math.min(1,(performance.now()-focusTween.start)/focusTween.duration);const k=t*t*(3-2*t);camera.position.lerpVectors(focusTween.fromCamera,focusTween.toCamera,k);controls.target.lerpVectors(focusTween.fromTarget,focusTween.toTarget,k);if(t===1){focusTween=null;controls.enabled=true;}}for(const mesh of meshes){const t=mesh.userData.target;mesh.userData.level+=(t-mesh.userData.level)*ease();mesh.position.z=mesh.userData.level;if(!mesh.userData.selected&&mesh.userData.level<.025)mesh.userData.cavity.visible=false;}controls.update();const d=camera.position.distanceTo(controls.target);const z=Math.round(THREE.MathUtils.clamp((zoomFar-d)/(zoomFar-zoomNear)*100,0,100));syncZoom(z);zoomLabel.textContent='%';for(const mesh of meshes){if(mesh.userData.sheen)mesh.userData.sheen.material.uniforms.uTime.value=performance.now()/1000;}renderer.render(scene,camera)}tick();
 $('zoom-number').addEventListener('change',e=>{const n=Number(e.target.value);if(Number.isFinite(n))setZoom(Math.max(0,Math.min(100,Math.round(n))))});
 try{const r=await fetch('./counties-2026-10-23.csv');if(!r.ok)throw Error('County data missing');const lines=(await r.text()).trim().split(/\r?\n/),keys=lines.shift().split(',');for(const line of lines){const cells=line.split(',');const row=Object.fromEntries(keys.map((k,i)=>[k,cells[i]]));rows.set(clean(row.county),row)}if(rows.size!==254||[...rows.values()].reduce((n,r)=>n+Number(r.cumulative_total),0)!==3724290)throw Error('County dataset did not reconcile');await showNational()}catch(e){load.textContent='Unable to validate county data: '+e.message}

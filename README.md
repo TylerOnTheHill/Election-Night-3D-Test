@@ -18,3 +18,12 @@ Known limitations: Requires internet for geometry and Three.js. Geographic simul
 - Zoom distance scale recalibrated for national camera and range input restyled.
 - All election totals, race calls, hold/flip labels and reporting figures remain fabricated demo data.
 - Browser rendering has not been validated on every device.
+
+
+## v2.3 camera and inset refinements
+- National default and 0% zoom are the same camera position; Reset Camera returns to 0%.
+- National camera distance is computed from map bounds and the actual viewport aspect ratio.
+- Alaska and Hawaii inset geometry is repositioned and scaled, including antimeridian unwrapping for Alaska.
+- Hover card leading/gain labels appear next to the corresponding party.
+- State-to-county transitions retain the current camera position; return to national restores national framing.
+- All simulated results remain fictional; national call counters are demonstration-only and not connected to the map.
