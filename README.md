@@ -9,3 +9,6 @@ The Three.js library and geographic boundaries load from external HTTPS services
 
 ## v1.4 changes
 Reduced OrbitControls sensitivity and constrained vertical orbit; half-height extrusions; illuminated cavity footprints; smooth double-click-to-zoom; closer default camera.
+
+## v1.5
+Z-up orbit camera with genuine polar-angle constraints, slower rotation, closer zoom, smooth selection framing for every county and district, and soft pearl-white raised geography with pale cavity illumination. Hard-refresh after deploying to bypass cached JavaScript.
