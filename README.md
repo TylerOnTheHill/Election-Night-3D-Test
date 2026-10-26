@@ -25,3 +25,7 @@ Alaska moved upward 1.45 projected map units. Hawaii enlarged 50% around its ori
 - Mark projected state GeoJSON coordinates explicitly to prevent a second projection in the WebGL renderer (the cause of the miniature/dispersed national map).
 - Reproject county polygons into a state-local coordinate system and fit the camera to county geometry instead of preserving the national camera (the cause of blank county views).
 - The two JavaScript modules pass `node --check`; a full browser visual check could not be completed because Chromium navigation to the local test server returned `ERR_BLOCKED_BY_ADMINISTRATOR`.
+
+
+## v4.4 changes
+Camera fit rewritten for national and county views; county extrusions reduced to 0.095 map units, with fine bevels; selected lift capped to 0.24 map units. Static fallback remains only while WebGL initializes.
