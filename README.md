@@ -22,3 +22,6 @@ Z-up orbit camera with genuine polar-angle constraints, slower rotation, closer 
 - Close manual zoom and double-click zoom are preserved.
 
 After uploading, hard-refresh the GitHub Pages site (Ctrl+Shift+R) to avoid cached JavaScript.
+
+
+v1.7: closer home view, closer selected-county framing, brighter cavities, synchronized zoom slider and typed location search.
