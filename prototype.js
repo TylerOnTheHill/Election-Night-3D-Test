@@ -11,7 +11,7 @@ function clean(x){return String(x||'').trim().toUpperCase()}function number(x){r
 function polygonToShape(rings){const outer=rings[0];if(!outer||outer.length<4)return null;const shape=new THREE.Shape();outer.forEach((p,i)=>i?shape.lineTo(...project(p)):shape.moveTo(...project(p)));for(const hole of rings.slice(1)){if(hole.length<4)continue;const path=new THREE.Path();hole.forEach((p,i)=>i?path.lineTo(...project(p)):path.moveTo(...project(p)));shape.holes.push(path)}return shape}
 function project(p){
  if(projectedGeometry)return [p[0],p[1]];
- if(view==='national'||view==='state'){
+ if(view==='national'){
   // Transform whole state consistently, including Aleutian islands crossing the date line.
   if(projectionRegion==='Alaska'){
    const lon=p[0]>0?p[0]-360:p[0];
@@ -166,13 +166,14 @@ async function show(){view='state';load.style.display='flex';load.textContent='B
  if(activeState==='Texas'&&mode.value==='county'&&data.length!==254)throw Error('Incomplete Texas coverage');
  // Preserve neighboring states in subdued gray while displaying county polygons.
  backdropNames=new Set(stateFeatures.filter(f=>f.properties.name!==activeState).map(f=>f.properties.name));
- const surroundings=stateFeatures.filter(f=>f.properties.name!==activeState).map(feature=>({feature,name:feature.properties.name}));
- finishBuild([...surroundings,...data],{preserveCamera:true});
+ const surroundings=[];
+ stateProjection(activeState);
+ finishBuild(data);
  const stateFeature=stateMap.get(activeState);projectionRegion=activeState;
  const polys=[];eachPoly(stateFeature,rings=>{for(const pt of rings[0])polys.push(new THREE.Vector3(...project(pt),0))});
  const bounds=new THREE.Box3().setFromPoints(polys);const center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
- // Maintain camera position on transition; counties materialize in place.
- if(!transitionLock){const distance=Math.max(7,Math.max(size.x/1.5,size.y/1.15));const direction=new THREE.Vector3(0,-.55,1.4).normalize();animateCamera(center,center.clone().addScaledVector(direction,distance),650)}transitionLock=false;
+ // County geometry is framed in its own local projection; do not reuse the national camera.
+ cameraView(false);transitionLock=false;
  }catch(e){load.textContent='Unable to load boundaries: '+e.message;console.error(e)}}
 mode.onchange=show;
 let focusTween=null;

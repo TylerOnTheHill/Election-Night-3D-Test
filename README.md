@@ -20,3 +20,8 @@ Declared `projectedStates` in the ES module. In v4 this undeclared assignment ca
 
 ## v4.2 inset placement
 Alaska moved upward 1.45 projected map units. Hawaii enlarged 50% around its original center and moved upward 1.75 projected units. Static SVG fallback insets were repositioned to match. The 3D interaction code is otherwise unchanged from v4.1.
+
+## v4.3 correction (2026-10-26)
+- Mark projected state GeoJSON coordinates explicitly to prevent a second projection in the WebGL renderer (the cause of the miniature/dispersed national map).
+- Reproject county polygons into a state-local coordinate system and fit the camera to county geometry instead of preserving the national camera (the cause of blank county views).
+- The two JavaScript modules pass `node --check`; a full browser visual check could not be completed because Chromium navigation to the local test server returned `ERR_BLOCKED_BY_ADMINISTRATOR`.
