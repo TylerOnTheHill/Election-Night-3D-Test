@@ -5,3 +5,7 @@ This is an **isolated prototype**, not a replacement for the existing GitHub Pag
 It renders actual extruded county polygons with Three.js, real shadows, a tilted camera, click/dropdown selection, and the verified October 23, 2026 county dataset. The congressional district toggle retrieves the 119th Congress boundary layer from Census TIGERweb; confirm legal applicability to the election before using as an authoritative election map.
 
 The Three.js library and geographic boundaries load from external HTTPS services, so an internet connection is required. District-level election results are not estimated. This prototype has not been browser-tested in the user's environment.
+
+
+## v1.4 changes
+Reduced OrbitControls sensitivity and constrained vertical orbit; half-height extrusions; illuminated cavity footprints; smooth double-click-to-zoom; closer default camera.
