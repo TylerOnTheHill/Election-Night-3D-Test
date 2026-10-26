@@ -36,3 +36,11 @@ Camera fit rewritten for national and county views; county extrusions reduced to
 - County 0% framing is closer (factor 0.87); national camera unchanged.
 - Alaska 11% larger; Hawaii islands locally enlarged and clustered in their inset.
 - The interactive map uses states-projected.geojson; the older SVG files are only fallback previews.
+
+
+## v4.6 targeted changes
+- Selected county rise increased to 0.19 units (base depth remains 0.042), to make the lift visible without returning to tall block geometry.
+- Hawaii's projected island outlines individually enlarged 1.55x and island-to-island distances compressed to 63% horizontally / 68% vertically.
+- Alaska enlarged slightly (4.5%), preserving its existing projection and placement.
+- National and county camera algorithms unchanged from v4.5.
+- SVG fallbacks are unchanged from v4.5; test the interactive WebGL rendering for these changes.
