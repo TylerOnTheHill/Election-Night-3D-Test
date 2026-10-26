@@ -25,3 +25,14 @@ After uploading, hard-refresh the GitHub Pages site (Ctrl+Shift+R) to avoid cach
 
 
 v1.7: closer home view, closer selected-county framing, brighter cavities, synchronized zoom slider and typed location search.
+
+
+## v1.8 updates
+- National floating map with 50 state shapes; Alaska/Hawaii displayed as insets.
+- Select a state to lift it, select again to lower, or Explore to open county geography.
+- All-state county geography sourced from Plotly county FIPS geometry; verified October 23 voting figures remain Texas-only.
+- Simultaneous interruptible selection animations; metallic reflective selection and animated lighting.
+- Socket outline depth tested behind raised regions; Home/Deselect, Escape, / search shortcut.
+- Removed redundant location dropdown and ground plane.
+- Uses external state, county, and Three.js assets; test in GitHub Pages (not file://).
+- National data availability is geography-only; 2026 election results are NOT provided for other states.
