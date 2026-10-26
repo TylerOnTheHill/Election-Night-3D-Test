@@ -1,14 +1,9 @@
-# Election Night 3D — v2.0 Synthetic Results Demo
+# Election Night 3D Prototype v2.1 — SIMULATED DEMO
 
-**WARNING: ALL CANDIDATE RESULTS IN THIS DEMO ARE ENTIRELY FABRICATED.** The generated totals, percentages, party leaders, and map colors are deterministic visual test fixtures, **not actual election results, polling, projections, or predictions**. No real candidate names are used.
+Upload the four files together to your GitHub Pages repository root.
 
-- National map: fictional U.S. Senate results across 50 states.
-- Single-click a state to select it; double-click a state to explore counties directly.
-- County map: fictional Senate/Governor/House results, with heavily faded surrounding states.
-- Race selector: changes the simulated contest used to color the geography.
-- Hover for sample result percentages; select for expanded sample totals.
-- Zoom +/- change by one percentage point; editable zoom number.
-- All existing Texas October 23 early-voting data is retained in the CSV, unmodified.
-- Map geometry requires access to external GeoJSON services and Three.js CDN.
+**Important:** Every election return, call, lead, flip, and reporting percentage in this version is fabricated for interface testing. Do not present them as actual election results, predictions, or verified returns. The national Senate and House counters are interactive *simulators*, not connected to the geographic fictional calls. Senate simulator baseline uses 34 Democratic-caucus seats and 31 Republican seats with 35 unresolved as a visual test; validate real election and membership data before production. House simulator starts at zero secured seats. The governor and Senate ballot-state lists are illustrative and must be verified against official 2026 ballots before production.
 
-This is a temporary **visual design prototype only**. Do not use the fictional results for any reporting, analysis, election coverage, or voter information. Replace the demo generator with a verified source and remove demo mode before publishing an actual election-night results product.
+New: inward-growing national congressional bars, centered finish line, fictional seat-call buttons and control announcements, blue-left/red-right individual vote bars, leading labels, simulated reporting %, yellow ties, subdued non-election states, striped synthetic flips, simplified hover cards, Alaska/Hawaii inset adjustments, clicking backdrop/empty map to return nationally, and reduced camera jumping on selected-state-to-county transitions.
+
+Known limitations: Requires internet for geometry and Three.js. Geographic simulation and national call simulator are independent. National-to-county camera can still reframe when entering from an unselected state; select a state first to keep its camera position. House results are geographic placeholders rather than district-accurate results. The original verified Texas October 23 early-vote CSV is unchanged and separate from simulated election returns.
