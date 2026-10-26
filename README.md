@@ -7,3 +7,14 @@ Upload the four files together to your GitHub Pages repository root.
 New: inward-growing national congressional bars, centered finish line, fictional seat-call buttons and control announcements, blue-left/red-right individual vote bars, leading labels, simulated reporting %, yellow ties, subdued non-election states, striped synthetic flips, simplified hover cards, Alaska/Hawaii inset adjustments, clicking backdrop/empty map to return nationally, and reduced camera jumping on selected-state-to-county transitions.
 
 Known limitations: Requires internet for geometry and Three.js. Geographic simulation and national call simulator are independent. National-to-county camera can still reframe when entering from an unselected state; select a state first to keep its camera position. House results are geographic placeholders rather than district-accurate results. The original verified Texas October 23 early-vote CSV is unchanged and separate from simulated election returns.
+
+
+## v2.2 changes (October 26, 2026)
+- National camera automatically fits the 50-state geography with margin; Alaska and Hawaii insets re-scaled and repositioned.
+- Individual race status/reporting moved to top; leading/hold/gain next to party labels.
+- Balance-of-power panel removes redundant center wording; synthetic called/held/flipped counts shown separately.
+- Selection outline and recessed footprint glow enhanced.
+- Flipped geography uses finer clipped top-surface stripes.
+- Zoom distance scale recalibrated for national camera and range input restyled.
+- All election totals, race calls, hold/flip labels and reporting figures remain fabricated demo data.
+- Browser rendering has not been validated on every device.
