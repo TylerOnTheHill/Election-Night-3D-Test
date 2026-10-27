@@ -79,7 +79,14 @@ def import_files(early, returned, outstanding):
     for key in sorted(tables["voted_mail"]):
         voted = tables["voted_mail"][key]["total"]
         pending = tables["mail_outstanding"][key]["total"]
+        by_party = {}
+        for party in PARTIES.values():
+            returned_party = tables["voted_mail"][key]["registration"][party]
+            pending_party = tables["mail_outstanding"][key]["registration"][party]
+            denominator = returned_party + pending_party
+            by_party[party] = round(returned_party / denominator, 6) if denominator else None
         records.append({
+            "mail_return_rate_by_registration": by_party,
             "county": tables["voted_mail"][key]["county"],
             "voted_early": tables["voted_early"][key],
             "voted_mail": tables["voted_mail"][key],
@@ -88,12 +95,19 @@ def import_files(early, returned, outstanding):
         })
     returned_total = totals["voted_mail"]["total"]
     outstanding_total = totals["mail_outstanding"]["total"]
+    statewide_by_party = {}
+    for party in PARTIES.values():
+        returned_party = totals["voted_mail"]["registration"][party]
+        pending_party = totals["mail_outstanding"]["registration"][party]
+        denominator = returned_party + pending_party
+        statewide_by_party[party] = round(returned_party / denominator, 6) if denominator else None
     return {
         "schema": "electionhq-florida-county-aggregate-v1",
         "election_id": "49894", "state_fips": "12", "source_url": SOURCE,
         "compiled_at_local": next(iter(times)).isoformat(),
         "mail_return_rate_definition": "voted_mail / (voted_mail + mail_outstanding)",
-        "statewide": {**totals, "mail_return_rate": round(returned_total / (returned_total + outstanding_total), 6)},
+        "statewide": {**totals, "mail_return_rate": round(returned_total / (returned_total + outstanding_total), 6),
+                      "mail_return_rate_by_registration": statewide_by_party},
         "coverage": {"counties_reported": len(records), "complete": len(records) == 67},
         "counties": records,
         "caveat": "Party breakdown reflects registration, not votes for candidates. Returned is not necessarily accepted."
