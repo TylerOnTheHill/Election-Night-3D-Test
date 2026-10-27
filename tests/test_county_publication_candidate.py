@@ -25,6 +25,24 @@ class CandidateGateTests(unittest.TestCase):
     def test_valid_unapproved_candidate(self):
         self.assertEqual(validate(candidate())["TX"]["reported_counties"], 254)
 
+    def test_accepts_independent_partial_florida_candidate(self):
+        c = candidate()
+        fl = c["states"].pop("TX")
+        c["states"].pop("NC")
+        fl.update(counties=[{"fips":"12001","name":"Alachua","total":10,
+                             "source_url":"https://example.org","credit":"Fixture",
+                             "file_as_of":"2026-10-27"}],
+                  county_count=1, geographic_count=67, coverage_complete=False,
+                  reporting_label="Partially reported",total=10)
+        c["states"]["FL"] = fl
+        self.assertEqual(validate(c)["FL"]["reported_counties"],1)
+
+    def test_rejects_unknown_state(self):
+        c = candidate()
+        c["states"]["ZZ"] = c["states"]["TX"]
+        with self.assertRaises(ValueError):
+            validate(c)
+
     def test_refuses_approved_flag(self):
         c = candidate()
         c["publication_approved"] = True
