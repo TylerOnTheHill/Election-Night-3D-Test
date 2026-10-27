@@ -16,6 +16,7 @@ on:
       - 'scripts/stage_maine_aggregated_counties.py'
       - 'scripts/probe_maine_official_absentee.py'
       - 'scripts/probe_votehub_l2_early_vote.py'
+      - 'scripts/stage_ctm_ten_state_statewide.py'
       - 'scripts/stage_new_hampshire_source_status.py'
       - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
@@ -81,6 +82,8 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_stage_alaska_official_statewide.py' -v
           python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
+      - name: Ingest verified credited statewide early-vote totals for remaining ten
+        run: python scripts/stage_ctm_ten_state_statewide.py --output ten-state-statewide-observations.json
       - name: Check VoteHub and L2 dashboards across all 19 states
         run: python scripts/probe_votehub_l2_early_vote.py --output votehub-l2-source-review.json
       - name: Discover Maine SOS 2026 absentee file
@@ -152,6 +155,7 @@ jobs:
             maine-county-review.json
             maine-official-source-review.json
             votehub-l2-source-review.json
+            ten-state-statewide-observations.json
             new-hampshire-county-status.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
