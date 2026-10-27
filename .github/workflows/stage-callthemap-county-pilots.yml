@@ -73,8 +73,6 @@ jobs:
         run: python scripts/validate_county_publication_candidate.py --candidate staging-county-publication-candidate.json
       - name: Test end-to-end county pipeline with partial reports
         run: python -m unittest discover -s tests -p 'test_run_tx_nc_county_pipeline.py' -v
-      - name: Run integrated real-data county pipeline
-        run: python scripts/run_tx_nc_county_pipeline.py --output staging-county-integrated-candidate.json
       - name: Install headless browser for real-data dashboard preview
         run: |
           pip install playwright
@@ -91,7 +89,6 @@ jobs:
             staging-county-pilots-fips/
             staging-county-preview.json
             staging-county-publication-candidate.json
-            staging-county-integrated-candidate.json
             staging-county-browser-preview/
           if-no-files-found: ignore
           retention-days: 7
