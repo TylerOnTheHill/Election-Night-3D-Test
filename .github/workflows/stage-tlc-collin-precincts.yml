@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/fetch_tlc_collin_2026_primary.py'
       - 'tests/test_tlc_collin_2026_primary.py'
+      - 'scripts/validate_tlc_collin_geojson.py'
+      - 'tests/test_validate_tlc_collin_geojson.py'
       - '.github/workflows/stage-tlc-collin-precincts.yml'
   workflow_dispatch:
 permissions:
@@ -22,10 +24,14 @@ jobs:
         run: python -m pip install 'pyshp>=2.3,<3' 'pyproj>=3.6,<4'
       - name: Test independent TLC polygon extraction
         run: python -m unittest discover -s tests -p 'test_tlc_collin_2026_primary.py' -v
+      - name: Test Collin polygon geometry and CRS safeguards
+        run: python -m unittest discover -s tests -p 'test_validate_tlc_collin_geojson.py' -v
       - name: Fetch official Texas Legislative Council 2026 primary polygons
         run: |
           mkdir -p staging-tlc-collin
           python scripts/fetch_tlc_collin_2026_primary.py --output staging-tlc-collin/collin-2026-primary.geojson --report staging-tlc-collin/report.json
+      - name: Validate extracted polygons and report bounds
+        run: python scripts/validate_tlc_collin_geojson.py --geojson staging-tlc-collin/collin-2026-primary.geojson --report staging-tlc-collin/geometry-validation.json
       - name: Upload primary-only staging geometry
         uses: actions/upload-artifact@v4
         with:
