@@ -16,6 +16,12 @@ class MaineAggregationTests(unittest.TestCase):
         self.assertEqual(result["total"],22)
         self.assertEqual(result["counties"],{"Cumberland":15,"York":7})
         self.assertEqual(result["metric"],"accepted")
+    def test_reachable_dataset_without_2026_rows_is_not_an_outage(self):
+        result=aggregate([{"unit_id":"1","election_date":"2024-11-05","returned":"20"}],
+                         [{"unit_id":"1","county":"York"}])
+        self.assertEqual(result["status"],"no_2026_general_election_rows")
+        self.assertIsNone(result["county_ballots"])
+        self.assertEqual(result["reporting_label"],"Not reported")
     def test_missing_unit_fails_closed(self):
         with self.assertRaises(ValueError):
             aggregate([{"unit_id":"3","election_date":"2026-11-03","returned":"4"}],
