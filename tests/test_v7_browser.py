@@ -34,10 +34,36 @@ with sync_playwright() as p:
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
     assert not page.locator(".ev-counties").is_visible()
     assert not page.locator(".ev-gradient").is_visible()
+    # Select Florida using the same search control a visitor uses.
+    florida=next(row for row in snapshot["states"] if row["state_name"]=="Florida")
+    page.locator("#search").fill("Florida")
+    page.locator("#search").press("Enter")
+    page.wait_for_function("document.querySelector('#details').textContent.includes('Florida')",timeout=15000)
+    state_text=page.locator("#details").text_content()
+    assert f"{florida['total']:,}" in state_text,("Florida ballot count missing",state_text[:1500])
+    assert "Party registration, not candidate preference." in state_text or florida.get("dem") is None
+    assert page.locator("#map-results-panel").is_visible()
+    # Drill into a non-Texas state: Texas county participation must never appear.
+    page.locator("#panel-explore").click()
+    page.wait_for_function("document.querySelector('#state-name').textContent==='Florida' && document.querySelector('#loading').style.display==='none'",timeout=45000)
+    assert page.locator("body").evaluate("(el)=>el.classList.contains('nontexas-early')")
+    assert "No verified county turnout" in page.locator("#details").text_content()
+    assert not page.locator(".ev-counties").is_visible()
+    # Return to the national map using the now-visible navigation control.
+    page.locator("#national").click()
+    page.wait_for_function("document.querySelector('#state-name').textContent==='United States' && document.querySelector('#loading').style.display==='none'",timeout=45000)
+    assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
+    # Texas county navigation should restore its county-specific dashboard.
+    page.locator("#search").fill("Texas")
+    page.locator("#search").press("Enter")
+    page.locator("#panel-explore").click()
+    page.wait_for_function("document.querySelector('#state-name').textContent==='Texas' && document.querySelector('#loading').style.display==='none'",timeout=45000)
+    assert not page.locator("body").evaluate("(el)=>el.classList.contains('nontexas-early')")
+    assert page.locator(".ev-counties").is_visible()
     page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
     page.get_by_role("tab",name="Election Night").click()
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('early')")
     assert not errors, errors
-    print("PASS: national data, reconciliation, Early Vote mode, national legend, Election Night toggle")
+    print("PASS: national totals, Florida selection and attribution, non-Texas isolation, national return, Texas county dashboard, mode toggle")
     browser.close()
 server.shutdown()
