@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "description": "Registry of verified early-vote sources by jurisdiction. Coverage must be explicitly documented; entries are not proof of active automated ingestion.",
+  "sources": [],
+  "source_entry_contract": {
+    "source_id": "Unique stable source ID",
+    "state_fips": "Two-digit state FIPS string",
+    "geography_level": "county | municipality | precinct | state",
+    "geography_id_system": "county_fips | state_fips | source_native",
+    "publisher": "Election authority or other clearly attributed publisher",
+    "source_url": "Canonical public data URL",
+    "official": "boolean",
+    "retrieval_method": "csv | json | html | pdf | manual",
+    "ballot_types": [
+      "mail",
+      "in_person"
+    ],
+    "measurement": "cumulative | daily",
+    "reported_through_field": "Source reporting cutoff date/time",
+    "last_verified_at": "UTC timestamp of human/source verification",
+    "update_frequency": "Published cadence or unknown",
+    "license": "Terms/attribution",
+    "adapter": "Path to parser, or null until implemented",
+    "status": "candidate | verified | active | paused",
+    "notes": "Coverage limits and caveats"
+  }
+}
