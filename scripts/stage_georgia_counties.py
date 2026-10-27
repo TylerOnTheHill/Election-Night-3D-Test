@@ -13,7 +13,7 @@ from datetime import date
 from pathlib import Path
 
 SOURCE="https://raw.githubusercontent.com/Votega/ga-races-elections/main/early-vote/2026-general/county-totals.json"
-CREDIT="VoteGA.org (CC BY-SA 4.0); underlying Georgia Secretary of State early-voting data"
+CREDIT="Georgia Civic Data (georgiacivicdata.org, CC BY 4.0); Georgia Secretary of State absentee and early-voting files; distributed by VoteGA"
 EXPECTED=159
 
 def stage(doc):
