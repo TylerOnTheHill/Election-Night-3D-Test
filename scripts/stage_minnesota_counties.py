@@ -37,7 +37,7 @@ def parse(html,census):
     cutoff=datetime.strptime(date_match.group(1),"%B %d, %Y").date().isoformat()
     mapping={}
     for feature in census["features"]:
-        fips=feature["id"]
+        fips=feature.get("id") or feature["properties"]["STATE"]+feature["properties"]["COUNTY"]
         if not fips.startswith("27"):continue
         name=feature["properties"]["NAME"]
         mapping[name.casefold()]=fips
@@ -90,8 +90,8 @@ def main():
     def get(url):
         with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-source-review/1.0"}),timeout=30) as r:return r.read()
     raw=get(CENSUS).decode("utf-8-sig")
-    if not raw.lstrip().startswith("["):
-        raise ValueError("Census county crosswalk endpoint did not return JSON: "+raw[:160])
+    if not raw.lstrip().startswith("{"):
+        raise ValueError("County geography crosswalk endpoint did not return JSON: "+raw[:160])
     result=parse(get(SOURCE).decode("utf-8"),json.loads(raw))
     target.write_text(json.dumps(result,indent=2)+"\n")
     print("Minnesota official county rows staged:",result["states"]["MN"]["county_count"])
