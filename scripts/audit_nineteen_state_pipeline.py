@@ -30,8 +30,13 @@ def audit(readiness, discovery):
                 raise ValueError("Missing county source must not become zero or a fabricated subtotal")
             if discovered[row["state"]].get("publication_approved") is not False:
                 raise ValueError("Discovery must remain unapproved")
-        elif row.get("county_ballots") is None:
-            raise ValueError("Staged county subtotal missing")
+        else:
+            if row.get("county_staged") is not True:
+                raise ValueError("Expected staged county source is missing: "+row["state"])
+            if type(row.get("county_ballots")) is not int or row["county_ballots"] < 0:
+                raise ValueError("Staged county subtotal missing or invalid: "+row["state"])
+            if type(row.get("county_reported")) is not int or row["county_reported"] < 1:
+                raise ValueError("Staged reported county count missing or invalid: "+row["state"])
     return {"schema":"electionhq-nineteen-state-coverage-audit-v1",
             "publication_approved":False,"states_checked":len(rows),
             "staged_count":len(staged),"source_discovery_count":len(MISSING),
