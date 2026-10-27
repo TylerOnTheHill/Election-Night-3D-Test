@@ -29,6 +29,7 @@ function showCountyTable(){if(countyTable&&countyTable.parentElement!==tableView
 function restoreCountyTable(){if(countyTable&&countyTable.parentElement!==county)countyPlaceholder.after(countyTable)}
 const header=main.querySelector('h2');header?.after(nav,national,state);
 function switchTab(name){const selected=name==='overview'?summary:name==='map'?countyView:tableView;
+ if(selected===summary)summary.append(detail);else if(selected===countyView)countyView.prepend(detail);else tableView.prepend(detail);
  if(selected===tableView)showCountyTable();else restoreCountyTable();
  for(const [button,section] of [[summaryTab,summary],[countyTab,countyView],[tableTab,tableView]]){const active=section===selected;button.setAttribute('aria-selected',String(active));section.hidden=!active}
  // The county renderer observes its host size; keep the map in the visible section.
