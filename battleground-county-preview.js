@@ -32,7 +32,8 @@ async function render(){
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
  status.textContent=(s.coverage_complete?'Fully reported':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
  $('county-preview-title').textContent=code==='TX'?'Texas counties':'North Carolina counties';
- $('county-preview-total').textContent=(s.coverage_complete?'State total: ':'Partially reported: ')+fmt(s.total)+(s.coverage_complete?'*':'');
+ $('county-preview-total').textContent='County ballots reported: '+fmt(s.total);
+ // County observations are a geographic subset; never present their sum as a statewide total.
  $('county-preview-complete-note').hidden=!s.coverage_complete;
  const body=$('county-preview-rows');body.replaceChildren();
  for(const r of [...s.counties].sort((a,b)=>b.total-a.total)){
@@ -71,7 +72,7 @@ function highlight(fips){
  const row=preview?.states?.[selected]?.counties?.find(r=>r.fips===fips);
  if(!row)return;
  window.dispatchEvent(new CustomEvent('electionhq:county-map-highlight',{detail:{fips}}));
- $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots';
+ $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots'+(row.file_as_of?' · As of '+row.file_as_of:' · County reporting cutoff unavailable');
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
