@@ -43,5 +43,11 @@ County geographic completeness is NOT a prerequisite for displaying verified ear
 - Regression tests cover newer cutoffs, same-cutoff corrections, stale states, failed refresh preservation, and no double counting; the refresh workflow runs these tests before ingestion.
 - **Verification pending:** The workflow tests must pass before this checkpoint is marked verified. No changes have been deployed to production.
 
+## Engineering checkpoint — TX/NC county readiness (2026-10-27)
+- The TX/NC staging workflow passed with snapshot comparison tests (run 40498228309).
+- County candidates now support explicit FIPS-keyed comparison of new, revised, and missing county observations, including cutoff regression checks.
+- A source audit now reports county cutoff coverage and statewide reconciliation without asserting unverified freshness; CI integration is awaiting its first run.
+- **Still blocked:** independently confirmed freshness and explicit owner approval before any publication. No public county dataset has been authorized.
+
 ## Current next action
 Complete the TX/NC county publication readiness gate and source freshness verification, then expand verified county coverage without waiting for geographic completeness. Keep the owner-approval requirement for public county data. Do not mark Milestone 2 complete until the public page automatically renders approved real county observations.
