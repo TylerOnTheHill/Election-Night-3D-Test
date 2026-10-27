@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
-let preview=null,selected='TX',atlas=null,renderVersion=0;
+let preview=null,selected=new URLSearchParams(location.search).get('state')?.toUpperCase()||'TX',atlas=null,renderVersion=0;
 function validate(p){
  if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==true)throw Error('County dataset is not approved for publication.');
  for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
