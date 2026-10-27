@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Discover actual county observations in the remaining 12 battleground states.
+"""Discover actual county observations in the remaining 11 battleground states.
 
 This is SOURCE DISCOVERY, not FIPS verification or publication. Never fill
 missing counties with zero, and never promote provider totals to verified data.
@@ -7,10 +7,11 @@ missing counties with zero, and never promote provider totals to verified data.
 import argparse
 import json
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from stage_callthemap_county_pilots import BASE
 
-STATES=("AK","AZ","GA","KS","ME","MI","MN","MS","NE","NV","NH","OH")
+STATES=("AK","AZ","KS","ME","MI","MN","MS","NE","NV","NH","OH")
 
 def inspect(code,payload):
     if code not in STATES:
@@ -68,14 +69,14 @@ def main():
     target=Path(args.output)
     if target.resolve().is_relative_to((Path.cwd()/"data/early-vote").resolve()):
         raise ValueError("Do not write unapproved observations into public data")
-    payloads={}
-    for code in STATES:
+    def fetch(code):
         if args.input_dir:
-            payloads[code]=json.loads((Path(args.input_dir)/(code+".json")).read_text())
-        else:
-            request=urllib.request.Request(BASE+code+".json",headers={"User-Agent":"ElectionHQ-county-source-discovery/1.0"})
-            with urllib.request.urlopen(request,timeout=30) as response:
-                payloads[code]=json.load(response)
+            return json.loads((Path(args.input_dir)/(code+".json")).read_text())
+        request=urllib.request.Request(BASE+code+".json",headers={"User-Agent":"ElectionHQ-county-source-discovery/1.0"})
+        with urllib.request.urlopen(request,timeout=30) as response:
+            return json.load(response)
+    with ThreadPoolExecutor(max_workers=11) as pool:
+        payloads=dict(zip(STATES,pool.map(fetch,STATES)))
     report=discover(payloads)
     target.write_text(json.dumps(report,indent=2)+"\n")
     print("County observations found in:",", ".join(report["states_with_county_observations"]) or "none")
