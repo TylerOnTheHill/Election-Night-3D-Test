@@ -11,16 +11,20 @@ import re
 import urllib.request
 import urllib.parse
 import time
+import csv
+import io
+import zipfile
 
 STATES = {"TX": "48", "NC": "37"}
 API = "https://api.census.gov/data/2020/dec/pl"
+GAZETTEER = "https://www2.census.gov/geo/docs/maps-data/data/gazetteer/2020_Gazetteer/2020_Gazetteer_counties_national.zip"
 
 def canonical(value):
     value = value.lower().replace("&", " and ")
     value = re.sub(r"\b(county|parish|borough)\b", "", value)
     return re.sub(r"[^a-z0-9]", "", value)
 
-def crosswalk(code, census_rows, staged):
+def crosswalk(code, census_rows, staged, geography_source="2020 Census PL 94-171 county geography API", geography_url=None):
     if code not in STATES or staged.get("state") != code or staged.get("status") != "staging_only_not_approved_for_publication":
         raise ValueError("Unexpected staged state or publication status")
     if not isinstance(census_rows, list) or not census_rows or census_rows[0] != ["NAME", "state", "county"]:
@@ -54,8 +58,8 @@ def crosswalk(code, census_rows, staged):
         raise ValueError("Staged county coverage incomplete; no zero-filling")
     return {**staged, "counties": output, "fips_verified": True,
             "coverage_complete": True, "census_geography_source":
-            "2020 Census PL 94-171 county geography API",
-            "census_geography_url": census_url(STATES[code]),
+            geography_source,
+            "census_geography_url": geography_url or census_url(STATES[code]),
             "status": "staging_only_fips_and_coverage_verified"}
 
 def census_url(state):
@@ -81,6 +85,26 @@ def fetch_census(state):
                 time.sleep(2 ** attempt)
     raise ValueError(f"Census county geography unavailable for state {state}: {last}")
 
+def fetch_gazetteer(state):
+    req = urllib.request.Request(GAZETTEER, headers={"User-Agent": "ElectionHQ-county-fips-audit/1.0"})
+    with urllib.request.urlopen(req, timeout=25) as response:
+        raw = response.read(5_000_001)
+    if len(raw) > 5_000_000:
+        raise ValueError("Census Gazetteer archive too large")
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        files = [n for n in archive.namelist() if n.lower().endswith(".txt")]
+        if len(files) != 1:
+            raise ValueError("Unexpected Census Gazetteer archive layout")
+        with archive.open(files[0]) as stream:
+            records = list(csv.DictReader(io.TextIOWrapper(stream, encoding="utf-8-sig"), delimiter="\\t"))
+    rows = [["NAME", "state", "county"]]
+    for record in records:
+        geoid = record.get("GEOID", "").strip()
+        name = record.get("NAME", "").strip()
+        if re.fullmatch(r"\\d{5}", geoid) and geoid[:2] == state and name:
+            rows.append([name, state, geoid[2:]])
+    return rows
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--input-dir", default="staging-county-pilots")
@@ -90,8 +114,13 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     for code, state in STATES.items():
         staged = json.loads((pathlib.Path(args.input_dir) / (code + ".json")).read_text())
-        census = fetch_census(state)
-        enriched = crosswalk(code, census, staged)
+        try:
+            census = fetch_census(state)
+            enriched = crosswalk(code, census, staged)
+        except (OSError, ValueError, zipfile.BadZipFile) as primary_error:
+            print(code, "Census API unavailable/invalid:", primary_error, "; trying official Census Gazetteer")
+            census = fetch_gazetteer(state)
+            enriched = crosswalk(code, census, staged, "2020 Census Gazetteer counties national", GAZETTEER)
         (out / (code + ".json")).write_text(json.dumps(enriched, indent=2) + "\n")
         print(code, len(enriched["counties"]), "counties matched to unique Census FIPS; STAGING ONLY")
 
