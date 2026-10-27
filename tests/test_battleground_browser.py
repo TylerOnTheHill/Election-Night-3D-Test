@@ -31,7 +31,8 @@ try:
             assert colors==["#268cff"],colors
             assert page.locator("#battleground-map svg path.nonwatch").count()>=25
             assert page.locator("#state-count").inner_text()=="19"
-            page.locator("#battleground-map path[data-code='FL']").click()
+            page.locator("#battleground-map path[data-code='FL']").focus()
+            page.keyboard.press("Enter")
             assert "Florida" in page.locator("#detail-name").inner_text()
             if "FL" in by_code:
                 assert page.locator("#detail-total").inner_text()==f"{by_code['FL']['total']:,}"
