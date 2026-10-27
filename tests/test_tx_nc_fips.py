@@ -30,6 +30,12 @@ class CensusCrosswalkTests(unittest.TestCase):
     def test_normalization(self):
         self.assertEqual(canonical("DeWitt County"), canonical("De Witt"))
         self.assertEqual(canonical("McLennan County"), canonical("McLennan"))
+    def test_gazetteer_crosswalk_rejects_missing_county(self):
+        census = [["NAME", "state", "county"], ["Travis County", "48", "453"]]
+        staged = {"state": "TX", "status": "staging_only_not_approved_for_publication",
+                  "counties": [{"county": "Travis", "total": 12}]}
+        with self.assertRaisesRegex(ValueError, "geographic count unexpected"):
+            crosswalk("TX", census, staged, "2020 Census Gazetteer", "https://www2.census.gov/")
     def test_rejects_incomplete_geography(self):
         staged={"state":"TX","status":"staging_only_not_approved_for_publication","counties":[]}
         with self.assertRaises(ValueError):
