@@ -85,14 +85,16 @@ def to_internal_candidate(review, geojson):
         for row in source["observations"]:
             key = canonical(row["county"])
             if key not in names:
-                raise ValueError(code+": UF county cannot match GEOID: "+row["county"])
+                gaps[code] = "Unmatched county name: " + row["county"]
+                observations = []
+                break
             observations.append({"fips":names[key],"name":row["county"],
                                  "total":row["ballots"],"file_as_of":None,
                                  "source_url":source["source_url"],"credit":CREDIT})
         if len(set(row["fips"] for row in observations)) != len(observations):
             raise ValueError(code+": duplicate county GEOID")
         if not observations:
-            gaps[code] = "No observed county ballots"
+            gaps.setdefault(code, "No observed county ballots")
             continue
         states[code] = {"status":"restricted_source_review_only",
                         "provider":"University of Florida Election Lab",
