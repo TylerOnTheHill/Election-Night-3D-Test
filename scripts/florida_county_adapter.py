@@ -39,6 +39,18 @@ def normalize(payload):
     counties = {r["county"].casefold() for r in output}
     full_categories = all({r["category"] for r in output if r["county"].casefold() == county} == CATEGORIES for county in counties)
     complete = len(counties) == COUNTIES_EXPECTED and full_categories
+    # Optional statewide reconciliation: require complete county coverage and exact
+    # category/party agreement with a statewide report from the same compilation.
+    statewide = payload.get("statewide")
+    if statewide is not None:
+        assert complete, "Cannot reconcile statewide totals from partial county coverage"
+        assert set(statewide) == CATEGORIES, "Missing statewide voting category"
+        for kind in CATEGORIES:
+            expected = statewide[kind]
+            actual_rows = [r for r in output if r["category"] == kind]
+            assert expected["total"] == sum(r["total"] for r in actual_rows), kind
+            for party in PARTIES:
+                assert expected[party] == sum(r["registration"][party] for r in actual_rows), (kind, party)
     return {"schema": "electionhq-county-early-vote-v1", "state_fips": "12",
             "source_url": payload["source_url"], "election_id": payload["election_id"],
             "reported_through": payload["reported_through"],
