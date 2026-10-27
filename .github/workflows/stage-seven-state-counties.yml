@@ -85,6 +85,8 @@ jobs:
           python scripts/stage_maine_aggregated_counties.py --output maine-county-review.json
       - name: Record New Hampshire official county source availability
         run: python scripts/stage_new_hampshire_source_status.py --output new-hampshire-county-status.json
+      - name: Stage Minnesota official accepted county ballots
+        run: python scripts/stage_minnesota_counties.py --output minnesota-unapproved.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -95,20 +97,21 @@ jobs:
         run: python scripts/stage_florida_county_candidate.py --official-tsv-snapshot florida-official.json --output florida-unapproved.json
       - name: Stage Georgia county observations
         run: python scripts/stage_georgia_counties.py --output georgia-unapproved.json
-      - name: Combine all eight without additive double counting
+      - name: Combine all nine official and standard county candidates without additive double counting
         run: |
           python scripts/combine_county_candidates.py \
             --candidate tx-nc-unapproved.json \
             --candidate four-states-unapproved.json \
             --candidate florida-unapproved.json \
             --candidate georgia-unapproved.json \
+            --candidate minnesota-unapproved.json \
             --output eight-states-unapproved.json
           python scripts/validate_county_publication_candidate.py --candidate eight-states-unapproved.json
       - name: Test combined restricted nineteen-state county merge
         run: python -m unittest discover -s tests -p 'test_merge_restricted_nineteen_state_review.py' -v
       - name: Merge observed counties into restricted nineteen-state coverage view
         run: python scripts/merge_restricted_nineteen_state_review.py --standard eight-states-unapproved.json --restricted uf-eleven-fips-candidate-restricted.json --output nineteen-state-observed-coverage-internal.json
-      - name: Audit eight-state reporting cutoffs and reconciliation
+      - name: Audit staged-state reporting cutoffs and reconciliation
         run: |
           python scripts/review_county_source_freshness.py --candidate eight-states-unapproved.json --output eight-state-freshness-audit.json
           python scripts/audit_watchlist_county_reconciliation.py --candidate eight-states-unapproved.json --output eight-state-reconciliation-audit.json
@@ -117,13 +120,13 @@ jobs:
           python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --output nineteen-state-readiness-unapproved.json
       - name: Audit all 19 states have explicit county coverage status
         run: python scripts/audit_nineteen_state_pipeline.py --readiness nineteen-state-readiness-unapproved.json --discovery eleven-state-discovery-unapproved.json --output nineteen-state-coverage-audit.json
-      - name: Build watermarked eight-state interactive dashboard
+      - name: Build watermarked nine-state interactive dashboard
         run: python scripts/build_local_battleground_preview.py --candidate eight-states-unapproved.json --output eight-state-interactive-review
       - name: Install Chromium
         run: |
           pip install playwright
           python -m playwright install --with-deps chromium
-      - name: Verify all eight states in actual browser
+      - name: Verify staged states in actual browser
         env:
           COUNTY_REVIEW_DIR: eight-state-interactive-review
           COUNTY_CANDIDATE: eight-states-unapproved.json
@@ -146,6 +149,7 @@ jobs:
             nineteen-state-observed-coverage-internal.json
             nineteen-state-coverage-audit.json
             eight-states-unapproved.json
+            minnesota-unapproved.json
             eight-state-freshness-audit.json
             eight-state-reconciliation-audit.json
             eight-state-interactive-review/
