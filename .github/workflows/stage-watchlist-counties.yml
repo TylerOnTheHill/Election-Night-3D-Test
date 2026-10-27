@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/stage_watchlist_counties.py'
       - 'scripts/audit_watchlist_county_reconciliation.py'
+      - 'scripts/review_county_source_freshness.py'
       - 'tests/test_stage_watchlist_counties.py'
       - 'scripts/validate_county_publication_candidate.py'
       - '.github/workflows/stage-watchlist-counties.yml'
@@ -25,6 +26,8 @@ jobs:
         run: python scripts/stage_watchlist_counties.py --output watchlist-county-candidate-unapproved.json
       - name: Audit county and statewide reconciliation without publication
         run: python scripts/audit_watchlist_county_reconciliation.py --candidate watchlist-county-candidate-unapproved.json --output watchlist-county-reconciliation-audit.json
+      - name: Review source timestamps and freshness limitations
+        run: python scripts/review_county_source_freshness.py --candidate watchlist-county-candidate-unapproved.json --output watchlist-county-freshness-review.json
       - name: Upload unapproved county candidate
         if: always()
         uses: actions/upload-artifact@v4
@@ -33,5 +36,6 @@ jobs:
           path: |
             watchlist-county-candidate-unapproved.json
             watchlist-county-reconciliation-audit.json
+            watchlist-county-freshness-review.json
           if-no-files-found: ignore
           retention-days: 7
