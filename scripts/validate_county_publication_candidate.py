@@ -1,0 +1,73 @@
+#!/usr/bin/env python3
+"""Validate a county publication candidate without authorizing publication.
+
+This command is intentionally read-only. Owner approval and a separate
+publication action are required before any public feed is written.
+"""
+import argparse
+import json
+from pathlib import Path
+
+EXPECTED = {"TX": (254, "48"), "NC": (100, "37")}
+
+def validate(candidate):
+    if candidate.get("schema") != "electionhq-county-preview-v1":
+        raise ValueError("Unexpected county schema")
+    if candidate.get("publication_approved") is not False or candidate.get("review_required") is not True:
+        raise ValueError("Candidate must remain unapproved and require review")
+    if set(candidate.get("states", {})) != set(EXPECTED):
+        raise ValueError("Unexpected or missing states")
+    summary = {}
+    for code, (expected, prefix) in EXPECTED.items():
+        state = candidate["states"][code]
+        rows = state.get("counties")
+        if state.get("status") != "candidate_pending_publication_approval":
+            raise ValueError(code + ": missing pending-approval status")
+        if not isinstance(rows, list) or not 0 < len(rows) <= expected:
+            raise ValueError(code + ": invalid county coverage")
+        if state.get("geographic_count") != expected or state.get("county_count") != len(rows):
+            raise ValueError(code + ": inconsistent geographic counts")
+        if state.get("coverage_complete") is not (len(rows) == expected):
+            raise ValueError(code + ": incorrect completeness flag")
+        if state.get("reporting_label") != ("Fully reported" if len(rows) == expected else "Partially reported"):
+            raise ValueError(code + ": incorrect reporting label")
+        if state.get("total_basis") != "sum_of_reported_counties":
+            raise ValueError(code + ": incorrect total basis")
+        if not all(isinstance(state.get(k), str) and state[k].strip() for k in
+                   ("provider", "credit", "census_geography_source", "census_geography_url")):
+            raise ValueError(code + ": missing source provenance")
+        seen = set()
+        total = 0
+        for row in rows:
+            fips = row.get("fips")
+            if not isinstance(fips, str) or len(fips) != 5 or not fips.startswith(prefix) or not fips.isdigit() or fips in seen:
+                raise ValueError(code + ": invalid or duplicate FIPS")
+            seen.add(fips)
+            count = row.get("total")
+            if type(count) is not int or count < 0:
+                raise ValueError(code + ": invalid ballot count")
+            if not isinstance(row.get("name"), str) or not row["name"].strip():
+                raise ValueError(code + ": missing county name")
+            if not isinstance(row.get("file_as_of"), str) or not row["file_as_of"].strip():
+                raise ValueError(code + ": missing county reporting cutoff")
+            if not isinstance(row.get("source_url"), str) or not row["source_url"].startswith("https://"):
+                raise ValueError(code + ": missing county source URL")
+            if not isinstance(row.get("credit"), str) or not row["credit"].strip():
+                raise ValueError(code + ": missing county attribution")
+            total += count
+        if state.get("total") != total:
+            raise ValueError(code + ": county aggregation mismatch")
+        summary[code] = {"reported_counties": len(rows), "expected_counties": expected,
+                         "reporting_label": state["reporting_label"], "reported_ballots": total}
+    return summary
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--candidate", default="staging-county-publication-candidate.json")
+    args = parser.parse_args()
+    result = validate(json.loads(Path(args.candidate).read_text()))
+    print(json.dumps({"review_status": "validated_candidate_not_approved_for_publication",
+                      "states": result}, indent=2))
+
+if __name__ == "__main__":
+    main()
