@@ -33,13 +33,15 @@ async function load(){
 }
 function csvCell(value){
  const raw=value==null?'':String(value);
- const safeValue=/^[\\s]*[=+@\\-]/.test(raw)?"'"+raw:raw;
+ const trimmed=raw.trimStart();
+ const safeValue=trimmed.length&&'=+@-'.includes(trimmed[0])?"'"+raw:raw;
  return '"'+safeValue.replace(/"/g,'""')+'"';
 }
 function exportVisible(){
  const headers=['State','Code','Reported early ballots','Mail / absentee','Early in person','Reporting cutoff','Source','Source URL','Feed checked UTC','Coverage'];
  const records=visibleRows.map(x=>[x.name,x.code,x.total,x.mail,x.code==='NH'?'Not offered':x.inPerson,x.date,x.sourceName,x.sourceUrl,checked,x.reported?'Reported':'No verified statewide total']);
- const csv='\\uFEFF'+[headers,...records].map(row=>row.map(csvCell).join(',')).join('\\r\\n')+'\\r\\n';
+ const lineEnding=String.fromCharCode(13,10);
+ const csv=String.fromCharCode(65279)+[headers,...records].map(row=>row.map(csvCell).join(',')).join(lineEnding)+lineEnding;
  const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
  const link=document.createElement('a');link.href=url;link.download='electionhq-battleground-watchlist-2026.csv';document.body.append(link);link.click();link.remove();
  setTimeout(()=>URL.revokeObjectURL(url),1000);
