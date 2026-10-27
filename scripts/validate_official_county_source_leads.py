@@ -15,7 +15,7 @@ def validate(doc):
         raise ValueError("Missing source leads")
     seen=set()
     for row in rows:
-        if row.get("state") not in STATES or row.get("status") not in STATUSES:
+        if row.get("state") not in (*STATES,"GA") or row.get("status") not in STATUSES:
             raise ValueError("Unknown state or source status")
         if not row.get("source_name") or not row.get("evidence"):
             raise ValueError("Missing provenance")
