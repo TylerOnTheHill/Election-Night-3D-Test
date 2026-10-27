@@ -5,6 +5,8 @@ on:
     paths:
       - 'scripts/stage_callthemap_county_pilots.py'
       - 'tests/test_callthemap_county_pilots.py'
+      - 'scripts/verify_tx_nc_fips.py'
+      - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
   workflow_dispatch:
 permissions:
@@ -21,11 +23,17 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_callthemap_county_pilots.py' -v
       - name: Download, validate, and stage real TX/NC county data
         run: python scripts/stage_callthemap_county_pilots.py --output-dir staging-county-pilots
+      - name: Test Census FIPS verification
+        run: python -m unittest discover -s tests -p 'test_tx_nc_fips.py' -v
+      - name: Verify complete Census FIPS geography and enrich staging records
+        run: python scripts/verify_tx_nc_fips.py --input-dir staging-county-pilots --output-dir staging-county-pilots-fips
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: tx-nc-county-pilot-staging
-          path: staging-county-pilots/
+          path: |
+            staging-county-pilots/
+            staging-county-pilots-fips/
           if-no-files-found: ignore
           retention-days: 7
