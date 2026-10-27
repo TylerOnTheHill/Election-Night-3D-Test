@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/combine_county_candidates.py'
       - 'scripts/stage_georgia_counties.py'
+      - 'battleground-county-preview.js'
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
