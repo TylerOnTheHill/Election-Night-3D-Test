@@ -10,7 +10,7 @@ function validate(p){
    if(typeof r.fips!=="string"||!new RegExp("^"+prefix+"[0-9]{3}$").test(r.fips)||seen.has(r.fips)||!Number.isSafeInteger(r.total)||r.total<0)throw Error("Invalid or duplicate county FIPS/count.");
    seen.add(r.fips);return n+r.total;
   },0);
-  if(sum!==s.total)throw Error(code+" statewide reconciliation failed.");
+  if(sum!==s.total)throw Error(code+" county rows do not match their county-derived aggregate.");
  }
  return p;
 }
@@ -18,7 +18,8 @@ function render(){
  const code=el("state").value,s=data.states[code],q=el("search").value.trim().toLowerCase();
  el("summary").textContent=code+" · "+s.county_count+" counties · "+fmt(s.total)+" early ballots";
  window.dispatchEvent(new CustomEvent("electionhq:county-preview",{detail:{code,rows:s.counties}}));
- el("provenance").textContent="Provider: "+s.provider+" · Statewide cutoff: "+(s.statewide_cutoff||"Unavailable")+" · Checked: "+(s.provider_checked_at||"Unavailable")+" · Geography: "+s.census_geography_source;
+ const comparison=Number.isSafeInteger(s.provider_statewide_total)?" · Separate statewide headline: "+fmt(s.provider_statewide_total)+" (county difference: "+(s.total-s.provider_statewide_total>0?"+":"")+fmt(s.total-s.provider_statewide_total)+")":"";
+ el("provenance").textContent="Displayed total: sum of "+s.county_count+" county reports · Provider: "+s.provider+" · Source cutoff: "+(s.statewide_cutoff||"Unavailable")+" · Checked: "+(s.provider_checked_at||"Unavailable")+" · Geography: "+s.census_geography_source+comparison;
  const body=el("rows");body.replaceChildren();
  for(const r of s.counties.filter(x=>x.name.toLowerCase().includes(q)||x.fips.includes(q)).sort((a,b)=>b.total-a.total)){
   const tr=document.createElement("tr");
