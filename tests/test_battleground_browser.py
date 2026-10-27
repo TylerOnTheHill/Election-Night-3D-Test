@@ -207,7 +207,7 @@ try:
         assert partial_page.locator("#county-preview-map").get_attribute("data-county-meshes")=="254"
         assert "Partially reported" in partial_page.locator("#county-preview-status").inner_text()
         assert "150 of 254" in partial_page.locator("#county-preview-status").inner_text()
-        assert "Partially reported:" in partial_page.locator("#county-preview-total").inner_text()
+        assert "County ballots reported:" in partial_page.locator("#county-preview-total").inner_text()
         assert partial_page.locator("#county-preview-map path[fill='#30343b']").count()==104
         partial_page.close()
         # Approved county data remains visible when statewide reporting cutoff is unavailable.
