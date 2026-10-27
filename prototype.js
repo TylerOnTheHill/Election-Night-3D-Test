@@ -133,6 +133,7 @@ function choose(name,{focus=true}={}){
  if(name&&focus){const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active)}
  if(!name&&view==='national'&&focus)cameraView(false);
  refreshPanel();updateFloatingPanel();
+ window.dispatchEvent(new CustomEvent('electionhq:geography-change',{detail:{view,activeState,selected:name}}));
  if(trackerMode==='early'&&view==='state'&&activeState==='Texas')window.dispatchEvent(new CustomEvent('electionhq:map-selection',{detail:{county:name||null}}));
 }
 window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail?.county);if(trackerMode!=='early')return;if(view==='state'&&activeState==='Texas'){if(meshes.some(m=>m.userData.name===name&&!m.userData.isBackdrop)){if(selected!==name)choose(name,{focus:true});else{const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active);}}}else{enterState('Texas').then(()=>choose(name,{focus:true}));}});
