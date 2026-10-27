@@ -22,6 +22,12 @@ class GeorgiaTests(unittest.TestCase):
         self.assertEqual(ga["reporting_label"],"Partially reported")
         self.assertFalse(s["publication_approved"])
         self.assertFalse(ga["statewide_reconciled"])
+    def test_partial_geography_can_reconcile_numerically(self):
+        d=fixture()
+        d["statewide"]["ballots"]=100
+        ga=stage(d)["states"]["GA"]
+        self.assertTrue(ga["statewide_reconciled"])
+        self.assertEqual(ga["reporting_label"],"Partially reported")
     def test_reject_duplicate_fips(self):
         d=fixture()
         d["counties"][1]["county_fips"]="13001"
