@@ -29,6 +29,7 @@ def parse(code,data):
             "source_name":summary["source_name"],"source_url":summary.get("source_url"),
             "credit":summary.get("credit") or data.get("credit"),
             "county_rows_available":len(county_rows),
+            "official_source_link":summary.get("source_url") if "Secretary of State" in summary["source_name"] else None,
             "county_staged":False,"county_ballots":None,
             "county_reporting_label":"Not reported","publication_approved":False}
 def run(fetch):
