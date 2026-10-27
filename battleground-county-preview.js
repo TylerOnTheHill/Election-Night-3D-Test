@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
-let preview=null,selected='TX',atlas=null;
+let preview=null,selected='TX',atlas=null,renderVersion=0;
 function validate(p){
  if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==false)throw Error('Expected a staging-only county preview.');
  for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
@@ -22,12 +22,13 @@ async function getAtlas(){
  atlas=await r.json();return atlas;
 }
 async function render(){
+ const version=++renderVersion,code=selected;
  const host=$('battleground-county-preview'),status=$('county-preview-status');
  if(!preview)return;
- if(!preview.states[selected]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
- const s=preview.states[selected];host.hidden=false;
+ if(!preview.states[code]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
+ const s=preview.states[code];host.hidden=false;
  status.textContent='Local staging data loaded; nothing uploaded or published.';
- $('county-preview-title').textContent=selected==='TX'?'Texas counties':'North Carolina counties';
+ $('county-preview-title').textContent=code==='TX'?'Texas counties':'North Carolina counties';
  $('county-preview-total').textContent='State total: '+fmt(s.total)+'*';
  const body=$('county-preview-rows');body.replaceChildren();
  for(const r of [...s.counties].sort((a,b)=>b.total-a.total)){
@@ -41,8 +42,8 @@ async function render(){
  const map=$('county-preview-map'),legend=$('county-preview-legend');
  map.textContent='Loading county boundaries…';
  try{
-  const geo=await getAtlas();if(!window.d3||!window.topojson)throw Error('Map libraries unavailable');
-  const shapes=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(selected==='TX'?'48':'37'));
+  const geo=await getAtlas();if(version!==renderVersion)return;if(!window.d3||!window.topojson)throw Error('Map libraries unavailable');
+  const shapes=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(code==='TX'?'48':'37'));
   const lookup=new Map(s.counties.map(r=>[r.fips,r]));
   if(shapes.length!==s.counties.length||shapes.some(f=>!lookup.has(String(f.id).padStart(5,'0'))))throw Error('County boundary coverage mismatch; county table remains available.');
   const w=850,h=510,collection={type:'FeatureCollection',features:shapes};
@@ -57,7 +58,7 @@ async function render(){
    .on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();highlight(String(f.id).padStart(5,'0'));}})
    .append('title').text(f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return r.name+': '+fmt(r.total)+' ballots'});
   legend.textContent=s.counties.length+' counties · Brighter blue means more reported ballots, not partisan preference.';
- }catch(e){map.textContent=e.message;legend.textContent='County totals remain available in the table.';}
+ }catch(e){if(version!==renderVersion)return;map.textContent=e.message;legend.textContent='County totals remain available in the table.';}
 }
 function highlight(fips){
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
@@ -66,7 +67,7 @@ function highlight(fips){
 $('county-preview-file').addEventListener('change',async e=>{
  try{const file=e.target.files?.[0];if(!file)return;if(file.size>4000000)throw Error('Preview file too large');
   preview=validate(JSON.parse(await file.text()));await render();
- }catch(err){preview=null;$('battleground-county-preview').hidden=true;$('county-preview-status').textContent='Cannot load preview: '+err.message;}
+ }catch(err){preview=null;renderVersion++;$('battleground-county-preview').hidden=true;$('county-preview-status').textContent='Cannot load preview: '+err.message;}
 });
 window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();});
 })();
