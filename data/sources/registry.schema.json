@@ -1,13 +1,100 @@
 {
   "schema_version": "1.0.0",
-  "description": "Registry of verified early-vote sources by jurisdiction. Coverage must be explicitly documented; entries are not proof of active automated ingestion.",
-  "sources": [],
+  "description": "Candidate official 2026 election data sources; verified means public source existence, NOT ingestion readiness or live coverage.",
+  "sources": [
+    {
+      "source_id": "fl-dos-2026-general",
+      "state_fips": "12",
+      "geography_level": "county",
+      "geography_id_system": "county_fips",
+      "publisher": "Florida Department of State",
+      "source_url": "https://countyfilesvbm-ev.floridados.gov/VoteByMailEarlyVotingReports/PublicStats",
+      "official": true,
+      "retrieval_method": "html",
+      "ballot_types": [
+        "mail",
+        "in_person"
+      ],
+      "measurement": "cumulative",
+      "reported_through_field": "Source-specific cutoff; not yet parsed",
+      "last_verified_at": "2026-10-26T00:00:00Z",
+      "update_frequency": "daily",
+      "license": "Verify terms before ingestion",
+      "adapter": null,
+      "status": "verified",
+      "notes": "County daily reports; published cumulative through prior day; official county table and downloadable files. Party fields are registration, not votes."
+    },
+    {
+      "source_id": "pa-dos-2026-general",
+      "state_fips": "42",
+      "geography_level": "county",
+      "geography_id_system": "county_fips",
+      "publisher": "Pennsylvania Department of State",
+      "source_url": "https://www.pa.gov/agencies/vote/elections/elections-data",
+      "official": true,
+      "retrieval_method": "manual",
+      "ballot_types": [
+        "mail"
+      ],
+      "measurement": "cumulative",
+      "reported_through_field": "Source-specific cutoff; not yet parsed",
+      "last_verified_at": "2026-10-26T00:00:00Z",
+      "update_frequency": "daily",
+      "license": "Verify terms before ingestion",
+      "adapter": null,
+      "status": "verified",
+      "notes": "SURE daily mail ballot report; county records can be revised; identify actual downloadable spreadsheet and parsing rules before automation."
+    },
+    {
+      "source_id": "oh-sos-2026-general",
+      "state_fips": "39",
+      "geography_level": "county",
+      "geography_id_system": "county_fips",
+      "publisher": "Ohio Secretary of State",
+      "source_url": "https://www.ohiosos.gov/preview/en-US/office/media-center/categories/press-releases/2026-10-13a",
+      "official": true,
+      "retrieval_method": "html",
+      "ballot_types": [
+        "mail",
+        "in_person"
+      ],
+      "measurement": "cumulative",
+      "reported_through_field": "Source-specific cutoff; not yet parsed",
+      "last_verified_at": "2026-10-26T00:00:00Z",
+      "update_frequency": "daily",
+      "license": "Verify terms before ingestion",
+      "adapter": null,
+      "status": "verified",
+      "notes": "State confirms county-board daily data and interactive county dashboard; locate stable export before automation."
+    },
+    {
+      "source_id": "me-sos-2026-general",
+      "state_fips": "23",
+      "geography_level": "municipality",
+      "geography_id_system": "source_native",
+      "publisher": "Maine Secretary of State",
+      "source_url": "https://www.maine.gov/sos/elections-voting/voter-data",
+      "official": true,
+      "retrieval_method": "manual",
+      "ballot_types": [
+        "mail"
+      ],
+      "measurement": "cumulative",
+      "reported_through_field": "Source-specific cutoff; not yet parsed",
+      "last_verified_at": "2026-10-26T00:00:00Z",
+      "update_frequency": "unknown",
+      "license": "Verify terms before ingestion",
+      "adapter": null,
+      "status": "verified",
+      "notes": "Statewide absentee voter data file reflects municipality reporting; voter-level source must not be mirrored to public repository. Build privacy-safe aggregate adapter only after verifying license and schema."
+    }
+  ],
   "source_entry_contract": {
     "source_id": "Unique stable source ID",
     "state_fips": "Two-digit state FIPS string",
     "geography_level": "county | municipality | precinct | state",
     "geography_id_system": "county_fips | state_fips | source_native",
-    "publisher": "Election authority or other clearly attributed publisher",
+    "publisher": "Source publisher",
     "source_url": "Canonical public data URL",
     "official": "boolean",
     "retrieval_method": "csv | json | html | pdf | manual",
@@ -16,12 +103,12 @@
       "in_person"
     ],
     "measurement": "cumulative | daily",
-    "reported_through_field": "Source reporting cutoff date/time",
-    "last_verified_at": "UTC timestamp of human/source verification",
+    "reported_through_field": "Source cutoff",
+    "last_verified_at": "Date source checked",
     "update_frequency": "Published cadence or unknown",
     "license": "Terms/attribution",
-    "adapter": "Path to parser, or null until implemented",
+    "adapter": "Path or null",
     "status": "candidate | verified | active | paused",
-    "notes": "Coverage limits and caveats"
+    "notes": "Limitations"
   }
 }
