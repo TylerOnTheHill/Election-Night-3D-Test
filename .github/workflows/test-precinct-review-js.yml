@@ -31,7 +31,7 @@ jobs:
           node - <<'JS'
           const fs=require('node:fs');
           const b=fs.readFileSync('boundary-review.js','utf8');
-          if(/\\bfetch\\s*\\(|\\bXMLHttpRequest\\b|\\bsendBeacon\\s*\\(/.test(b))throw Error('Unexpected network access in boundary review');
+          if(/\bfetch\s*\(|\bXMLHttpRequest\b|\bsendBeacon\s*\(/.test(b))throw Error('Unexpected network access in boundary review');
           if(!b.includes('p.county_fips!=="48085"'))throw Error('Missing Collin-only geometry guard');
           const s=fs.readFileSync('precinct-review.js','utf8');
           if(/\bfetch\s*\(|\bXMLHttpRequest\b|\blocalStorage\b|\bsendBeacon\s*\(/.test(s))throw Error('Unexpected network or storage in precinct review');
