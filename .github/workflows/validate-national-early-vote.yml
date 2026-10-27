@@ -9,6 +9,8 @@ on:
       - 'scripts/validate_national_early_vote.py'
       - 'tests/test_validate_national_early_vote.py'
       - '.github/workflows/validate-national-early-vote.yml'
+      - 'scripts/audit_national_early_vote.py'
+      - 'tests/test_audit_national_early_vote.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,6 +24,10 @@ jobs:
           python-version: '3.12'
       - name: National data validation unit tests
         run: python -m unittest discover -s tests -p 'test_validate_national_early_vote.py' -v
+      - name: Verify nationwide and watchlist missing-state handling
+        run: python -m unittest discover -s tests -p 'test_audit_national_early_vote.py' -v
+      - name: Audit national and watchlist coverage
+        run: python scripts/audit_national_early_vote.py --output /tmp/national-watchlist-coverage-audit.json
       - name: Validate actual national feed and report provenance
         run: python scripts/validate_national_early_vote.py --report /tmp/national-source-audit.json
       - name: Validate independently sourced fallback observations
@@ -30,5 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: national-early-vote-source-audit
-          path: /tmp/national-source-audit.json
+          path: |
+            /tmp/national-source-audit.json
+            /tmp/national-watchlist-coverage-audit.json
           retention-days: 7
