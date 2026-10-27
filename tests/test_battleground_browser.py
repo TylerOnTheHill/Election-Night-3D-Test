@@ -158,6 +158,8 @@ try:
             lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(partial)))
         partial_page.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
         partial_page.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
+        partial_page.wait_for_function("document.querySelector('#county-preview-map').dataset.reportedMeshes==='150'",timeout=30000)
+        assert partial_page.locator("#county-preview-map").get_attribute("data-county-meshes")=="254"
         assert "Partially reported" in partial_page.locator("#county-preview-status").inner_text()
         assert "150 of 254" in partial_page.locator("#county-preview-status").inner_text()
         assert "Partially reported:" in partial_page.locator("#county-preview-total").inner_text()
