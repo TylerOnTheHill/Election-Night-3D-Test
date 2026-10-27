@@ -39,6 +39,11 @@ def review(candidate, now=None):
             raise ValueError(f"{code}: county observation cutoff is in the future")
         provider_total = state.get("provider_statewide_total")
         difference = state["total"] - provider_total if provider_total is not None else None
+        county_vs_statewide_cutoff = ("unknown" if not dated or statewide_cutoff is None else
+            "county_older" if max(dated) < statewide_cutoff else
+            "county_newer" if min(dated) > statewide_cutoff else
+            "matching" if len(dated) == len(rows) and all(d == statewide_cutoff for d in dated) else
+            "mixed")
         states[code] = {
             "status": state["reporting_label"],
             "counties_reported": len(rows),
@@ -47,6 +52,11 @@ def review(candidate, now=None):
             "county_total_basis": "sum_of_reported_counties",
             "provider_statewide_total": provider_total,
             "county_minus_provider_statewide": difference,
+            "county_vs_statewide_cutoff": county_vs_statewide_cutoff,
+            "reconciliation_status": ("unavailable" if difference is None else
+                "matching" if difference == 0 else
+                "different_cutoffs" if county_vs_statewide_cutoff != "matching" else
+                "same_cutoff_unreconciled"),
             "provider_checked_at": provider_checked.isoformat() if provider_checked else None,
             "statewide_source_cutoff": statewide_cutoff.isoformat() if statewide_cutoff else None,
             "counties_with_source_cutoff": len(dated),
