@@ -59,7 +59,7 @@ def stage(code,payload,census):
         key=canonical(name.split(",",1)[0])
         # Virginia independent cities share names with counties. Their FIPS
         # county-equivalent codes are 5xx; keep the City suffix for matching.
-        if code=="VA" and int(county)>=500:
+        if code=="VA" and int(county)>=500 and not key.endswith("city"):
             key += "city"
         if key in lookup:
             raise ValueError(f"Ambiguous county-equivalent Census name: {name!r}, existing GEOID {lookup[key]}, new GEOID {prefix+county}")
