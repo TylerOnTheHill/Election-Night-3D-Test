@@ -29,20 +29,21 @@ with sync_playwright() as p:
     # The national map is already the default geography. Its back-navigation button
     # is intentionally hidden there, so do not attempt to click it.
     # Verify the national total in the loaded source, and the state coverage in UI.
-    assert snapshot["national"]["total"] == 29398708
+    assert snapshot["national"]["total"] > 0
     assert "46 states reporting" in page.locator("#details").text_content(),repr(page.locator("#details").text_content())
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
     assert not page.locator(".ev-counties").is_visible()
     assert not page.locator(".ev-gradient").is_visible()
-    page.wait_for_function("document.querySelector('#ev-total').textContent === '29,398,708'",timeout=15000)
+    page.wait_for_function("(expected)=>document.querySelector('#ev-total').textContent === expected",arg=f"{snapshot['national']['total']:,}",timeout=15000)
     assert "Nationwide early ballots" in page.locator(".early-stats").text_content()
     # Select Florida using the same search control a visitor uses.
     florida=next(row for row in snapshot["states"] if row["state_name"]=="Florida")
     page.locator("#search").fill("Florida")
     page.locator("#search").press("Enter")
     page.wait_for_function("document.querySelector('#details').textContent.includes('Florida')",timeout=15000)
-    page.wait_for_function("document.querySelector('#ev-total').textContent === '3,142,750'",timeout=15000)
+    page.wait_for_function("(expected)=>document.querySelector('#ev-total').textContent === expected",arg=f"{florida['total']:,}",timeout=15000)
     assert "Mail ballots" in page.locator(".early-stats").text_content()
+    assert f"{florida['mail']:,}" in page.locator(".early-stats").text_content()
     state_text=page.locator("#details").text_content()
     assert f"{florida['total']:,}" in state_text,("Florida ballot count missing",state_text[:1500])
     assert "Party registration, not candidate preference." in state_text or florida.get("dem") is None
@@ -66,6 +67,15 @@ with sync_playwright() as p:
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('nontexas-early')")
     assert page.locator(".ev-counties").is_visible()
     assert "Texas" in page.locator(".early-heading").text_content()
+    texas=next(row for row in snapshot["states"] if row["state_name"]=="Texas")
+    page.wait_for_function("(expected)=>document.querySelector('#ev-total').textContent === expected",arg=f"{texas['total']:,}",timeout=15000)
+    page.locator("#search").fill("Harris")
+    page.locator("#search").press("Enter")
+    page.wait_for_function("document.querySelector('.early-heading strong').textContent.includes('Harris County')",timeout=15000)
+    assert "County participation" in page.locator(".early-stats").text_content()
+    assert "Texas official snapshot" in page.locator(".early-stats").text_content()
+    assert page.locator("#map-panel-content").evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)")>=15
+    assert "National totals, party composition, historical comparisons and daily trends remain unavailable" not in page.locator(".bottom-races.early-only").last.text_content()
     page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
     page.get_by_role("tab",name="Election Night").click()
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('early')")
