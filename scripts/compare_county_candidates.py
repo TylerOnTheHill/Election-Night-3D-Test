@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare two validated TX/NC county candidates before any publication decision.
+"""Compare validated county candidates before any publication decision.
 
 A new source snapshot replaces earlier county observations. Never sum snapshots.
 Report newly seen, revised and missing counties and fail on cutoff regressions.
@@ -19,9 +19,14 @@ def compare(previous, current):
     validate(previous)
     validate(current)
     report = {}
-    for code in ("TX", "NC"):
-        old = previous["states"][code]
+    missing_states = set(previous["states"]) - set(current["states"])
+    if missing_states:
+        raise ValueError("Previously reporting states disappeared: " + ", ".join(sorted(missing_states)))
+    for code in sorted(current["states"]):
         new = current["states"][code]
+        old = previous["states"].get(code)
+        if old is None:
+            old = {**new, "counties": [], "total": 0, "statewide_cutoff": None}
         prior = {r["fips"]: r for r in old["counties"]}
         latest = {r["fips"]: r for r in new["counties"]}
         removed = sorted(set(prior) - set(latest))
