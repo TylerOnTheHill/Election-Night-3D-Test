@@ -10,7 +10,7 @@ function showDetail(name){
  $('ev-state-pct').textContent=(row?Number(row.cumulative_early_voting_pct):statePct).toFixed(2)+'%';
  $('ev-registered').textContent=fmt(row?row.registered_voters:stateRegistered);
  $('ev-compare-row').hidden=!row;
- if(row){const diff=Number(row.cumulative_early_voting_pct)-statePct;$('ev-compare').textContent=(diff>=0?'+':'')+diff.toFixed(2)+' pp';}
+ if(row){$('ev-compare').textContent='Unavailable';}
  $('ev-detail-source').textContent=row?'Official county snapshot · October 23, 2026':'Official Texas snapshot · October 23, 2026';
  document.querySelectorAll('#ev-county-body tr').forEach(tr=>tr.classList.toggle('ev-selected',clean(tr.dataset.county)===selected&&!!selected));
 }
