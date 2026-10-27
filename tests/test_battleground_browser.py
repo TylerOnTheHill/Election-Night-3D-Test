@@ -34,6 +34,10 @@ try:
             page.locator("#battleground-map path[data-code='FL']").focus()
             page.keyboard.press("Enter")
             assert "Florida" in page.locator("#detail-name").inner_text()
+            assert page.locator("#rows tr.selected-row").count()==1
+            assert page.locator("#rows tr.selected-row").get_attribute("data-code")=="FL"
+            if by_code["FL"].get("source_url"):
+                assert page.locator("#detail-source-link").get_attribute("href")==by_code["FL"]["source_url"]
             if "FL" in by_code:
                 assert page.locator("#detail-total").inner_text()==f"{by_code['FL']['total']:,}"
             page.locator("#search").fill("New Hampshire")
