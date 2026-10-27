@@ -56,10 +56,14 @@ def stage(code,payload,census):
     if not isinstance(rows,list):
         raise ValueError("Missing provider counties")
     observations={}
+    seen_provider_names=set()
     for row in rows:
         if row.get("state")!=code or not isinstance(row.get("county"),str):
             raise ValueError("Invalid county row")
         key=canonical(row["county"])
+        if key in seen_provider_names:
+            raise ValueError("Duplicate provider county name")
+        seen_provider_names.add(key)
         if key not in lookup:
             raise ValueError("County does not match Census county-equivalent: "+row["county"])
         fips=lookup[key]
