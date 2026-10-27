@@ -26,7 +26,20 @@
       "source_url": "https://vote.nyc/page/early-voting-check-ins",
       "coverage": "New York City only",
       "eligible_for_national_aggregation": false,
-      "reason": "NYC check-ins exclude rest of state and absentee/mail votes"
+      "reason": "NYC check-ins exclude rest of state and absentee/mail votes",
+      "alternative_observations": [
+        {
+          "metric_kind": "in_person_ballots_cast",
+          "value_approximate": 485200,
+          "precision": "rounded",
+          "coverage": "New York State, all 62 counties",
+          "period_start": "2026-10-24",
+          "period_end": "2026-10-25",
+          "source_name": "Times Union",
+          "source_url": "https://www.timesunion.com/capitol/article/early-voting-surges-across-new-york-state-22495010.php",
+          "eligible_for_national_aggregation": false
+        }
+      ]
     },
     {
       "state": "DC",
