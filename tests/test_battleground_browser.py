@@ -277,6 +277,17 @@ try:
         assert "1 of 99" in optional.locator("#county-preview-status").inner_text()
         assert optional.locator("#county-preview-total").inner_text()=="County ballots reported: 42"
         optional.close()
+        # Geographic completeness must not override the approved reporting label.
+        mismatched=json.loads(json.dumps(approved))
+        mismatched["states"]["NC"]["reporting_label"]="Partially reported"
+        mismatch_page=browser.new_page()
+        mismatch_page.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(mismatched)))
+        mismatch_page.goto("http://127.0.0.1:8766/battleground.html?state=NC",wait_until="domcontentloaded")
+        mismatch_page.wait_for_function("document.querySelector('#county-preview-status')?.textContent.includes('100 of 100')",timeout=30000)
+        assert "Partially reported" in mismatch_page.locator("#county-preview-status").inner_text()
+        assert mismatch_page.locator("#county-preview-complete-note").is_hidden()
+        mismatch_page.close()
         browser.close()
 finally:
     server.shutdown()
