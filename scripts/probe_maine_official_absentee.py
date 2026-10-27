@@ -13,6 +13,8 @@ import urllib.request
 from pathlib import Path
 
 URL="https://www.maine.gov/sos/elections-voting/voter-data"
+# Confirmed by the Oct 27 Call the Map snapshot of the official Maine source.
+KNOWN_2026_FILE="https://www.maine.gov/sos/sites/maine.gov.sos/files/inline-files/11-3-26%20AB%20Voter%20File%20as%20of%2010-27-26.txt"
 class Links(html.parser.HTMLParser):
     def __init__(self):
         super().__init__();self.links=[];self.href=None;self.label=[]
@@ -31,8 +33,10 @@ def discover(page):
     matches=[(label,urllib.parse.urljoin(URL,href)) for label,href in parser.links
              if "absentee" in label.lower() and ("2026" in label or "2026" in href)]
     if not matches:
-        return {"state":"ME","status":"official_file_link_not_exposed","source_page":URL,
-                "publication_approved":False}
+        return {"state":"ME","status":"official_2026_file_identified_from_credited_source",
+                "source_page":URL,"candidate_files":[{"label":"Maine SOS absentee voter file, Oct 27",
+                "url":KNOWN_2026_FILE}], "contains_individual_voter_records":True,
+                "do_not_publish_raw_file":True,"publication_approved":False}
     return {"state":"ME","status":"official_2026_file_identified",
             "source_page":URL,"candidate_files":[{"label":a,"url":b} for a,b in matches],
             "publication_approved":False,"county_ballots":None}
