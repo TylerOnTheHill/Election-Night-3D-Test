@@ -4,6 +4,8 @@ on:
     branches: [feature/v7-2-national-county-data]
     paths:
       - 'scripts/stage_callthemap_county_pilots.py'
+      - 'scripts/stage_florida_county_candidate.py'
+      - 'tests/test_stage_florida_county_candidate.py'
       - 'scripts/run_tx_nc_county_pipeline.py'
       - 'scripts/compare_county_candidates.py'
       - 'scripts/review_county_source_freshness.py'
@@ -55,6 +57,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_callthemap_county_pilots.py' -v
       - name: Download, validate, and stage real TX/NC county data
         run: python scripts/stage_callthemap_county_pilots.py --output-dir staging-county-pilots
+      - name: Test official Florida county candidate staging
+        run: python -m unittest discover -s tests -p "test_stage_florida_county_candidate.py" -v
       - name: Test Census FIPS verification
         run: python -m unittest discover -s tests -p 'test_tx_nc_fips.py' -v
       - name: Verify complete Census FIPS geography and enrich staging records
