@@ -12,6 +12,8 @@ on:
       - 'scripts/stage_minnesota_counties.py'
       - 'scripts/stage_remaining_eleven_counties.py'
       - 'scripts/stage_uf_county_review.py'
+      - 'scripts/stage_alaska_official_statewide.py'
+      - 'tests/test_stage_alaska_official_statewide.py'
       - 'tests/test_stage_uf_county_review.py'
       - 'scripts/merge_restricted_nineteen_state_review.py'
       - 'tests/test_merge_restricted_nineteen_state_review.py'
@@ -70,6 +72,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_stage_uf_county_review.py' -v
       - name: Review alternative UF county data for eleven states
         run: python scripts/stage_uf_county_review.py --output uf-eleven-county-source-review.json --candidate-output uf-eleven-fips-candidate-restricted.json
+      - name: Ingest Alaska official statewide 2026 ballot snapshot
+        run: |
+          python -m unittest discover -s tests -p 'test_stage_alaska_official_statewide.py' -v
+          python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -124,6 +130,7 @@ jobs:
             remaining-eleven-unapproved.json
             remaining-eleven-gaps.json
             uf-eleven-county-source-review.json
+            alaska-official-statewide-review.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
             nineteen-state-coverage-audit.json
