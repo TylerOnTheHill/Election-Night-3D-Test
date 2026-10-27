@@ -10,7 +10,7 @@ import threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-candidate_path = Path("staging-county-integrated-candidate.json")
+candidate_path = Path("staging-county-publication-candidate.json")
 candidate = json.loads(candidate_path.read_text())
 assert candidate["publication_approved"] is False
 assert candidate["review_required"] is True
