@@ -16,7 +16,9 @@ COUNTIES_EXPECTED = 67
 def normalize(payload):
     assert payload["source_url"] == "https://countyfilesvbm-ev.floridados.gov/VoteByMailEarlyVotingReports/PublicStats"
     assert payload["election_id"] == "49894"
-    assert date.fromisoformat(payload["reported_through"]) <= date.today()
+    reported_through = date.fromisoformat(payload["reported_through"])
+    assert date(2026, 9, 4) <= reported_through <= date(2026, 11, 18), "Outside official 2026 reporting window"
+    assert reported_through <= date.today(), "Future reporting date"
     rows = payload["rows"]
     assert isinstance(rows, list) and rows
     seen = set()
@@ -43,6 +45,8 @@ def normalize(payload):
     # category/party agreement with a statewide report from the same compilation.
     statewide = payload.get("statewide")
     if statewide is not None:
+        assert payload.get("county_compiled_at") and payload.get("statewide_compiled_at"), "Missing compilation provenance"
+        assert payload["county_compiled_at"] == payload["statewide_compiled_at"], "Different county and statewide snapshots"
         assert complete, "Cannot reconcile statewide totals from partial county coverage"
         assert set(statewide) == CATEGORIES, "Missing statewide voting category"
         for kind in CATEGORIES:
@@ -54,6 +58,8 @@ def normalize(payload):
     return {"schema": "electionhq-county-early-vote-v1", "state_fips": "12",
             "source_url": payload["source_url"], "election_id": payload["election_id"],
             "reported_through": payload["reported_through"],
+            "county_compiled_at": payload.get("county_compiled_at"),
+            "statewide_compiled_at": payload.get("statewide_compiled_at"),
             "coverage": {"county_category_rows": len(output), "counties_reported": len(counties),
                          "complete_both_categories": complete},
             "records": sorted(output, key=lambda r: (r["county"], r["category"]))}
