@@ -21,10 +21,16 @@ def fetch_mirror(state):
         raise ValueError('County GeoJSON mirror too large')
     geojson=json.loads(raw)
     rows=[['NAME','state','county']]
+    seen_geoids={}
     for feature in geojson['features']:
         geoid=str(feature.get('id',''))
         name=feature.get('properties',{}).get('NAME')
         if len(geoid)==5 and geoid.isdigit() and geoid.startswith(state) and isinstance(name,str):
+            if geoid in seen_geoids:
+                if seen_geoids[geoid]!=name:
+                    raise ValueError("Conflicting GEOID names in geography mirror")
+                continue
+            seen_geoids[geoid]=name
             rows.append([name,state,geoid[2:]])
     return rows
 
@@ -48,7 +54,7 @@ def stage(code,payload,census):
             raise ValueError("Invalid Census GEOID")
         key=canonical(name.split(",",1)[0])
         if key in lookup:
-            raise ValueError("Ambiguous county-equivalent Census name")
+            raise ValueError(f"Ambiguous county-equivalent Census name: {name!r}, existing GEOID {lookup[key]}, new GEOID {prefix+county}")
         lookup[key]=prefix+county
     if len(lookup)!=expected or len(set(lookup.values()))!=expected:
         raise ValueError("Unexpected Census county-equivalent count")
