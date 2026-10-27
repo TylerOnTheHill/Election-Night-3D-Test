@@ -29,6 +29,7 @@ fetch('./counties-2026-10-23.csv').then(r=>{if(!r.ok)throw Error('CSV unavailabl
  stateRegistered=rows.reduce((n,r)=>n+Number(r.registered_voters),0);
  if(rows.length!==254||stateBallots!==3724290||!stateRegistered)throw Error('County data did not reconcile');
  statePct=100*stateBallots/stateRegistered;
+ window.__electionhqCountyRows=rows;
  $('ev-inperson').textContent=statePct.toFixed(2)+'%';
  $('ev-mail').textContent=fmt(stateRegistered);
  showDetail(null);render();
