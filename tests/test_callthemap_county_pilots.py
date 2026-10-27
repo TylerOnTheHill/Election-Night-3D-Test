@@ -19,9 +19,13 @@ class PilotTests(unittest.TestCase):
         self.assertEqual(r["county_sum"], 15)
         self.assertFalse(r["fips_verified"])
         self.assertIsNone(r["coverage_complete"])
-    def test_rejects_statewide_mismatch(self):
+    def test_county_total_precedence_when_statewide_differs(self):
         f=fixture();f["summary"]["total"]=16
-        with self.assertRaises(ValueError):validate("TX",f)
+        r=validate("TX",f)
+        self.assertEqual(r["county_sum"],15)
+        self.assertEqual(r["statewide_total"],16)
+        self.assertEqual(r["county_vs_provider_statewide_difference"],-1)
+        self.assertFalse(r["fips_verified"])
     def test_rejects_party_mismatch(self):
         f=fixture();f["counties"][0]["dem"]=5
         with self.assertRaises(ValueError):validate("TX",f)
