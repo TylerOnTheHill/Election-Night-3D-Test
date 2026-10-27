@@ -47,6 +47,7 @@ def validate(feed, official):
                            "callthemap_file_as_of": row["file_as_of"],
                            "source_url": row["source_url"], "credit": row["credit"]})
     county_sum = sum(r["callthemap_total"] for r in comparison)
+    changed = sorted((r for r in comparison if r["difference"] != 0), key=lambda r: abs(r["difference"]), reverse=True)
     summary = feed.get("summary", {})
     statewide = summary.get("total")
     if type(statewide) is not int or statewide < 0:
@@ -58,6 +59,9 @@ def validate(feed, official):
         "credit": feed["credit"],
         "counties_count": len(comparison),
         "county_rows_total": county_sum,
+        "county_rows_matching_official_baseline": len(comparison) - len(changed),
+        "county_rows_different_from_official_baseline": len(changed),
+        "largest_county_differences": changed[:10],
         "statewide_feed_total": statewide,
         "unallocated_statewide_minus_counties": statewide - county_sum,
         "county_cutoffs_may_differ_from_statewide": True,
@@ -81,6 +85,9 @@ def main():
     official = json.loads((ROOT / "data/early-vote/FL.json").read_text())
     report = validate(feed, official)
     pathlib.Path(args.output).write_text(json.dumps(report, indent=2) + "\n")
+    print("Matching counties:", report["county_rows_matching_official_baseline"])
+    print("Differing counties:", report["county_rows_different_from_official_baseline"])
+    print("Largest differences:", [(r["county"], r["difference"]) for r in report["largest_county_differences"]])
     print(f"Compared {report['counties_count']} counties; unallocated statewide difference: {report['unallocated_statewide_minus_counties']:,}")
 
 if __name__ == "__main__":
