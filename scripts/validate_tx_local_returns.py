@@ -27,7 +27,7 @@ def validate(payload):
     for row in rows:
         county = row.get("county_fips")
         area = row.get("area_id")
-        if not isinstance(county, str) or not re.fullmatch(r"48\\d{3}", county):
+        if not isinstance(county, str) or not re.fullmatch(r"48[0-9]{3}", county):
             raise ValueError("Invalid Texas county FIPS")
         if not isinstance(area, str) or not area.strip():
             raise ValueError("Missing local area identifier")
