@@ -8,6 +8,7 @@ import argparse
 import json
 import shutil
 from pathlib import Path
+from validate_county_publication_candidate import validate
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = [
@@ -23,14 +24,8 @@ def build(candidate_path: Path, output: Path):
     candidate = json.loads(candidate_path.read_text(encoding="utf-8"))
     if candidate.get("publication_approved") is not False or candidate.get("review_required") is not True:
         raise ValueError("Only unapproved review candidates may be packaged")
-    if set(candidate["states"]) != {"TX", "NC"}:
-        raise ValueError("Expected TX and NC staging candidate")
-    for code, maximum in (("TX", 254), ("NC", 100)):
-        state = candidate["states"][code]
-        if state["status"] != "candidate_pending_publication_approval":
-            raise ValueError(f"{code}: candidate is not awaiting approval")
-        if not 0 < state["county_count"] <= maximum or sum(c["total"] for c in state["counties"]) != state["total"]:
-            raise ValueError(f"{code}: invalid county coverage or totals")
+    validate(candidate)
+    codes = sorted(candidate["states"])
     output.mkdir(parents=True, exist_ok=True)
     for asset in ASSETS:
         target = output / asset
@@ -47,18 +42,19 @@ def build(candidate_path: Path, output: Path):
     banner = ('<div role="status" style="position:sticky;top:0;z-index:9999;'
               'background:#60431a;color:#fff;padding:9px 15px;text-align:center;'
               'font:700 13px system-ui">LOCAL STAGING PREVIEW ONLY — '
-              'UNAPPROVED TX/NC COUNTY DATA — NOT PUBLISHED</div>')
+              'UNAPPROVED COUNTY DATA — NOT PUBLISHED</div>')
     if "<body>" not in html:
         raise ValueError("Dashboard body insertion point missing")
     html_path.write_text(html.replace("<body>", "<body>" + banner, 1), encoding="utf-8")
+    links = "\\n".join(
+        f"{code}: http://127.0.0.1:8766/battleground.html?state={code}" for code in codes)
     (output / "README.txt").write_text(
         "ElectionHQ v7.2 LOCAL INTERACTIVE STAGING PREVIEW\\n"
-        "These county totals are unapproved, staged observations. The local JSON\\n"
-        "simulates the published-feed interface for preview purposes ONLY.\\n"
-        "Do not upload or deploy this package as a public website.\\n\\n"
-        "From this extracted folder, run: python -m http.server 8766 --bind 127.0.0.1\\n"
-        "Then open: http://127.0.0.1:8766/battleground.html?state=TX\\n"
-        "North Carolina: http://127.0.0.1:8766/battleground.html?state=NC\\n"
+        "County totals are UNAPPROVED staging observations, not a public release.\\n"
+        "This preview simulates the approved-feed interface ONLY inside the local package.\\n"
+        "Never upload or deploy this package as a public website.\\n\\n"
+        "From the extracted folder run: python -m http.server 8766 --bind 127.0.0.1\\n"
+        + links + "\\n"
         "The browser needs internet access to load existing map libraries.\\n",
         encoding="utf-8")
     print(f"Built LOCAL-ONLY staging preview: {output}")
