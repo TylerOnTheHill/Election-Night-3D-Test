@@ -71,7 +71,18 @@ with sync_playwright() as p:
     page.wait_for_function("(expected)=>document.querySelector('#ev-total').textContent === expected",arg=f"{texas['total']:,}",timeout=15000)
     page.locator("#search").fill("Harris")
     page.locator("#search").press("Enter")
-    page.wait_for_function("document.querySelector('.early-heading strong').textContent.includes('Harris County')",timeout=15000)
+    try:
+        page.wait_for_function("document.querySelector('.early-heading strong').textContent.includes('Harris County')",timeout=15000)
+    except Exception:
+        print("DIAGNOSTIC Harris heading:",repr(page.locator(".early-heading strong").text_content()))
+        print("DIAGNOSTIC search:",repr(page.locator("#search").input_value()))
+        print("DIAGNOSTIC suggestions:",repr(page.locator("#suggestions").all_text_contents()))
+        print("DIAGNOSTIC state:",repr(page.locator("#state-name").text_content()))
+        print("DIAGNOSTIC body:",repr(page.locator("body").get_attribute("class")))
+        print("DIAGNOSTIC details:",repr(page.locator("#details").text_content()[:1200]))
+        print("DIAGNOSTIC errors:",repr(errors))
+        page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
+        raise
     assert "County participation" in page.locator(".early-stats").text_content()
     assert "Texas official snapshot" in page.locator(".early-stats").text_content()
     assert page.locator("#map-panel-content").evaluate("(el)=>parseFloat(getComputedStyle(el).fontSize)")>=15
