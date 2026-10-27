@@ -36,8 +36,6 @@ const countyTable=county.querySelector('.scroll'),placeholder=document.createCom
 const countyTableEmpty=node('p','ehq-county-table-empty','County ballot totals have not been published for this state. The county map shows geography only.');
 tableStage.append(countyTableEmpty);
 function syncCountyTable(){const rows=county.querySelector('#county-preview-rows');const hasData=!!rows?.children.length;const available=!!document.querySelector('#battleground-county-preview:not([hidden])');if(countyTable)countyTable.hidden=!hasData;countyTableEmpty.hidden=hasData;countyTableEmpty.textContent=available?'County ballot totals have not been published for this state. The county map shows geography only.':'County-level reporting is not yet available for this state.';}
-new MutationObserver(syncCountyTable).observe(county.querySelector('#county-preview-rows'),{childList:true});
-new MutationObserver(syncCountyTable).observe(document.getElementById('battleground-county-preview'),{attributes:true,attributeFilter:['hidden']});
 function showTab(which){const isMap=which==='map',isSummary=which==='summary',isTable=which==='table';
 countyStage.hidden=!isMap;summaryStage.hidden=!isSummary;tableStage.hidden=!isTable;
 if(isMap)countySide.append(detail);else if(isSummary)summaryStage.append(detail);else tableStage.append(detail);
@@ -56,6 +54,5 @@ window.addEventListener('popstate',()=>showView(new URLSearchParams(location.sea
 state.append(stateHead,stateTools,stateMetrics,tabs,countyStage,summaryStage,tableStage);
 const foot=node('div','ehq-foot');if(footer)foot.append(footer);
 shell.append(mast,nav,national,state,foot);main.replaceChildren(shell);
-syncCountyTable();
 showView(new URLSearchParams(location.search).has('state')?'state':'national');
 })();
