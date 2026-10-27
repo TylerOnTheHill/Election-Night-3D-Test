@@ -21,6 +21,7 @@ on:
       - 'scripts/reconcile_remaining_ten_counties.py'
       - 'scripts/stage_public_county_tables_ten_states.py'
       - 'scripts/stage_michigan_ohio_verified_counties.py'
+      - 'scripts/stage_five_more_counties.py'
       - 'scripts/stage_new_hampshire_source_status.py'
       - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
@@ -109,6 +110,8 @@ jobs:
           PY
       - name: Retrieve real county tables for ten states concurrently
         run: python scripts/stage_public_county_tables_ten_states.py --output ten-state-provider-county-tables.json
+      - name: Stage Arizona Kansas Mississippi Nebraska Nevada county candidates
+        run: python scripts/stage_five_more_counties.py --source ten-state-provider-county-tables.json --output five-more-county-candidates.json
       - name: Reconcile ten states county-first against available statewide figures
         run: |
           python - <<'PY'
@@ -156,6 +159,7 @@ jobs:
             --candidate georgia-unapproved.json \
             --candidate minnesota-unapproved.json \
             --candidate michigan-ohio-county-candidates.json \
+            --candidate five-more-county-candidates.json \
             --output eight-states-unapproved.json
           python scripts/validate_county_publication_candidate.py --candidate eight-states-unapproved.json
       - name: Test combined restricted nineteen-state county merge
@@ -201,6 +205,7 @@ jobs:
             ten-state-county-reconciliation.json
             ten-state-provider-county-tables.json
             michigan-ohio-county-candidates.json
+            five-more-county-candidates.json
             new-hampshire-county-status.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
