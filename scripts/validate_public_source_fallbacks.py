@@ -13,6 +13,15 @@ def validate(data):
         if r.get("eligible_for_national_aggregation") is not False:
             raise ValueError("Fallback not eligible for national aggregation: "+r["state"])
         if not str(r.get("source_url","")).startswith("https://"):raise ValueError("Source URL")
+        for observation in r.get("alternative_observations",[]):
+            if observation.get("eligible_for_national_aggregation") is not False:
+                raise ValueError("Alternative observation must not enter national sum")
+            if not str(observation.get("source_url","")).startswith("https://"):
+                raise ValueError("Alternative observation source URL")
+            if not observation.get("coverage") or not observation.get("period_end"):
+                raise ValueError("Alternative observation coverage/date")
+            if observation.get("precision")=="rounded" and "value_approximate" not in observation:
+                raise ValueError("Rounded observation missing approximate value")
         if r.get("total") is not None:
             if type(r["total"])!=int or r["total"]<0:raise ValueError("Total")
             if not r.get("counts_through") or not r.get("coverage"):raise ValueError("Missing date or coverage")
