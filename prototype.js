@@ -102,13 +102,25 @@ function choose(name,{focus=true}={}){
  if(name&&focus){const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active)}
  if(!name&&view==='national'&&focus)cameraView(false);
  refreshPanel();updateFloatingPanel();
+ if(trackerMode==='early'&&view==='state'&&activeState==='Texas')window.dispatchEvent(new CustomEvent('electionhq:map-selection',{detail:{county:name||null}}));
 }
+window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail?.county);if(trackerMode!=='early')return;if(view==='state'&&activeState==='Texas'){if(meshes.some(m=>m.userData.name===name&&!m.userData.isBackdrop)){if(selected!==name)choose(name,{focus:false});}}else{enterState('Texas').then(()=>choose(name,{focus:false}));}});
 let panelRace=null;
 const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content');
 function updateFloatingPanel(){
  const open=!!selected;
  floatingPanel.hidden=!open;
  if(!open){panelRace=null;return;}
+ if(trackerMode==='early'){
+  const row=view==='state'&&activeState==='Texas'?rows.get(clean(selected)):null;
+  const ballots=row?Number(row.cumulative_total):null;
+  const registered=row?Number(row.registered_voters):null;
+  const pct=row?Number(row.cumulative_early_voting_pct):null;
+  const statewide=statewidePct();
+  floatingContent.innerHTML=`<h2>${view==='state'?selected+' County':selected}</h2><p class="muted">Official early vote · October 23, 2026</p>${row?`<div class="call-row"><span>Early ballots</span><b>${number(ballots)}</b></div><div class="call-row"><span>Registered</span><b>${number(registered)}</b></div><div class="call-row"><span>Participation</span><b>${pct.toFixed(2)}%</b></div><div class="call-row"><span>Vs Texas average</span><b>${(pct-statewide>=0?'+':'')+(pct-statewide).toFixed(2)} pp</b></div>`:'<p>County-level details are available for Texas only.</p>'}${view==='national'&&selected==='Texas'?'<button type="button" class="panel-back" id="panel-explore">Explore counties</button>':''}`;
+  const explore=floatingContent.querySelector('#panel-explore');if(explore)explore.onclick=()=>enterState('Texas');
+  return;
+ }
  if(!panelRace)panelRace=raceChoice();
  const options=[['senate','U.S. Senate'],['governor','Governor'],['house','U.S. House']];
  const level=view==='national'?'state':'county';
