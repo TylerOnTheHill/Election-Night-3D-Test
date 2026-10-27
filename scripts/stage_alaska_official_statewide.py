@@ -7,6 +7,7 @@ observations. Preserve the distinction until geographic source data exists.
 import argparse
 import json
 import re
+import urllib.error
 import urllib.request
 from html import unescape
 from pathlib import Path
@@ -52,8 +53,13 @@ def main():
         raw=a.input_html.read_text()
     else:
         req=urllib.request.Request(URL,headers={"User-Agent":"ElectionHQ-AK-official-source/1.0"})
-        with urllib.request.urlopen(req,timeout=35) as response:
-            raw=response.read().decode("utf-8")
+        try:
+            with urllib.request.urlopen(req,timeout=35) as response:
+                raw=response.read().decode("utf-8")
+        except urllib.error.URLError:
+            a.output.write_text(json.dumps({"state":"AK","status":"source_unavailable","source_url":URL,"publication_approved":False},indent=2)+chr(10))
+            print("Alaska official source unavailable; no observations staged")
+            return
     result=parse(raw)
     a.output.write_text(json.dumps(result,indent=2)+chr(10))
     print("Alaska official statewide received:",result["received_ballots"],"cutoff:",result["source_cutoff"])
