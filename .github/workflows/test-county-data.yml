@@ -3,7 +3,25 @@ on:
   push:
     branches:
       - feature/v7-2-national-county-data
+    paths:
+      - 'scripts/**'
+      - 'tests/test_*adapter.py'
+      - 'tests/test_callthemap_florida_adapter.py'
+      - 'data/sources/**'
+      - 'data/early-vote/**'
+      - '.github/workflows/test-county-data.yml'
   pull_request:
+    paths:
+      - 'scripts/**'
+      - 'tests/test_*adapter.py'
+      - 'tests/test_callthemap_florida_adapter.py'
+      - 'data/sources/**'
+      - 'data/early-vote/**'
+      - '.github/workflows/test-county-data.yml'
+  workflow_dispatch:
+concurrency:
+  group: county-adapters-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
