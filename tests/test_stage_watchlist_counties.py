@@ -36,6 +36,8 @@ class WatchlistStagingTests(unittest.TestCase):
         p,c=fixture("VA")
         c[1]=["Fairfax County","51","059"]
         c[2]=["Fairfax city","51","600"]
+        # Preserve 133 unique geographic identifiers after replacing the fixture row.
+        c[59]=["County59 County","51","001"]
         p["counties"]=[
             {"county":"Fairfax County","state":"VA","total":30,
              "source_url":"https://example.org","credit":"Fixture"},
