@@ -1,0 +1,30 @@
+name: Validate national early vote (v7.2)
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'data/early-vote/US.json'
+      - 'scripts/validate_national_early_vote.py'
+      - 'tests/test_validate_national_early_vote.py'
+      - '.github/workflows/validate-national-early-vote.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: National data validation unit tests
+        run: python -m unittest discover -s tests -p 'test_validate_national_early_vote.py' -v
+      - name: Validate actual national feed and report provenance
+        run: python scripts/validate_national_early_vote.py --report /tmp/national-source-audit.json
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: national-early-vote-source-audit
+          path: /tmp/national-source-audit.json
+          retention-days: 7
