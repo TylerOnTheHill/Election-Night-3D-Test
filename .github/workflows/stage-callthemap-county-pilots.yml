@@ -4,6 +4,7 @@ on:
     branches: [feature/v7-2-national-county-data]
     paths:
       - 'scripts/stage_callthemap_county_pilots.py'
+      - 'scripts/run_tx_nc_county_pipeline.py'
       - 'tests/test_callthemap_county_pilots.py'
       - 'scripts/verify_tx_nc_fips.py'
       - 'scripts/build_county_preview.py'
@@ -68,6 +69,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_prepare_approved_county_feed.py' -v
       - name: Validate candidate without publishing
         run: python scripts/validate_county_publication_candidate.py --candidate staging-county-publication-candidate.json
+      - name: Run integrated real-data county pipeline
+        run: python scripts/run_tx_nc_county_pipeline.py --output staging-county-integrated-candidate.json
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
@@ -78,5 +81,6 @@ jobs:
             staging-county-pilots-fips/
             staging-county-preview.json
             staging-county-publication-candidate.json
+            staging-county-integrated-candidate.json
           if-no-files-found: ignore
           retention-days: 7
