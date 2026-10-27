@@ -34,8 +34,10 @@ def validate(candidate):
         if state.get("total_basis") != "sum_of_reported_counties":
             raise ValueError(code + ": incorrect total basis")
         if not all(isinstance(state.get(k), str) and state[k].strip() for k in
-                   ("provider", "credit", "census_geography_source", "census_geography_url")):
+                   ("provider", "credit", "census_geography_source", "census_geography_url", "statewide_cutoff")):
             raise ValueError(code + ": missing source provenance")
+        if state.get("provider_statewide_total") is not None and (type(state["provider_statewide_total"]) is not int or state["provider_statewide_total"] < 0):
+            raise ValueError(code + ": invalid provider statewide total")
         seen = set()
         total = 0
         for row in rows:
@@ -55,7 +57,7 @@ def validate(candidate):
             if not isinstance(row.get("credit"), str) or not row["credit"].strip():
                 raise ValueError(code + ": missing county attribution")
             total += count
-        if state.get("total") != total:
+        if type(state.get("total")) is not int or state["total"] != total:
             raise ValueError(code + ": county aggregation mismatch")
         summary[code] = {"reported_counties": len(rows), "expected_counties": expected,
                          "reporting_label": state["reporting_label"], "reported_ballots": total}
