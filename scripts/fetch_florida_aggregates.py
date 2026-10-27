@@ -16,7 +16,11 @@ try:
 except ModuleNotFoundError:
     from import_florida_tsv import import_files
 
-ALLOWED_HOST = "countyfilesvbm-ev.floridados.gov"
+ALLOWED_HOST = "electionfiles.floridados.gov"
+BASE_URL = "https://electionfiles.floridados.gov/countyballotreportfiles/"
+DEFAULT_EARLY = BASE_URL + "Stats_49894_EarlyVoted.txt"
+DEFAULT_RETURNED = BASE_URL + "Stats_49894_VbmVoted.txt"
+DEFAULT_OUTSTANDING = BASE_URL + "Stats_49894_VbmProvided.txt"
 MAX_BYTES = 5_000_000
 
 def fetch_official(url, target):
@@ -48,9 +52,9 @@ def run(early_url, returned_url, outstanding_url, output):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--early-url", required=True)
-    parser.add_argument("--returned-url", required=True)
-    parser.add_argument("--outstanding-url", required=True)
+    parser.add_argument("--early-url", default=DEFAULT_EARLY)
+    parser.add_argument("--returned-url", default=DEFAULT_RETURNED)
+    parser.add_argument("--outstanding-url", default=DEFAULT_OUTSTANDING)
     parser.add_argument("--output", type=Path, default=Path("data/early-vote/FL.json"))
     args = parser.parse_args()
     snapshot = run(args.early_url, args.returned_url, args.outstanding_url, args.output)
