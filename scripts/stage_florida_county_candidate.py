@@ -33,10 +33,13 @@ def from_official_tsv_snapshot(snapshot):
                 "total":observation["total"],"registration":observation["registration"]})
     statewide=snapshot.get("statewide",{})
     official_total=sum(statewide[category]["total"] for category in CATEGORIES) if all(category in statewide for category in CATEGORIES) else None
+    method_cutoffs=snapshot.get("method_compiled_at_local",{})
+    cutoff=min((method_cutoffs.get(category,snapshot["compiled_at_local"]) for category in CATEGORIES))
     return {"schema":"electionhq-county-early-vote-v1","state_fips":"12",
         "provider_statewide_total":official_total,
         "source_url":snapshot["source_url"],
-        "reported_through":snapshot["compiled_at_local"],
+        "reported_through":cutoff,
+        "method_compiled_at_local":method_cutoffs,
         "county_compiled_at":snapshot["compiled_at_local"],"records":records}
 
 def stage(normalized, census_rows):
