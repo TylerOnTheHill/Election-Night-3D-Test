@@ -14,7 +14,7 @@ root = Path(os.environ.get("COUNTY_REVIEW_DIR","watchlist-interactive-review"))
 candidate = json.loads(Path(os.environ.get("COUNTY_CANDIDATE","watchlist-county-candidate-unapproved.json")).read_text())
 assert candidate["publication_approved"] is False
 assert candidate["review_required"] is True
-assert set(candidate["states"]) in ({"VA", "IA", "WI", "SC"}, {"FL"}, {"TX", "NC", "FL", "VA", "IA", "WI", "SC"})
+assert set(candidate["states"]) in ({"VA", "IA", "WI", "SC"}, {"FL"}, {"TX", "NC", "FL", "VA", "IA", "WI", "SC", "GA"})
 assert (root / "README.txt").read_text().count("\n") >= 6
 assert "UNAPPROVED COUNTY DATA" in (root / "battleground.html").read_text()
 feed = json.loads((root / "data/early-vote/battleground-counties.json").read_text())
@@ -57,7 +57,7 @@ try:
             assert page.locator("input[type=file]").count() == 0
             assert not errors, (code, errors)
             page.close()
-        # Release regression: exercise the same real seven-state observations on
+        # Release regression: exercise the same real eight-state observations on
         # narrow mobile screens, including state switching and county table.
         for code, state in candidate["states"].items():
             page = browser.new_page(viewport={"width":390,"height":844},is_mobile=True,
