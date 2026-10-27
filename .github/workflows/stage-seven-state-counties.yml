@@ -7,6 +7,8 @@ on:
       - 'scripts/combine_county_candidates.py'
       - 'scripts/stage_georgia_counties.py'
       - 'battleground-county-preview.js'
+      - 'scripts/import_florida_tsv.py'
+      - 'tests/test_florida_blank_compile_date.py'
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
@@ -32,6 +34,8 @@ jobs:
           python-version: '3.12'
       - name: Validate consolidated 19-state readiness semantics
         run: python -m unittest discover -s tests -p 'test_build_watchlist_readiness.py' -v
+      - name: Validate Florida official TSV timestamp handling
+        run: python -m unittest discover -s tests -p 'test_florida_blank_compile_date.py' -v
       - name: Verify duplicate-safe combination
         run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
       - name: Test reconciliation classifications
