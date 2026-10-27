@@ -176,7 +176,7 @@ try:
         )
         assert automatic.locator(f"#county-preview-rows tr[data-fips='{nc_first['fips']}']").get_attribute("class")=="selected-row"
         automatic.wait_for_function("document.querySelector('#county-preview-title').textContent.includes('North Carolina')",timeout=10000)
-        assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
+        assert automatic.locator("#county-preview-total").inner_text()==f"County ballots reported: {approved['states']['NC']['total']:,}"
         assert automatic.locator("#ehq-state-screen").is_visible()
         assert automatic.locator("#ehq-county-view").is_visible()
         assert automatic.locator("#ehq-national-screen").is_hidden()
