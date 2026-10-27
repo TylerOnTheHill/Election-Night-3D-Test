@@ -7,6 +7,10 @@ on:
       - 'scripts/run_tx_nc_county_pipeline.py'
       - 'tests/test_run_tx_nc_county_pipeline.py'
       - 'tests/preview_real_county_candidate_browser.py'
+      - 'scripts/build_local_battleground_preview.py'
+      - 'battleground-layout.js'
+      - 'battleground-studio.css'
+      - 'battleground.html'
       - 'tests/test_callthemap_county_pilots.py'
       - 'scripts/verify_tx_nc_fips.py'
       - 'scripts/build_county_preview.py'
@@ -83,6 +87,15 @@ jobs:
           python -m playwright install --with-deps chromium
       - name: Render actual staged county totals in existing dashboard
         run: python tests/preview_real_county_candidate_browser.py
+      - name: Build downloadable local interactive preview (never deploy)
+        run: python scripts/build_local_battleground_preview.py --candidate staging-county-publication-candidate.json --output staging-interactive-preview
+      - name: Upload local interactive preview
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: electionhq-v7-2-local-interactive-preview
+          path: staging-interactive-preview/
+          retention-days: 7
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
