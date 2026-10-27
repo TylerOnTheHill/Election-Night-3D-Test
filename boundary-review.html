@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ElectionHQ | Boundary-only staging review</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,sans-serif}body{margin:0;background:#111720;color:#edf2f8}main{max-width:1200px;margin:auto;padding:24px}p{color:#c4cfdd;line-height:1.5}.notice{padding:14px;border:1px solid #a68b56;background:#302919;border-radius:8px}section{background:#1d2939;padding:16px;border-radius:10px;margin:16px 0}input{display:block;margin:8px 0 16px}svg{background:#111b28;width:100%;height:560px;border:1px solid #45566a;border-radius:10px}path{fill:#315d70;stroke:#c3d3df;stroke-width:.7;vector-effect:non-scaling-stroke}path:hover{fill:#5395a6}path:focus{outline:2px solid #fff;fill:#5395a6}#details{white-space:pre-wrap}a{color:#a7d5ff}
+</style></head><body><main><h1>ElectionHQ · Boundary-only staging review</h1>
+<p class="notice"><strong>Not verified November 2026 general-election boundaries.</strong> This viewer accepts only a locally selected GeoJSON file, including the official Texas Legislative Council 2026 <em>primary</em> precinct artifact. It shows geometry and precinct identifiers only—no turnout, votes, partisan estimates, or publication approval. Files remain in your browser.</p>
+<section><label>Precinct GeoJSON (local file)<input id="geo" type="file" accept=".geojson,.json,application/geo+json"></label><button id="render">Inspect precinct boundaries</button><p id="status" role="status">Choose a local GeoJSON file.</p></section>
+<section id="map-wrap" hidden><svg id="map" viewBox="0 0 1000 560" role="img" aria-label="Neutral 2026 primary precinct polygons"></svg><p id="details">Select a precinct polygon.</p></section>
+<p><a href="./precinct-review.html">Aggregate join review (separate, staging only)</a> · <a href="./county-review.html">County staging review</a></p>
+<script src="./boundary-review.js"></script></main></body></html>
