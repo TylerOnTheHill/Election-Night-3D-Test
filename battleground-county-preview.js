@@ -1,6 +1,6 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
-const COUNTY_STATES={TX:{name:'Texas',fips:'48',count:254},NC:{name:'North Carolina',fips:'37',count:100},FL:{name:'Florida',fips:'12',count:67},VA:{name:'Virginia',fips:'51',count:133},IA:{name:'Iowa',fips:'19',count:99},WI:{name:'Wisconsin',fips:'55',count:72},SC:{name:'South Carolina',fips:'45',count:46},GA:{name:'Georgia',fips:'13',count:159}};
+const COUNTY_STATES={TX:{name:'Texas',fips:'48',count:254},NC:{name:'North Carolina',fips:'37',count:100},FL:{name:'Florida',fips:'12',count:67},VA:{name:'Virginia',fips:'51',count:133},IA:{name:'Iowa',fips:'19',count:99},WI:{name:'Wisconsin',fips:'55',count:72},SC:{name:'South Carolina',fips:'45',count:46},GA:{name:'Georgia',fips:'13',count:159},AK:{name:'Alaska',fips:'02'},AZ:{name:'Arizona',fips:'04'},KS:{name:'Kansas',fips:'20'},ME:{name:'Maine',fips:'23'},MI:{name:'Michigan',fips:'26'},MN:{name:'Minnesota',fips:'27'},MS:{name:'Mississippi',fips:'28'},NE:{name:'Nebraska',fips:'31'},NV:{name:'Nevada',fips:'32'},NH:{name:'New Hampshire',fips:'33'},OH:{name:'Ohio',fips:'39'}};
 let preview=null,selected=new URLSearchParams(location.search).get('state')?.toUpperCase()||'TX',atlas=null,renderVersion=0;
 function validate(p){
  if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==true)throw Error('County dataset is not approved for publication.');
@@ -97,7 +97,8 @@ async function renderBoundariesOnly(){
   if(!window.topojson||!window.d3)throw Error('County geography libraries unavailable');
   const prefix=COUNTY_STATES[code].fips,count=COUNTY_STATES[code].count;
   const features=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(prefix));
-  if(features.length!==count)throw Error('County boundary coverage mismatch');
+  if(count!=null&&features.length!==count)throw Error('County boundary coverage mismatch');
+  if(!features.length)throw Error('No county boundaries available');
   const w=850,h=510,collection={type:'FeatureCollection',features};
   const projection=d3.geoMercator().fitExtent([[20,20],[w-20,h-20]],collection),path=d3.geoPath(projection);
   map.replaceChildren();
