@@ -16,7 +16,7 @@ class LeadRegistryTests(unittest.TestCase):
     def test_cannot_mark_verified_without_ingestion(self):
         doc=copy.deepcopy(self.doc)
         doc["leads"][0]["county_ballot_values_verified"]=True
-        with self.assertRaisesRegex(ValueError,"unverified"):
+        with self.assertRaisesRegex(ValueError,"verified ingestible"):
             validate(doc)
     def test_duplicate_source_rejected(self):
         doc=copy.deepcopy(self.doc)
