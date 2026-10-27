@@ -24,6 +24,14 @@ class UnifiedPipelineTests(unittest.TestCase):
         self.assertEqual(result["states_checked"],19)
         self.assertEqual(result["source_discovery_count"],11)
         self.assertFalse(result["county_values_imputed"])
+    def test_minnesota_promoted_from_discovery_to_staging(self):
+        r,d=fixtures()
+        mn=next(x for x in r["states"] if x["state"]=="MN")
+        mn.update({"county_staged":True,"county_ballots":420,"county_reported":87})
+        result=audit(r,d)
+        self.assertEqual(result["staged_count"],9)
+        self.assertEqual(result["source_discovery_count"],10)
+        self.assertNotIn("MN",result["discovery_states"])
     def test_reject_fabricated_missing_county(self):
         r,d=fixtures()
         next(x for x in r["states"] if x["state"]=="NH")["county_ballots"]=0
