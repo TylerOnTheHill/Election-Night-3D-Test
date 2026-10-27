@@ -102,6 +102,10 @@ with sync_playwright() as p:
     mobile.wait_for_function("document.querySelector('.early-stats').textContent.includes('Nationwide early ballots')",timeout=15000)
     assert mobile.locator(".early-stats").is_visible()
     assert mobile.locator("#stage").is_visible()
+    assert not mobile.locator(".ev-legend").is_visible(), "National view must not show Texas participation scale"
+    assert mobile.locator("#ev-map-context").is_visible()
+    assert "NATIONAL" in mobile.locator("#ev-map-context").text_content()
+    assert mobile.locator(".zoom-panel input").evaluate("(el)=>el.getBoundingClientRect().height")<=100
     mobile.screenshot(path="/tmp/electionhq-mobile.png",full_page=True)
     overflow=mobile.evaluate("({scroll:document.documentElement.scrollWidth,viewport:window.innerWidth})")
     assert overflow["scroll"]<=overflow["viewport"]+2,("Mobile horizontal overflow",overflow)
