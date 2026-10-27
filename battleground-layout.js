@@ -18,7 +18,7 @@ const tableSection=el('section','ehq-tab-content');tableSection.id='ehq-state-ta
 const controls=main.querySelector('.controls'),stateTable=controls?.nextElementSibling;
 if(controls&&stateTable){tableSection.append(controls,stateTable)}
 // Move existing live widgets rather than creating duplicate state or county data components.
-overview.replaceChildren(map);national.append(cards,overview,tableSection);
+overview.replaceChildren(map,tableSection);national.append(cards,overview);
 summary.append(detail);
 countyView.append(county);
 state.append(heading,picker,stateTabs,summary,countyView,tableView);
@@ -29,16 +29,17 @@ function showCountyTable(){if(countyTable&&countyTable.parentElement!==tableView
 function restoreCountyTable(){if(countyTable&&countyTable.parentElement!==county)countyPlaceholder.after(countyTable)}
 const header=main.querySelector('h2');header?.after(nav,national,state);
 function switchTab(name){const selected=name==='overview'?summary:name==='map'?countyView:tableView;
- if(selected===summary)summary.append(detail);else if(selected===countyView)countyView.prepend(detail);else tableView.prepend(detail);
+ if(selected===summary)summary.append(detail);else if(selected===countyView)countyView.append(detail);else tableView.append(detail);
  if(selected===tableView)showCountyTable();else restoreCountyTable();
  for(const [button,section] of [[summaryTab,summary],[countyTab,countyView],[tableTab,tableView]]){const active=section===selected;button.setAttribute('aria-selected',String(active));section.hidden=!active}
  // The county renderer observes its host size; keep the map in the visible section.
  if(selected===countyView)window.dispatchEvent(new Event('resize'));
 }
-function switchView(name){const isState=name==='state';national.hidden=isState;state.hidden=!isState;nationalButton.setAttribute('aria-selected',String(!isState));stateButton.setAttribute('aria-selected',String(isState));if(isState)switchTab('map')}
+function switchView(name){const isState=name==='state';national.hidden=isState;state.hidden=!isState;nationalButton.setAttribute('aria-selected',String(!isState));stateButton.setAttribute('aria-selected',String(isState));if(isState)switchTab('map');else window.dispatchEvent(new Event('resize'))}
 nationalButton.addEventListener('click',()=>switchView('national'));stateButton.addEventListener('click',()=>switchView('state'));
 summaryTab.addEventListener('click',()=>switchTab('overview'));countyTab.addEventListener('click',()=>switchTab('map'));tableTab.addEventListener('click',()=>switchTab('table'));
 picker.querySelector('select')?.addEventListener('change',()=>switchView('state'));
 window.addEventListener('electionhq:battleground-map-click',()=>switchView('state'));
+window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('state'))switchView('state')});
 switchView(new URLSearchParams(location.search).has('state')?'state':'national');
 })();
