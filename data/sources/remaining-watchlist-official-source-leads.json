@@ -5,9 +5,9 @@
     {
       "state": "OH",
       "source_name": "Ohio Secretary of State early and absentee voting dashboard",
-      "source_url": "https://www.ohiosos.gov/data",
+      "source_url": "https://data.ohiosos.gov/portal/election-dashboards/absentee",
       "evidence_url": "https://www.ohiosos.gov/office/media-center/categories/press-releases/2026-10-13a",
-      "evidence": "Official state describes county-board daily reporting and county-level drilldown",
+      "evidence": "Ohio Secretary of State confirms daily reporting from 88 county boards and county drilldown; dashboard is a JavaScript application and no aggregate machine-readable endpoint has yet been validated. Voter-level download must not be ingested.",
       "status": "official_county_dashboard_identified",
       "machine_readable_endpoint_verified": false,
       "county_ballot_values_verified": false
