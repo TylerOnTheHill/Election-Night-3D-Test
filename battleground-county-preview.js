@@ -5,13 +5,14 @@ function validate(p){
  if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==true)throw Error('County dataset is not approved for publication.');
  for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
   const s=p.states?.[code],seen=new Set();
-  if(!s||s.status!=='published'||s.counties?.length!==n)throw Error('Incomplete '+code+' staging county coverage.');
+  if(!s||s.status!=='published'||s.counties?.length!==n)throw Error('Incomplete '+code+' published county coverage.');
+  if(s.total_basis!=='sum_of_complete_county_reports'||!Number.isSafeInteger(s.total)||s.total<0||!s.statewide_cutoff||!s.provider||!s.credit)throw Error('Missing verified county total provenance: '+code);
   let sum=0;
   for(const r of s.counties){
-   if(typeof r.fips!=='string'||!new RegExp('^'+prefix+'[0-9]{3}$').test(r.fips)||seen.has(r.fips)||!Number.isSafeInteger(r.total)||r.total<0)throw Error('Invalid or duplicate '+code+' county observation.');
+   if(typeof r.name!=='string'||!r.name.trim()||typeof r.fips!=='string'||!new RegExp('^'+prefix+'[0-9]{3}$').test(r.fips)||seen.has(r.fips)||!Number.isSafeInteger(r.total)||r.total<0)throw Error('Invalid or duplicate '+code+' county observation.');
    seen.add(r.fips);sum+=r.total;
   }
-  if(sum!==s.total)throw Error(code+' county aggregate mismatch.');
+  if(!Number.isSafeInteger(sum)||sum!==s.total)throw Error(code+' county aggregate mismatch.');
  }
  return p;
 }
@@ -25,7 +26,7 @@ async function render(){
  const version=++renderVersion,code=selected;
  const host=$('battleground-county-preview'),status=$('county-preview-status');
  if(!preview)return;
- if(!preview.states[code]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
+ if(!preview.states[code]){host.hidden=true;status.textContent='County-level reporting is currently available for Texas and North Carolina. Select either state to explore.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
  status.textContent='County data available · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
