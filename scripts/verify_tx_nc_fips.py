@@ -96,12 +96,12 @@ def fetch_gazetteer(state):
         if len(files) != 1:
             raise ValueError("Unexpected Census Gazetteer archive layout")
         with archive.open(files[0]) as stream:
-            records = list(csv.DictReader(io.TextIOWrapper(stream, encoding="utf-8-sig"), delimiter="\\t"))
+            records = list(csv.DictReader(io.TextIOWrapper(stream, encoding="utf-8-sig"), delimiter="\t"))
     rows = [["NAME", "state", "county"]]
     for record in records:
         geoid = record.get("GEOID", "").strip()
         name = record.get("NAME", "").strip()
-        if re.fullmatch(r"\\d{5}", geoid) and geoid[:2] == state and name:
+        if re.fullmatch(r"\d{5}", geoid) and geoid[:2] == state and name:
             rows.append([name, state, geoid[2:]])
     return rows
 
