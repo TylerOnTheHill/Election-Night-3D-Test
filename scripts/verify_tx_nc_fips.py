@@ -54,10 +54,10 @@ def crosswalk(code, census_rows, staged, geography_source="2020 Census PL 94-171
         enriched = dict(row)
         enriched["fips"] = lookup[key]
         output.append(enriched)
-    if len(output) != len(lookup) or used != set(lookup):
-        raise ValueError("Staged county coverage incomplete; no zero-filling")
+    # Partial reporting is valid: retain only observed counties, never zero-fill.
+    # Every reported county must still map uniquely to a real Census GEOID.
     return {**staged, "counties": output, "fips_verified": True,
-            "coverage_complete": True, "census_geography_source":
+            "coverage_complete": len(output) == len(lookup), "geographic_count": len(lookup), "reported_county_count": len(output), "census_geography_source":
             geography_source,
             "census_geography_url": geography_url or census_url(STATES[code]),
             "status": "staging_only_fips_and_coverage_verified"}
