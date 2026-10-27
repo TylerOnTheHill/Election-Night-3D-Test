@@ -95,17 +95,18 @@
     {
       "county": "Broward",
       "baseline_available": true,
-      "county_source_status": "not_researched",
-      "official_county_url": null,
+      "county_source_status": "source_identified",
+      "official_county_url": "https://browardvotes.gov/",
       "machine_readable_url": null,
       "source_cutoff": null,
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "notes": "Official 2026 turnout widget publicly displays mail and early vote totals; machine-readable feed and update cutoff not verified; do not ingest yet.",
       "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
       "official_supervisor_directory_verified": true,
-      "county_specific_feed_verified": false
+      "county_specific_feed_verified": false,
+      "public_turnout_url": "https://my.browardvotes.gov/TEDElectionLink/TurnOutWidget/dashboard/view/turnout-summary"
     },
     {
       "county": "Calhoun",
@@ -725,14 +726,14 @@
     {
       "county": "Orange",
       "baseline_available": true,
-      "county_source_status": "not_researched",
-      "official_county_url": null,
+      "county_source_status": "source_identified",
+      "official_county_url": "https://voteorangefl.gov/voter-turnout/",
       "machine_readable_url": null,
       "source_cutoff": null,
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "notes": "Official 2026 turnout dashboard using authorized VR Systems vendor; embedded tool, machine-readable feed and cutoff not verified; do not ingest yet.",
       "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
       "official_supervisor_directory_verified": true,
       "county_specific_feed_verified": false
