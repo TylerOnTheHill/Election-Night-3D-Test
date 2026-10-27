@@ -251,6 +251,30 @@ try:
         assert "2 of 67" in fl_partial.locator("#county-preview-status").inner_text()
         assert fl_partial.locator("#county-preview-total").inner_text()=="County ballots reported: 300"
         fl_partial.close()
+        # All expansion states render county boundaries without fabricated ballot counts.
+        for state_code,expected in [("VA",133),("IA",99),("WI",72),("SC",46)]:
+            geography=browser.new_page()
+            geography.goto(f"http://127.0.0.1:8766/battleground.html?state={state_code}",wait_until="domcontentloaded")
+            geography.wait_for_function("document.querySelector('#county-preview-map')?.dataset.county3d==='ready'",timeout=45000)
+            assert geography.locator("#county-preview-map").get_attribute("data-county-meshes")==str(expected)
+            assert geography.locator("#county-preview-map").get_attribute("data-reported-meshes")=="0"
+            assert "awaiting publication" in geography.locator("#county-preview-total").inner_text()
+            geography.close()
+        # An optional new state must not require TX/NC in the same approved feed.
+        independent={"schema":"electionhq-county-preview-v1","publication_approved":True,
+                     "states":{"IA":{"status":"published","total_basis":"sum_of_reported_counties",
+                     "provider":"Synthetic test","credit":"Synthetic test","statewide_cutoff":None,
+                     "geographic_count":99,"coverage_complete":False,"total":42,
+                     "counties":[{"fips":"19001","name":"Adair","total":42}]}}}
+        optional=browser.new_page()
+        optional.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(independent)))
+        optional.goto("http://127.0.0.1:8766/battleground.html?state=IA",wait_until="domcontentloaded")
+        optional.wait_for_function("document.querySelector('#county-preview-map')?.dataset.reportedMeshes==='1'",timeout=45000)
+        assert optional.locator("#county-preview-map").get_attribute("data-county-meshes")=="99"
+        assert "1 of 99" in optional.locator("#county-preview-status").inner_text()
+        assert optional.locator("#county-preview-total").inner_text()=="County ballots reported: 42"
+        optional.close()
         browser.close()
 finally:
     server.shutdown()
