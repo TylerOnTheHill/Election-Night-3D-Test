@@ -31,7 +31,7 @@ try:
             assert page.locator("#map-zoom-in").count()==1
             assert page.locator("#map-reset").count()==1
             assert page.locator("#state-count").inner_text()=="19"
-            page.locator("#state-picker").select_option("FL")
+            page.locator("#explorer-state").select_option("FL")
             assert "Florida" in page.locator("#detail-name").inner_text()
             assert page.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=FL"
             assert "state=FL" in page.url
@@ -131,7 +131,7 @@ try:
         assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
         assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
         assert automatic.locator("input[type=file]").count()==0
-        automatic.locator("#state-picker").select_option("TX")
+        automatic.locator("#explorer-state").select_option("TX")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         automatic.close()
         # Partial TX feed: all geographic shapes remain; missing counties stay gray.
