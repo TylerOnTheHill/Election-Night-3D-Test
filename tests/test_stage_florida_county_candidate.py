@@ -48,6 +48,23 @@ class FloridaCountyStagingTests(unittest.TestCase):
         self.assertFalse(fl["statewide_reconciled"])
         self.assertEqual(fl["county_vs_provider_statewide_difference"],-10)
 
+    def test_combined_reporting_cutoff_uses_older_official_method(self):
+        data,census=fixture()
+        rows=[]
+        for county in ("County1","County2"):
+            entries={r["category"]:{"total":r["total"],"registration":r["registration"]}
+                     for r in data["records"] if r["county"]==county}
+            rows.append({"county":county,**entries})
+        snapshot={"schema":"electionhq-florida-county-aggregate-v1",
+                  "election_id":"49894","state_fips":"12",
+                  "source_url":data["source_url"],"compiled_at_local":"2026-10-27T09:00:00",
+                  "method_compiled_at_local":{"voted_early":"2026-10-27T09:00:00",
+                    "voted_mail":"2026-10-26T08:00:00","mail_outstanding":"2026-10-27T09:00:00"},
+                  "counties":rows}
+        converted=from_official_tsv_snapshot(snapshot)
+        self.assertEqual(converted["reported_through"],"2026-10-26T08:00:00")
+        self.assertEqual(stage(converted,census)["states"]["FL"]["statewide_cutoff"],"2026-10-26T08:00:00")
+
     def test_partial_counties_and_no_zero_fill(self):
         data,census=fixture()
         candidate=stage(data,census)
