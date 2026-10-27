@@ -37,6 +37,21 @@ class CandidateGateTests(unittest.TestCase):
         c["states"]["FL"] = fl
         self.assertEqual(validate(c)["FL"]["reported_counties"],1)
 
+    def test_full_county_coverage_with_statewide_mismatch_is_partial(self):
+        c = candidate()
+        tx = c["states"]["TX"]
+        tx["provider_statewide_total"] = tx["total"] + 50
+        with self.assertRaisesRegex(ValueError, "reporting label"):
+            validate(c)
+        tx["reporting_label"] = "Partially reported"
+        self.assertEqual(validate(c)["TX"]["reported_counties"], 254)
+
+    def test_full_county_coverage_matching_statewide_remains_full(self):
+        c = candidate()
+        tx = c["states"]["TX"]
+        tx["provider_statewide_total"] = tx["total"]
+        self.assertEqual(validate(c)["TX"]["reporting_label"], "Fully reported")
+
     def test_rejects_unknown_state(self):
         c = candidate()
         c["states"]["ZZ"] = c["states"]["TX"]
