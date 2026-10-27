@@ -19,6 +19,14 @@ Do not require government-specific certification when a reputable independent so
 - Collin November daily and cumulative site totals: https://www.collincountytx.gov/Elections/rosters . This is site-based, not precinct-based, and voter rosters contain personal information; do not ingest or publish PII.
 - Collin GIS voting precincts: https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer . Earlier CI queries returned HTTP 403. Do not keep retrying the same blocked endpoint.
 
+## Mandatory implementation sequence (large to small)
+
+**Phase 1: National and state early-vote reporting.** Validate the live national feed, the 50-state/DC roster, ballot totals and mail/in-person components, as-of timestamps and source provenance. Show reported coverage and avoid presenting partial reporting as a complete national total. Freeze feature work on county and precinct layers until the national view is usable.
+
+**Phase 2: County data nationwide.** Enumerate counties per state, ingest public county feeds where available, reconcile geography keys and distinguish state-vs-county source cutoffs. Display missing county data explicitly rather than inventing values.
+
+**Phase 3: Precinct data.** Join only compatible counts and polygons, start with available states/counties, and label primary-vintage boundaries and third-party estimates correctly. Precinct coverage is not a prerequisite for Phase 1.
+
 ## Ship-ready acceptance checklist
 
 - [ ] Nation/state dashboard works and shows state-level values with per-provider as-of cutoffs.
