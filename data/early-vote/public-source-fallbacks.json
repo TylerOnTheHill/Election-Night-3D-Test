@@ -1,0 +1,53 @@
+{
+  "schema": "electionhq-public-source-fallbacks-v1",
+  "checked_on": "2026-10-27",
+  "jurisdictions": [
+    {
+      "state": "MA",
+      "status": "dated_verified_partial",
+      "total": 476053,
+      "mail": 386480,
+      "in_person": 89573,
+      "counts_through": "2026-10-22",
+      "source_name": "WCVB reporting Massachusetts Secretary of the Commonwealth figures",
+      "source_url": "https://www.wcvb.com/article/2026-massachusetts-voter-turnout-early-voting-update-oct-22/74217228",
+      "coverage": "statewide",
+      "eligible_for_national_aggregation": false,
+      "reason": "Dated Oct 22; seek current weekday update before combining with fresher state totals"
+    },
+    {
+      "state": "NY",
+      "status": "dated_verified_partial",
+      "total": 224894,
+      "mail": null,
+      "in_person": 224894,
+      "counts_through": "2026-10-26",
+      "source_name": "New York City Board of Elections",
+      "source_url": "https://vote.nyc/page/early-voting-check-ins",
+      "coverage": "New York City only",
+      "eligible_for_national_aggregation": false,
+      "reason": "NYC check-ins exclude rest of state and absentee/mail votes"
+    },
+    {
+      "state": "DC",
+      "status": "source_discovery",
+      "source_url": "https://www.dcboe.org/",
+      "eligible_for_national_aggregation": false,
+      "reason": "No verified 2026 total and cutoff retrieved"
+    },
+    {
+      "state": "AL",
+      "status": "not_reported",
+      "source_url": "https://www.sos.alabama.gov/alabama-votes/voter/absentee-voting",
+      "eligible_for_national_aggregation": false,
+      "reason": "No verified statewide returned absentee total"
+    },
+    {
+      "state": "NH",
+      "status": "not_reported",
+      "source_url": "https://www.sos.nh.gov/elections",
+      "eligible_for_national_aggregation": false,
+      "reason": "No verified statewide returned absentee total"
+    }
+  ]
+}
