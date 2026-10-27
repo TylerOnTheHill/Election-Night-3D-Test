@@ -1,0 +1,45 @@
+name: Stage Georgia 2026 county aggregates (v7.2)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/stage_georgia_counties.py'
+      - 'tests/test_stage_georgia_counties.py'
+      - '.github/workflows/stage-georgia-counties.yml'
+permissions:
+  contents: read
+concurrency:
+  group: georgia-county-staging-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate Georgia county staging behavior
+        run: python -m unittest discover -s tests -p 'test_stage_georgia_counties.py' -v
+      - name: Fetch and stage live Georgia county aggregates
+        run: python scripts/stage_georgia_counties.py --output georgia-unapproved.json
+      - name: Validate Georgia publication candidate shape without approving it
+        run: python scripts/validate_county_publication_candidate.py --candidate georgia-unapproved.json
+      - name: Audit source cutoff and county/statewide reconciliation
+        run: |
+          python scripts/review_county_source_freshness.py --candidate georgia-unapproved.json --output georgia-freshness-audit.json
+          python scripts/audit_watchlist_county_reconciliation.py --candidate georgia-unapproved.json --output georgia-reconciliation-audit.json
+      - name: Upload internal-review aggregates only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: georgia-county-aggregates-not-for-publication
+          path: |
+            georgia-unapproved.json
+            georgia-freshness-audit.json
+            georgia-reconciliation-audit.json
+          if-no-files-found: ignore
+          retention-days: 7
