@@ -141,6 +141,13 @@ try:
         assert automatic.locator(f"#county-preview-rows tr[data-fips='{nc_first['fips']}']").get_attribute("class")=="selected-row"
         assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
         assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
+        assert automatic.locator("#ehq-state-screen").is_visible()
+        assert automatic.locator("#ehq-county-view").is_visible()
+        assert automatic.locator("#ehq-national-screen").is_hidden()
+        automatic.get_by_role("tab",name="County table").click()
+        assert automatic.locator("#ehq-county-table-view").is_visible()
+        automatic.get_by_role("tab",name="County map").click()
+        assert automatic.locator("#ehq-county-view").is_visible()
         assert automatic.locator("input[type=file]").count()==0
         automatic.locator("#explorer-state").select_option("TX")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
