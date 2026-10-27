@@ -8,7 +8,7 @@ import argparse
 import json
 from pathlib import Path
 
-EXPECTED = {"TX": (254, "48"), "NC": (100, "37"), "FL": (67, "12"), "VA": (133, "51"), "IA": (99, "19"), "WI": (72, "55"), "SC": (46, "45"), "GA": (159, "13")}
+EXPECTED = {"TX": (254, "48"), "NC": (100, "37"), "FL": (67, "12"), "VA": (133, "51"), "IA": (99, "19"), "WI": (72, "55"), "SC": (46, "45"), "GA": (159, "13"), "MN": (87, "27")}
 
 def validate(candidate):
     if candidate.get("schema") != "electionhq-county-preview-v1":
