@@ -12,6 +12,8 @@ import re
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
+from verify_tx_nc_fips import fetch_census, fetch_gazetteer
+from stage_watchlist_counties import fetch_mirror
 
 EXPECTED=67
 CATEGORIES={"voted_mail","voted_early"}
@@ -29,7 +31,10 @@ def from_official_tsv_snapshot(snapshot):
             observation=county[category]
             records.append({"county":county["county"],"category":category,
                 "total":observation["total"],"registration":observation["registration"]})
+    statewide=snapshot.get("statewide",{})
+    official_total=sum(statewide[category]["total"] for category in CATEGORIES) if all(category in statewide for category in CATEGORIES) else None
     return {"schema":"electionhq-county-early-vote-v1","state_fips":"12",
+        "provider_statewide_total":official_total,
         "source_url":snapshot["source_url"],
         "reported_through":snapshot["compiled_at_local"],
         "county_compiled_at":snapshot["compiled_at_local"],"records":records}
@@ -85,6 +90,10 @@ def stage(normalized, census_rows):
         raise ValueError("No Florida counties with both verified voting categories")
     count=len(counties)
     total=sum(row["total"] for row in counties)
+    statewide=normalized.get("provider_statewide_total")
+    if statewide is not None and (type(statewide)!=int or statewide<0):
+        raise ValueError("Invalid Florida statewide total")
+    reconciled=statewide is not None and total==statewide
     return {"schema":"electionhq-county-preview-v1","publication_approved":False,"review_required":True,
         "party_counts_mean":"voter registration, never candidate votes",
         "states":{"FL":{"status":"candidate_pending_publication_approval",
@@ -95,10 +104,11 @@ def stage(normalized, census_rows):
             "census_geography_url":"https://api.census.gov/data/2020/dec/pl",
             "county_count":count,"geographic_count":EXPECTED,
             "coverage_complete":count==EXPECTED,
-            "reporting_label":"Fully reported" if count==EXPECTED else "Partially reported",
+            "reporting_label":"Fully reported" if count==EXPECTED and reconciled else "Partially reported",
+            "statewide_reconciled":reconciled,
             "total":total,"total_basis":"sum_of_reported_counties",
-            "provider_statewide_total":None,
-            "county_vs_provider_statewide_difference":None,
+            "provider_statewide_total":statewide,
+            "county_vs_provider_statewide_difference":total-statewide if statewide is not None else None,
             "counties":counties}}}
 
 def main():
@@ -117,9 +127,13 @@ def main():
     if args.census:
         census=json.loads(Path(args.census).read_text())
     else:
-        url="https://api.census.gov/data/2020/dec/pl?get=NAME&for=county:*&in=state:12"
-        with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-county-geography/1.0"}),timeout=30) as response:
-            census=json.load(response)
+        try:
+            census=fetch_census("12")
+        except (OSError,ValueError):
+            try:
+                census=fetch_gazetteer("12")
+            except (OSError,ValueError):
+                census=fetch_mirror("12")
     candidate=stage(normalized,census)
     Path(args.output).write_text(json.dumps(candidate,indent=2)+"\n")
     print("FL staged, not published:",candidate["states"]["FL"]["county_count"],"counties")
