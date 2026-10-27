@@ -18,5 +18,7 @@ jobs:
         run: python scripts/validate_source_registry.py
       - name: Validate all 67 Florida county audit records
         run: python scripts/validate_florida_county_audit.py
+      - name: Run Call the Map Florida county reconciliation tests
+        run: python -m unittest discover -s tests -p 'test_callthemap_florida_adapter.py' -v
       - name: Run county adapter unit tests
         run: python -m unittest discover -s tests -p 'test_*adapter.py' -v
