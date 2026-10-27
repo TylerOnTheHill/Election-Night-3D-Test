@@ -37,7 +37,7 @@ class UnifiedPipelineTests(unittest.TestCase):
     def test_reject_unstaged_state_with_county_subtotal(self):
         r,d=fixtures()
         next(x for x in r["states"] if x["state"]=="TX")["county_staged"]=False
-        with self.assertRaisesRegex(ValueError,"Expected staged"):
+        with self.assertRaisesRegex(ValueError,"Coverage gap"):
             audit(r,d)
 
     def test_reject_malformed_staged_ballots(self):
