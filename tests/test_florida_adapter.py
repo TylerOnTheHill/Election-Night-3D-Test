@@ -49,6 +49,25 @@ class FloridaAdapterTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             normalize(data)
 
+    def test_rejects_mismatched_compilation_times(self):
+        data = copy.deepcopy(BASE)
+        data["county_compiled_at"] = "2026-10-26T08:06:00-04:00"
+        data["statewide_compiled_at"] = "2026-10-25T08:06:00-04:00"
+        data["statewide"] = {
+            "voted_mail": {"total": 6, "republican": 2, "democrat": 3,
+                           "other": 0, "no_party_affiliation": 1},
+            "voted_early": {"total": 10, "republican": 5, "democrat": 3,
+                            "other": 1, "no_party_affiliation": 1},
+        }
+        with self.assertRaisesRegex(AssertionError, "Different county and statewide snapshots"):
+            normalize(data)
+
+    def test_rejects_reporting_date_outside_election_window(self):
+        data = copy.deepcopy(BASE)
+        data["reported_through"] = "2025-10-26"
+        with self.assertRaises(AssertionError):
+            normalize(data)
+
     def test_rejects_wrong_election(self):
         data = copy.deepcopy(BASE)
         data["election_id"] = "other"
