@@ -21,7 +21,7 @@ function draw(){
  const width=850,height=510;
  const max=Math.max(1,...rows.map(r=>r.total));
  const collection={type:'FeatureCollection',features:shapes};
- const projection=d3.geoIdentity().reflectY(true).fitExtent([[20,20],[width-20,height-20]],collection);
+ const projection=d3.geoMercator().fitExtent([[20,20],[width-20,height-20]],collection);
  const path=d3.geoPath(projection);
  host.replaceChildren();
  const svg=d3.select(host).append('svg').attr('viewBox','0 0 '+width+' '+height).attr('role','img').attr('aria-label',code+' county early-ballot volume map, staging only');
