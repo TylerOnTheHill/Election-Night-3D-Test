@@ -69,6 +69,7 @@ window.addEventListener('electionhq:county-map-select',e=>highlight(e.detail.fip
 function highlight(fips){
  const row=preview?.states?.[selected]?.counties?.find(r=>r.fips===fips);
  if(!row)return;
+ window.dispatchEvent(new CustomEvent('electionhq:county-map-highlight',{detail:{fips}}));
  $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots';
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
