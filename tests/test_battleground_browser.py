@@ -120,7 +120,8 @@ try:
         integrated.locator("#battleground-map path[data-code='NC']").click()
         integrated.wait_for_function("document.querySelectorAll('#county-preview-map svg path').length===100",timeout=30000)
         assert integrated.locator("#county-preview-total").inner_text()==f"State total: {states['NC']['total']:,}*"
-        integrated.locator("#battleground-map path[data-code='FL']").click()
+        integrated.locator("#battleground-map path[data-code='FL']").focus()
+        integrated.keyboard.press("Enter")
         assert integrated.locator("#battleground-county-preview").is_hidden()
         assert "Texas and North Carolina" in integrated.locator("#county-preview-status").inner_text()
         assert not errors,errors
