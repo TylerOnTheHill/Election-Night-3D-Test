@@ -20,6 +20,7 @@ jobs:
         run: |
           node --check battleground.js
           node --check battleground-map.js
+          node --check battleground-county-preview.js
           node --check county-review.js
           node --check county-review-map.js
       - run: python tests/test_battleground_browser.py
