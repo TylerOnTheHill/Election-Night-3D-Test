@@ -1,0 +1,31 @@
+name: Stage independent TLC 2026 primary precinct geometry
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/fetch_tlc_collin_2026_primary.py'
+      - '.github/workflows/stage-tlc-collin-precincts.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install shapefile reader
+        run: python -m pip install 'pyshp>=2.3,<3'
+      - name: Fetch official Texas Legislative Council 2026 primary polygons
+        run: |
+          mkdir -p staging-tlc-collin
+          python scripts/fetch_tlc_collin_2026_primary.py --output staging-tlc-collin/collin-2026-primary.geojson --report staging-tlc-collin/report.json
+      - name: Upload primary-only staging geometry
+        uses: actions/upload-artifact@v4
+        with:
+          name: tlc-collin-2026-primary-geometry-not-general-verified
+          path: staging-tlc-collin/
+          retention-days: 7
