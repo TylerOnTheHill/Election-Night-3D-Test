@@ -10,6 +10,9 @@ on:
       - 'scripts/audit_watchlist_county_reconciliation.py'
       - 'tests/test_audit_watchlist_county_reconciliation.py'
       - '.github/workflows/stage-seven-state-counties.yml'
+concurrency:
+  group: seven-state-county-review-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
