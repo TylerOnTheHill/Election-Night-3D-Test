@@ -1,5 +1,5 @@
 (()=>{'use strict';
-const WATCH=[['AK','Alaska'],['AZ','Arizona'],['FL','Florida'],['GA','Georgia'],['IA','Iowa'],['KS','Kansas'],['ME','Maine'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NC','North Carolina'],['OH','Ohio'],['SC','South Carolina'],['TX','Texas'],['VA','Virginia'],['WI','Wisconsin']];
+const WATCH=[['AK','Alaska'],['AZ','Arizona'],['FL','Florida'],['GA','Georgia'],['IA','Iowa'],['KS','Kansas'],['ME','Maine'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['NE','Nebraska'],['NV','Nevada'],['NC','North Carolina'],['OH','Ohio'],['SC','South Carolina'],['TX','Texas'],['VA','Virginia'],['WI','Wisconsin']];
 const EXTRA=new Set(['AZ','MN','MS']),$=id=>document.getElementById(id),fmt=n=>n==null?'—':Number(n).toLocaleString('en-US');
 let data=[],checked='—',selectedCode='TX',visibleRows=[];
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -20,7 +20,7 @@ function render(){
  visibleRows=rows;
  $('rows').innerHTML=rows.length?rows.map(x=>'<tr data-code="'+safe(x.code)+'"'+(x.code===selectedCode?' class="selected-row" aria-selected="true"':'')+'><td><strong>'+safe(x.name)+'</strong> <span class="source">'+safe(x.code)+'</span></td><td><span class="pill'+(EXTRA.has(x.code)?' warn':'')+'">'+(EXTRA.has(x.code)?'Added':'VoteHub selection')+'</span></td><td class="num">'+fmt(x.total)+'</td><td class="num">'+fmt(x.mail)+'</td><td class="num">'+(x.code==='NH'?'Not offered':fmt(x.inPerson))+'</td><td>'+safe(x.date||'Not reported')+'</td><td>'+(x.sourceUrl?'<a href="'+safe(x.sourceUrl)+'" target="_blank" rel="noopener noreferrer">'+safe(x.sourceName||'Source')+'</a>':(x.code==='NH'?'<a href="https://www.nh.vote/mail" target="_blank" rel="noopener noreferrer">NH absentee voting rules</a>':'No current count'))+'</td></tr>').join(''):'<tr><td colspan="7">No matching states</td></tr>';
  document.querySelectorAll('#rows tr').forEach((tr,i)=>{tr.tabIndex=0;tr.addEventListener('click',e=>{if(e.target.closest('a'))return;selectState(rows[i].code)});tr.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectState(rows[i].code)}})});
- $('status').textContent='Showing '+rows.length+' of 19 selected states. Ballot figures are not adjusted to a common reporting date.';
+ $('status').textContent='Showing '+rows.length+' of '+WATCH.length+' selected states. Ballot figures are not adjusted to a common reporting date.';
 }
 async function load(){
  try{
