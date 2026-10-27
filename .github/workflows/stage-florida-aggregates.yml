@@ -25,6 +25,7 @@ jobs:
       - name: Inspect public Florida statistics endpoints
         run: python scripts/probe_florida_public_stats.py
       - name: Fetch and validate official Florida aggregate files
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         env:
           FL_EARLY_TSV_URL: ${{ vars.FL_EARLY_TSV_URL }}
           FL_RETURNED_TSV_URL: ${{ vars.FL_RETURNED_TSV_URL }}
@@ -36,17 +37,22 @@ jobs:
             --outstanding-url "$FL_OUTSTANDING_TSV_URL" \
             --output florida-latest.json
       - name: Test official Florida county candidate adapter
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         run: python -m unittest discover -s tests -p "test_stage_florida_county_candidate.py" -v
       - name: Build unapproved Florida county publication candidate
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         run: |
           python scripts/stage_florida_county_candidate.py \
             --official-tsv-snapshot florida-latest.json \
             --output florida-county-candidate-unapproved.json
       - name: Validate Florida candidate without publishing
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         run: python scripts/validate_county_publication_candidate.py --candidate florida-county-candidate-unapproved.json
       - name: Build local Florida interactive review
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         run: python scripts/build_local_battleground_preview.py --candidate florida-county-candidate-unapproved.json --output florida-interactive-review
       - name: Upload validated staging snapshot
+        if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: florida-validated-snapshot
