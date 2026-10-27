@@ -31,6 +31,7 @@ def retrieve(code,method):
             seen.add(name);pairs.append({"name":name,"total":int(v.replace(",",""))})
     return {"state":code,"method":method,"url":url,
             "status":"county_table_found" if pairs else "county_table_unparsed",
+            "diagnostic_text_sample":section[:36] if not pairs else None,
             "counties":pairs,"county_rows":len(pairs),
             "attribution":"50501 Vets / civicAPI (reported from election sources)",
             "publication_approved":False,"reuse_rights_verified":False}
