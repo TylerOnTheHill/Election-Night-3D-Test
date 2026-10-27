@@ -1,0 +1,33 @@
+name: Discover remaining 12 battleground county sources (v7.2)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/audit_remaining_watchlist_county_sources.py'
+      - 'tests/test_audit_remaining_watchlist_county_sources.py'
+      - '.github/workflows/audit-remaining-watchlist-counties.yml'
+permissions:
+  contents: read
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify missing and duplicate county handling
+        run: python -m unittest discover -s tests -p test_audit_remaining_watchlist_county_sources.py -v
+      - name: Inspect live county sources in remaining 12 states
+        run: python scripts/audit_remaining_watchlist_county_sources.py --output remaining-watchlist-county-discovery-unapproved.json
+      - name: Upload discovery audit only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remaining-12-county-source-discovery-not-for-publication
+          path: remaining-watchlist-county-discovery-unapproved.json
+          if-no-files-found: ignore
+          retention-days: 7
