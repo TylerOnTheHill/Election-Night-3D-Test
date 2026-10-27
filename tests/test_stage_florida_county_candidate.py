@@ -36,6 +36,18 @@ class FloridaCountyStagingTests(unittest.TestCase):
         self.assertEqual(candidate["states"]["FL"]["county_count"],2)
         self.assertFalse(candidate["publication_approved"])
 
+    def test_official_statewide_reconciliation_controls_full_reporting(self):
+        data,census=fixture()
+        data["provider_statewide_total"]=60
+        fl=stage(data,census)["states"]["FL"]
+        self.assertTrue(fl["statewide_reconciled"])
+        self.assertEqual(fl["county_vs_provider_statewide_difference"],0)
+        self.assertEqual(fl["reporting_label"],"Partially reported")
+        data["provider_statewide_total"]=70
+        fl=stage(data,census)["states"]["FL"]
+        self.assertFalse(fl["statewide_reconciled"])
+        self.assertEqual(fl["county_vs_provider_statewide_difference"],-10)
+
     def test_partial_counties_and_no_zero_fill(self):
         data,census=fixture()
         candidate=stage(data,census)
