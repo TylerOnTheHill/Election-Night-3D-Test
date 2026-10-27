@@ -1,5 +1,10 @@
 name: Refresh 2026 early vote aggregates
 on:
+  push:
+    branches: [feature/v7-national-early-vote]
+    paths:
+      - '.github/workflows/refresh-early-vote.yml'
+      - 'scripts/refresh_early_vote.py'
   workflow_dispatch:
   schedule:
     - cron: '17 */6 * * *'
