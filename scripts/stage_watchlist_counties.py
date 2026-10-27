@@ -26,6 +26,10 @@ def fetch_mirror(state):
         geoid=str(feature.get('id',''))
         name=feature.get('properties',{}).get('NAME')
         if len(geoid)==5 and geoid.isdigit() and geoid.startswith(state) and isinstance(name,str):
+            # Bedford independent city (51515) reverted to town status in 2013;
+            # the historical mirror still includes this retired GEOID.
+            if geoid=="51515":
+                continue
             if geoid in seen_geoids:
                 if seen_geoids[geoid]!=name:
                     raise ValueError("Conflicting GEOID names in geography mirror")
@@ -53,6 +57,10 @@ def stage(code,payload,census):
         if state!=prefix or len(county)!=3 or not county.isdigit():
             raise ValueError("Invalid Census GEOID")
         key=canonical(name.split(",",1)[0])
+        # Virginia independent cities share names with counties. Their FIPS
+        # county-equivalent codes are 5xx; keep the City suffix for matching.
+        if code=="VA" and int(county)>=500:
+            key += "city"
         if key in lookup:
             raise ValueError(f"Ambiguous county-equivalent Census name: {name!r}, existing GEOID {lookup[key]}, new GEOID {prefix+county}")
         lookup[key]=prefix+county
@@ -67,6 +75,8 @@ def stage(code,payload,census):
         if row.get("state")!=code or not isinstance(row.get("county"),str):
             raise ValueError("Invalid county row")
         key=canonical(row["county"])
+        if code=="VA" and "city" in row["county"].lower():
+            key += "city"
         if key in seen_provider_names:
             raise ValueError("Duplicate provider county name")
         seen_provider_names.add(key)
