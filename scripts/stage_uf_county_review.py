@@ -154,7 +154,7 @@ def main():
         with urllib.request.urlopen(geo_request,timeout=35) as response:
             geojson=json.load(response)
         candidate, gaps=to_internal_candidate(output,geojson)
-        a.candidate_output.write_text(json.dumps(candidate,indent=2)+"\\n")
+        a.candidate_output.write_text(json.dumps(candidate, indent=2) + chr(10))
         print("Restricted FIPS-matched UF county candidates:",len(candidate["states"]),"gaps:",gaps)
     print("UF source review:",{code:row["status"] for code,row in sorted(results.items())})
 
