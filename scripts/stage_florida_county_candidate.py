@@ -18,6 +18,21 @@ CATEGORIES={"voted_mail","voted_early"}
 def canonical(name):
     return re.sub(r"[^a-z0-9]","",re.sub(r"\\b(county)\\b","",name.lower()))
 
+def from_official_tsv_snapshot(snapshot):
+    """Adapt the existing scheduled Florida official TSV pipeline output."""
+    if snapshot.get("schema")!="electionhq-florida-county-aggregate-v1" or snapshot.get("election_id")!="49894" or snapshot.get("state_fips")!="12":
+        raise ValueError("Unexpected official Florida TSV snapshot")
+    records=[]
+    for county in snapshot["counties"]:
+        for category in CATEGORIES:
+            observation=county[category]
+            records.append({"county":county["county"],"category":category,
+                "total":observation["total"],"registration":observation["registration"]})
+    return {"schema":"electionhq-county-early-vote-v1","state_fips":"12",
+        "source_url":snapshot["source_url"],
+        "reported_through":snapshot["compiled_at_local"],
+        "county_compiled_at":snapshot["compiled_at_local"],"records":records}
+
 def stage(normalized, census_rows):
     if normalized.get("schema")!="electionhq-county-early-vote-v1" or normalized.get("state_fips")!="12":
         raise ValueError("Florida official normalized input required")
@@ -87,13 +102,18 @@ def stage(normalized, census_rows):
 
 def main():
     parser=argparse.ArgumentParser()
-    parser.add_argument("--normalized",required=True)
+    parser.add_argument("--normalized",help="Normalized Florida county/category records")
+    parser.add_argument("--official-tsv-snapshot",help="Output from existing official Florida TSV ingestion")
     parser.add_argument("--census",required=True,help="Verified Census NAME/state/county JSON")
     parser.add_argument("--output",required=True)
     args=parser.parse_args()
     if Path(args.output).as_posix().lstrip("./").startswith("data/early-vote/"):
         raise ValueError("Staging cannot write to public early-vote directory")
-    candidate=stage(json.loads(Path(args.normalized).read_text()),json.loads(Path(args.census).read_text()))
+    if bool(args.normalized)==bool(args.official_tsv_snapshot):
+        parser.error("Provide exactly one Florida input format")
+    source=json.loads(Path(args.normalized or args.official_tsv_snapshot).read_text())
+    normalized=source if args.normalized else from_official_tsv_snapshot(source)
+    candidate=stage(normalized,json.loads(Path(args.census).read_text()))
     Path(args.output).write_text(json.dumps(candidate,indent=2)+"\\n")
     print("FL staged, not published:",candidate["states"]["FL"]["county_count"],"counties")
 
