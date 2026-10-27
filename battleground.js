@@ -32,8 +32,8 @@ async function load(){
   checked=j.checked_at||'Unavailable';
   $('state-count').textContent=WATCH.length;
   $('reported-count').textContent=data.filter(x=>x.reported).length+' / '+WATCH.length;
-  $('ballot-total').textContent=fmt(data.reduce((sum,x)=>sum+(x.total||0),0));
-  $('feed-date').textContent=checked.slice(0,16).replace('T',' ')+' UTC';
+  $('ballot-total').textContent=fmt(data.reduce((sum,x)=>sum+(x.reported?x.total:0),0));
+  $('feed-date').textContent=checked==='Unavailable'?'Unavailable':checked.slice(0,16).replace('T',' ')+' UTC';
   window.dispatchEvent(new CustomEvent('electionhq:battleground-data',{detail:{states:data}}));
   render();selectState(stateFromUrl()||selectedCode,false);
  }catch(e){$('rows').innerHTML='<tr><td colspan="7">Early-vote snapshot unavailable. Please try again later.</td></tr>';$('status').textContent=e.message;console.warn('Battlegrounds:',e);}
