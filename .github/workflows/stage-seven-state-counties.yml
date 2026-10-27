@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/combine_county_candidates.py'
       - 'tests/test_combine_county_candidates.py'
+      - 'tests/test_watchlist_interactive_review_browser.py'
       - '.github/workflows/stage-seven-state-counties.yml'
 permissions:
   contents: read
