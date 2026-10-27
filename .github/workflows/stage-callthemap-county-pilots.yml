@@ -21,6 +21,8 @@ on:
       - 'tests/test_county_preview.py'
       - 'scripts/validate_county_publication_candidate.py'
       - 'tests/test_county_publication_candidate.py'
+      - 'scripts/prepare_approved_county_feed.py'
+      - 'tests/test_prepare_approved_county_feed.py'
       - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
   workflow_dispatch:
@@ -62,6 +64,8 @@ jobs:
         run: python scripts/build_county_preview.py --candidate --input-dir staging-county-pilots-fips --output staging-county-publication-candidate.json
       - name: Test publication candidate review gate
         run: python -m unittest discover -s tests -p 'test_county_publication_candidate.py' -v
+      - name: Test explicit owner-approval conversion without publishing
+        run: python -m unittest discover -s tests -p 'test_prepare_approved_county_feed.py' -v
       - name: Validate candidate without publishing
         run: python scripts/validate_county_publication_candidate.py --candidate staging-county-publication-candidate.json
       - name: Upload staging-only county records
