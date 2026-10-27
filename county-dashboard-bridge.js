@@ -10,7 +10,8 @@ function start(){
  note.style.cssText='font-size:12px;color:#c2cad7;margin:8px 0';
  const link=document.createElement('a');link.href='./county-review.html';link.textContent='Open county review';link.style.color='#9ed3ff';
  const status=document.createElement('span');status.textContent=' · Requires local staging JSON file';status.style.fontSize='12px';
- host.append(heading,note,link,status);
+ const precinct=document.createElement('a');precinct.href='./precinct-review.html';precinct.textContent=' · Preview precinct geometry (staging)';precinct.style.color='#9ed3ff';
+ host.append(heading,note,link,precinct,status);
  const target=document.querySelector('.early-stats');
  if(target&&target.parentElement)target.parentElement.insertBefore(host,target);
  else document.querySelector('main')?.prepend(host);
