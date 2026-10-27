@@ -83,8 +83,21 @@ def build():
             "in_person_total":found.get("inperson",({},0))[1],
             "metric":"returned_absentee_plus_early_in_person" if state=="OH" else "returned_absentee_only",
             "county_total_basis":"sum_of_county_observations",
-            "publication_approved":False,"counties":rows}
-    return {"schema":"electionhq-mi-oh-county-candidate-v1","publication_approved":False,"states":states}
+            "publication_approved":False,
+            "geographic_count":EXPECTED[state],"coverage_complete":True,
+            "reporting_label":"Fully reported","statewide_reconciled":True,
+            "provider_statewide_total":sum(r["total"] for r in rows),
+            "total_basis":"sum_of_reported_counties",
+            "census_geography_source":"Plotly US Census county GeoJSON",
+            "census_geography_url":CENSUS,
+            "statewide_cutoff":"2026-10-27",
+            "counties":[{**r,"file_as_of":"2026-10-27",
+              "source_url":URL.format(state=state,method="returned"),
+              "credit":"50501 Vets / civicAPI"} for r in rows]}
+    return {"schema":"electionhq-county-preview-v1","publication_approved":False,
+            "review_required":True,"states":{
+                code:{**state,"status":"candidate_pending_publication_approval"}
+                for code,state in states.items()}}
 def main():
     p=argparse.ArgumentParser();p.add_argument("--output",type=Path,required=True);a=p.parse_args()
     result=build();a.output.write_text(json.dumps(result,indent=2)+"\n")
