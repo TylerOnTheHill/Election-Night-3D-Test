@@ -54,5 +54,10 @@ window.addEventListener('popstate',()=>showView(new URLSearchParams(location.sea
 state.append(stateHead,stateTools,stateMetrics,tabs,countyStage,summaryStage,tableStage);
 const foot=node('div','ehq-foot');if(footer)foot.append(footer);
 shell.append(mast,nav,national,state,foot);main.replaceChildren(shell);
+const countyRows=county.querySelector('#county-preview-rows');
+if(countyRows)new MutationObserver(syncCountyTable).observe(countyRows,{childList:true});
+const countyPreview=document.getElementById('battleground-county-preview');
+if(countyPreview)new MutationObserver(syncCountyTable).observe(countyPreview,{attributes:true,attributeFilter:['hidden']});
+syncCountyTable();
 showView(new URLSearchParams(location.search).has('state')?'state':'national');
 })();
