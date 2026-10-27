@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 SOURCE="https://sos.mn.gov/election-administration-campaigns/data-maps/absentee-data/"
-CENSUS="https://api.census.gov/data/2023/acs/acs5?get=NAME&for=county%3A%2A&in=state%3A27"
+CENSUS="https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json"
 CREDIT="Minnesota Secretary of State, 2026 General Election Absentee Data"
 class Tables(HTMLParser):
     def __init__(self):
@@ -36,11 +36,11 @@ def parse(html,census):
     if not date_match:raise ValueError("Missing 2026 county reporting cutoff")
     cutoff=datetime.strptime(date_match.group(1),"%B %d, %Y").date().isoformat()
     mapping={}
-    for row in census[1:]:
-        name,state,county=row
-        if state!="27":continue
-        normalized=re.sub(r"\s+County, Minnesota$","",name,flags=re.I).casefold()
-        mapping[normalized]=state+county
+    for feature in census["features"]:
+        fips=feature["id"]
+        if not fips.startswith("27"):continue
+        name=feature["properties"]["NAME"]
+        mapping[name.casefold()]=fips
     if len(mapping)!=87:raise ValueError("Minnesota Census crosswalk must contain 87 counties")
     found=None
     for table in page.tables:
@@ -76,7 +76,7 @@ def parse(html,census):
     return {"schema":"electionhq-county-preview-v1","publication_approved":False,
         "review_required":True,"states":{"MN":{"status":"candidate_pending_publication_approval",
         "provider":"Minnesota Secretary of State","credit":CREDIT,
-        "statewide_cutoff":cutoff,"census_geography_source":"2020 US Census county FIPS",
+        "statewide_cutoff":cutoff,"census_geography_source":"US county GeoJSON FIPS crosswalk (Plotly mirror; official Census verification pending)",
         "census_geography_url":CENSUS,"county_count":len(counties),"geographic_count":87,
         "coverage_complete":len(counties)==87,"reporting_label":"Fully reported" if len(counties)==87 and reconciled else "Partially reported",
         "statewide_reconciled":reconciled,"total":total,"total_basis":"sum_of_reported_counties",
