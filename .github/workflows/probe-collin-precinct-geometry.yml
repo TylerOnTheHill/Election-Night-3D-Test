@@ -56,3 +56,8 @@ jobs:
           path: staging-collin-geometry/
           if-no-files-found: warn
           retention-days: 7
+      - name: Fail probe if source did not return geometry
+        if: steps.download.outcome != 'success'
+        run: |
+          echo 'Official GIS returned no usable polygons; blocked-source artifact uploaded.'
+          exit 1
