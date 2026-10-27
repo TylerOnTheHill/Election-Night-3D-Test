@@ -40,5 +40,6 @@ el("file").addEventListener("change",async e=>{
   el("results").hidden=false;render();
  }catch(err){el("status").textContent="Cannot display: "+err.message;}
 });
+window.addEventListener("electionhq:county-map-select",e=>{if(!data)return;const r=data.states[el("state").value].counties.find(x=>x.fips===e.detail.fips);if(!r)return;el("search").value=r.name;render();window.dispatchEvent(new CustomEvent("electionhq:county-table-select",{detail:{fips:r.fips}}));el("rows").querySelector("tr")?.scrollIntoView({block:"nearest"});});
 el("state").addEventListener("change",render);el("search").addEventListener("input",render);
 })();
