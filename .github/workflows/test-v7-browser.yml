@@ -1,7 +1,7 @@
 name: Test v7 national dashboard
 on:
   push:
-    branches: [feature/v7-national-early-vote]
+    branches: [feature/v7-national-early-vote, feature/v7-1-contextual-early-dashboard]
   workflow_dispatch:
 permissions:
   contents: read
