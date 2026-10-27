@@ -63,6 +63,7 @@ def stage(doc):
             "provider":"VoteGA.org / Georgia Secretary of State",
             "credit":CREDIT,"provider_checked_at":meta.get("dataGeneratedAt"),
             "statewide_cutoff":cutoff,"census_geography_source":"Source-provided 5-digit Georgia county FIPS (Census cross-check pending)",
+            "census_geography_url":"https://api.census.gov/data/2020/dec/pl",
             "county_count":len(counties),"geographic_count":EXPECTED,
             "coverage_complete":len(counties)==EXPECTED,
             "reporting_label":"Fully reported" if matching else "Partially reported",
