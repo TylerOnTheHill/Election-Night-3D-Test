@@ -26,3 +26,12 @@ Scope: 50 states **plus the District of Columbia** = 51 jurisdictions. The check
 3. Check the independent NY tracker for statewide coverage and mail/in-person definitions; separately preserve the NYC official series.
 4. Continue checking for any AL/NH publicly published absentee-ballot-return totals, without blocking launch if absent.
 5. Once verified, add each new jurisdiction through a source-aware ingestion adapter, recalculate national total and rerun validation. **Do not insert unverifiable figures.**
+
+## October 27 follow-up: public alternatives checked
+
+- **New York:** [Times Union statewide report](https://www.timesunion.com/capitol/article/early-voting-surges-across-new-york-state-22495010.php) reports approximately **485,200** in-person votes across **all 62 counties** for the **October 24–25 opening weekend**. This is a credible, dated statewide observation, but the published figure is rounded and excludes later voting and absentee returns. Preserve as a separate partial observation, **not** a precise statewide total in US.json.
+- **Massachusetts:** [Massachusetts election office early-voting guidance](https://www.sec.state.ma.us/divisions/elections/voting-information/vote-early.htm) confirms the October 17–30 early-vote period. This is a calendar source, **not** a count. Continue using the dated 476,053 figure only as an independently labeled observation pending fresher reporting.
+- **VoteHub:** [2026 methodology](https://votehub.com/2026-early-vote-methodology/) confirms partnership with L2 and distinction between ballot-return observations and modeled electorate composition. Its public site alone does not establish a documented machine-readable download for the missing jurisdictions.
+- **Independent alternate:** [50501 Vets / civicAPI](https://election-watch.50501vets.com/map?layer=early) reports national requested/returned/in-person categories with different reporting-state denominators. Its **requested** category must not be combined with **returned** ballots; evaluate state-specific coverage before substitution.
+
+Do not mistake a state with no general early in-person voting for a state with no absentee ballots. **No outreach or records requests.**
