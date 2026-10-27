@@ -112,6 +112,7 @@ def stage(code,payload,census):
         raise ValueError("Invalid provider statewide total")
     total=sum(r["total"] for r in counties)
     count=len(counties)
+    reconciled=statewide is not None and total==statewide
     return {"status":"candidate_pending_publication_approval",
         "provider":"Call the Map","credit":payload["credit"],
         "provider_checked_at":payload.get("checked_at"),
@@ -120,7 +121,9 @@ def stage(code,payload,census):
         "census_geography_url":GEOJSON_MIRROR,
         "county_count":count,"geographic_count":expected,
         "coverage_complete":count==expected,
-        "reporting_label":"Fully reported" if count==expected else "Partially reported",
+        "reporting_label":"Fully reported" if count==expected and reconciled else "Partially reported",
+        "statewide_reconciled":reconciled,
+        "reporting_status_note":("County rows cover all geographic units but do not reconcile to provider statewide total; county totals may have different cutoffs or scope." if count==expected and not reconciled else None),
         "total":total,"total_basis":"sum_of_reported_counties",
         "provider_statewide_total":statewide,
         "county_vs_provider_statewide_difference":total-statewide if statewide is not None else None,
