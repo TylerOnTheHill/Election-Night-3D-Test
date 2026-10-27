@@ -28,6 +28,7 @@ class CountySourceReviewTests(unittest.TestCase):
         tx = doc["states"]["TX"]
         tx["statewide_cutoff"] = None
         tx["provider_statewide_total"] = 800
+        tx["reporting_label"] = "Partially reported"
         for county in tx["counties"]:
             county["file_as_of"] = None
         result = review(doc, NOW)["states"]["TX"]
@@ -39,6 +40,7 @@ class CountySourceReviewTests(unittest.TestCase):
         tx = doc["states"]["TX"]
         tx["statewide_cutoff"] = "2026-10-27"
         tx["provider_statewide_total"] = 800
+        tx["reporting_label"] = "Partially reported"
         tx["counties"][0]["file_as_of"] = "2026-10-25"
         result = review(doc, NOW)["states"]["TX"]
         self.assertEqual(result["county_vs_statewide_cutoff"], "mixed")
@@ -47,6 +49,7 @@ class CountySourceReviewTests(unittest.TestCase):
     def test_reconciliation_difference_is_explicit_not_added(self):
         doc = candidate()
         doc["states"]["TX"]["provider_statewide_total"] = 800
+        doc["states"]["TX"]["reporting_label"] = "Partially reported"
         result = review(doc, NOW)["states"]["TX"]
         self.assertEqual(result["county_ballots_observed"], 508)
         self.assertEqual(result["county_minus_provider_statewide"], -292)
@@ -57,6 +60,7 @@ class CountySourceReviewTests(unittest.TestCase):
         tx = doc["states"]["TX"]
         tx["statewide_cutoff"] = "2026-10-27"
         tx["provider_statewide_total"] = 800
+        tx["reporting_label"] = "Partially reported"
         for county in tx["counties"]:
             county["file_as_of"] = "2026-10-25"
         result = review(doc, NOW)["states"]["TX"]
@@ -69,6 +73,7 @@ class CountySourceReviewTests(unittest.TestCase):
         tx = doc["states"]["TX"]
         tx["statewide_cutoff"] = "2026-10-27"
         tx["provider_statewide_total"] = 800
+        tx["reporting_label"] = "Partially reported"
         for county in tx["counties"]:
             county["file_as_of"] = "2026-10-27"
         result = review(doc, NOW)["states"]["TX"]
