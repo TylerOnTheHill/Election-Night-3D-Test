@@ -65,6 +65,25 @@ main>h2{font-size:23px;margin:3px 0 5px}main>.muted{font-size:12px;line-height:1
 #ehq-county-table-view>.scroll{max-height:550px;overflow:auto;border:1px solid #353535;border-radius:8px}
 @media(max-width:1000px){#ehq-county-view:not([hidden]),#ehq-county-table-view:not([hidden]){grid-template-columns:1fr}#ehq-county-view>.state-metrics,#ehq-county-table-view>.state-metrics{grid-column:1;grid-row:1}#ehq-county-view>.county-panel,#ehq-county-table-view>.scroll{grid-column:1;grid-row:2}}
 @media(max-width:600px){#ehq-county-view #battleground-county-preview:not([hidden]){display:block}#ehq-county-view #county-preview-map{min-height:320px!important}#ehq-county-view #battleground-county-preview .scroll{max-height:260px}}
+</style><style>
+/* Visual QA corrections from 1440px/390px captured browser screenshots. */
+#ehq-state-screen .state-metrics{min-width:0;overflow:hidden}
+#ehq-county-view .state-metrics .detail-stats,
+#ehq-county-table-view .state-metrics .detail-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+#ehq-county-view .state-metrics .detail-stats .card,
+#ehq-county-table-view .state-metrics .detail-stats .card{min-width:0;overflow:hidden;padding:11px!important}
+#ehq-county-view .state-metrics .detail-stats .value,
+#ehq-county-table-view .state-metrics .detail-stats .value{font-size:clamp(16px,1.65vw,23px)!important;line-height:1.18;overflow-wrap:anywhere;letter-spacing:-.03em}
+#ehq-county-view .state-metrics .detail-stats .label,
+#ehq-county-table-view .state-metrics .detail-stats .label{font-size:10px!important;line-height:1.25;overflow-wrap:normal}
+#ehq-national-screen .overview{display:block}
+#ehq-national-screen .map-panel{width:100%}
+#ehq-national-screen .map-stage{min-height:440px!important}
+#ehq-national-screen .map-stage canvas{display:block}
+#ehq-national-screen .map-panel .section-title{font-size:19px!important}
+#ehq-national-screen .cards{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(min-width:1150px){#ehq-county-view:not([hidden]),#ehq-county-table-view:not([hidden]){grid-template-columns:minmax(0,1.35fr) minmax(390px,.65fr)}}
+@media(max-width:700px){#ehq-national-screen .cards{grid-template-columns:repeat(2,minmax(0,1fr))}#ehq-national-screen .map-stage{min-height:290px!important}#ehq-county-view .state-metrics .detail-stats .value,#ehq-county-table-view .state-metrics .detail-stats .value{font-size:19px!important}}
 </style></head><body>
 <header><h1>✧ ELECTION<span>HQ</span></h1><nav aria-label="Tracker navigation"><a href="./index.html">Election Night / Early Vote</a><a class="active" href="./battleground.html" aria-current="page">Battlegrounds</a></nav></header>
 <main><div class="eyebrow">2026 midterms · early voting · observed counts</div><h2>Battleground <span style="color:#268cff">Watch</span></h2><p class="muted">The 16 states displayed on VoteHub's tracker, plus Arizona, Minnesota and Mississippi. These 19 states are a <strong>user-selected watchlist</strong>, not a statistical sample of the country or a prediction of election outcomes. Reported dates and ballot types differ across states.</p>
