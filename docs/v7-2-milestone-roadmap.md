@@ -18,12 +18,12 @@ Status: active development on `feature/v7-2-national-county-data`. Production `m
 
 ## Milestone 2 — Automatic county maps, starting TX/NC
 **Target:** County map and table automatically load from a published, approved dataset when a viewer selects Texas or North Carolina.
-**Acceptance:** No upload; 254 TX and 100 NC counties, interactive county selection, blue-intensity ballot-volume map, prominent state total with '* Sum of complete county reports', source/cutoff; county sum takes precedence when coverage complete. Fallback to statewide data if county dataset unavailable. No fabricated or silently published data.
+**Acceptance:** No upload; ingest and display verified partial county reports immediately (for example 150 of 254 TX counties), interactive county selection, blue-intensity ballot-volume map, reporting coverage and source/cutoff. Missing counties are unknown, not zero. Prefer the freshest verified statewide total when available; do not sum county and statewide counts or claim a partial county sum represents the entire state. When complete county reports are the freshest authoritative observation, their sum may take precedence. No fabricated or silently published data.
 **Current status:** Interactive map/table and automatic loader implemented; publication-approved county feed is not yet checked in. This is the immediate engineering blocker. Internal staging previews are not public data.
 
 ## Milestone 3 — County expansion and Battleground completion
-**Target:** Extend complete county reporting to FL, VA, IA, WI, SC where available, then seek the remaining watchlist states without blocking verified coverage.
-**Acceptance:** State-by-state county maps appear only with complete matching reporting; missing coverage clearly communicated; 19-state interface polished on desktop/mobile and reviewed by owner.
+**Target:** Extend partial and complete verified county reporting to FL, VA, IA, WI, SC where available, then seek the remaining watchlist states without blocking verified coverage.
+**Acceptance:** State-by-state county maps appear as soon as verified observations exist, even with partial coverage; unreported counties are visually and numerically distinguished from zero; 19-state interface polished on desktop/mobile and reviewed by owner.
 
 ## Milestone 4 — Nationwide Early Vote
 **Target:** Complete consistent nationwide state map and source-aware reporting.
@@ -32,6 +32,9 @@ Status: active development on `feature/v7-2-national-county-data`. Production `m
 ## Milestone 5 — Election Night and release
 **Target:** Election Night readiness and production release candidate.
 **Acceptance:** Demo data visibly distinguished from live results, final smoke tests pass, owner approves any production merge/deployment.
+
+## Reporting freshness rule (owner correction, 2026-10-27)
+County geographic completeness is NOT a prerequisite for displaying verified early-vote observations. Show partial reporting as it arrives; distinguish reporting coverage from the statewide headline and compare source cutoffs before choosing the headline. Never add county sums to a statewide total. Any incomplete county sum must be labeled as a reported-county subtotal, not a complete state total. The earlier full-county gate is superseded.
 
 ## Current next action
 Produce an approved-data publication path for TX/NC county feed without changing public UX. Do not mark Milestone 2 complete until the public page automatically renders real county observations from that feed.
