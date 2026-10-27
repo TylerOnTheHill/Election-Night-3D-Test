@@ -21,8 +21,10 @@ def build(files):
             raise ValueError("Invalid county FIPS: " + code)
         if len({r["fips"] for r in rows}) != len(rows):
             raise ValueError("Duplicate county FIPS: " + code)
-        if sum(r["total"] for r in rows) != payload["statewide_total"]:
-            raise ValueError("County totals no longer reconcile: " + code)
+        if any(not isinstance(r.get("total"), int) or isinstance(r["total"], bool) or r["total"] < 0 for r in rows):
+            raise ValueError("Invalid county ballot count: " + code)
+        county_total = sum(r["total"] for r in rows)
+        reported_statewide = payload.get("statewide_total")
         states[code] = {
             "status": "preview_only_not_approved_for_publication",
             "provider": payload["provider"],
@@ -32,7 +34,10 @@ def build(files):
             "census_geography_source": payload["census_geography_source"],
             "census_geography_url": payload["census_geography_url"],
             "county_count": len(rows),
-            "total": payload["statewide_total"],
+            "total": county_total,
+            "total_basis": "sum_of_complete_county_reports",
+            "provider_statewide_total": reported_statewide,
+            "county_vs_provider_statewide_difference": county_total - reported_statewide if isinstance(reported_statewide, int) else None,
             "counties": [{"fips": r["fips"], "name": r["county"], "total": r["total"],
                           "mail": r["mail"], "in_person": r["in_person"],
                           "registered_dem": r["registered_dem"],
