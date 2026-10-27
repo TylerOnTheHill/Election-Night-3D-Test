@@ -1,1 +1,7 @@
 :root{--eh-bg:#090c11;--eh-surface:#111720;--eh-border:#303b4a;--eh-blue:#268cff;--eh-blue-soft:#74b6ff;--eh-text:#edf3fb;color-scheme:dark}body{background:var(--eh-bg);color:var(--eh-text)}header{background:#0c1017;border-bottom-color:var(--eh-border)}header h1 span{color:var(--eh-blue-soft)}a{color:var(--eh-blue-soft)}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--eh-blue-soft);outline-offset:3px}
+/* Shared dashboard panels and navigation */
+.panel,.card,.right-card,.stat-card{border-color:var(--eh-border)!important;background:#111720!important;color:var(--eh-text)}
+.stage,.map-stage{background:#090c11!important;border-color:#303b4a!important}
+button.active,button[aria-selected=true],.mode-switch button.active,.rail button.active{border-color:#268cff!important;background:#102b4b!important;color:#f4f9ff!important}
+button:hover,a:hover{border-color:#74b6ff}
+.pill.warn{background:#15375b;color:#9ed0ff}
