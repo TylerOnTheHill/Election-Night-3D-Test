@@ -38,6 +38,17 @@ class FloridaAdapterTests(unittest.TestCase):
         with self.assertRaises(AssertionError):
             normalize(data)
 
+    def test_rejects_statewide_reconciliation_on_partial_coverage(self):
+        data = copy.deepcopy(BASE)
+        data["statewide"] = {
+            "voted_mail": {"total": 6, "republican": 2, "democrat": 3,
+                           "other": 0, "no_party_affiliation": 1},
+            "voted_early": {"total": 10, "republican": 5, "democrat": 3,
+                            "other": 1, "no_party_affiliation": 1},
+        }
+        with self.assertRaises(AssertionError):
+            normalize(data)
+
     def test_rejects_wrong_election(self):
         data = copy.deepcopy(BASE)
         data["election_id"] = "other"
