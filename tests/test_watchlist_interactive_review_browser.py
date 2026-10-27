@@ -14,7 +14,10 @@ root = Path(os.environ.get("COUNTY_REVIEW_DIR","watchlist-interactive-review"))
 candidate = json.loads(Path(os.environ.get("COUNTY_CANDIDATE","watchlist-county-candidate-unapproved.json")).read_text())
 assert candidate["publication_approved"] is False
 assert candidate["review_required"] is True
-assert set(candidate["states"]) in ({"VA", "IA", "WI", "SC"}, {"FL"}, {"TX", "NC", "FL", "VA", "IA", "WI", "SC", "GA"}, {"TX", "NC", "FL", "VA", "IA", "WI", "SC", "GA", "MN"}, {"TX", "NC", "FL", "VA", "IA", "WI", "SC", "GA", "MN", "MI", "OH"})
+SUPPORTED_STATES = set("AK AZ FL GA IA KS ME MI MN MS NC NE NH NV OH SC TX VA WI".split())
+assert candidate["states"], "No states available for browser regression"
+assert set(candidate["states"]) <= SUPPORTED_STATES, "Unknown state in candidate"
+assert all(state["county_count"] > 0 for state in candidate["states"].values()), "Empty state candidate"
 assert (root / "README.txt").read_text().count("\n") >= 6
 assert "UNAPPROVED COUNTY DATA" in (root / "battleground.html").read_text()
 feed = json.loads((root / "data/early-vote/battleground-counties.json").read_text())
