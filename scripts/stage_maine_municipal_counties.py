@@ -18,7 +18,7 @@ def build(source,units,geo):
     if not units:raise ValueError("Maine crosswalk empty")
     cols=list(units[0])
     county_col=next((k for k in cols if k.casefold() in ("county","county_name")),None)
-    town_cols=[k for k in cols if k.casefold() in ("town","town_name","municipality","municipality_name","unit_name","name","city","place")]
+    town_cols=[k for k in cols if k.casefold() in ("town","town_name","municipality","municipality_name","unit_name","canonical_name","megis_name","census_name","name","city","place")]
     if not county_col or not town_cols:raise ValueError("Maine crosswalk columns require mapping: "+str(cols))
     lookup=collections.defaultdict(set)
     for r in units:
