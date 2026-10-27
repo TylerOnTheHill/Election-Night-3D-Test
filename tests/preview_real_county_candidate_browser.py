@@ -60,9 +60,18 @@ try:
             page.wait_for_function(
                 "(count) => document.querySelectorAll('#county-preview-map path').length === count",
                 arg=expected, timeout=30000)
+            page.wait_for_function(
+                """(count) => { const map=document.querySelector('#county-preview-map');
+                return map && map.dataset.county3d==='ready'
+                  && Number(map.dataset.countyMeshes)===count
+                  && !!map.querySelector('canvas'); }""",
+                arg=expected, timeout=30000)
+            assert page.locator("#ehq-state-screen").is_visible()
+            assert page.locator("#ehq-county-view").is_visible()
+            assert page.locator("#county-preview-map canvas").is_visible()
             assert not errors, errors
             Path("staging-county-browser-preview").mkdir(exist_ok=True)
-            page.screenshot(path=f"staging-county-browser-preview/{code}.png", full_page=True)
+            page.screenshot(path=f"staging-county-browser-preview/{code}.png", full_page=False)
             print(code, state["county_count"], "counties rendered;", state["total"],
                   "reported ballots; browser-only, not published")
             page.close()
