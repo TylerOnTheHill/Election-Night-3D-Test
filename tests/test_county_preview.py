@@ -36,10 +36,20 @@ class PreviewTests(unittest.TestCase):
         p.write_text(json.dumps(d))
         with self.assertRaises(ValueError):
             build(self.temp.name)
-    def test_reject_bad_total(self):
+    def test_complete_county_sum_takes_precedence_over_statewide_headline(self):
         p = Path(self.temp.name, "NC.json")
         d = json.loads(p.read_text())
-        d["statewide_total"] += 1
+        d["statewide_total"] -= 10
+        p.write_text(json.dumps(d))
+        result = build(self.temp.name)["states"]["NC"]
+        self.assertEqual(result["total"], 100)
+        self.assertEqual(result["provider_statewide_total"], 90)
+        self.assertEqual(result["county_vs_provider_statewide_difference"], 10)
+        self.assertEqual(result["total_basis"], "sum_of_complete_county_reports")
+    def test_reject_invalid_county_total(self):
+        p = Path(self.temp.name, "NC.json")
+        d = json.loads(p.read_text())
+        d["counties"][0]["total"] = -1
         p.write_text(json.dumps(d))
         with self.assertRaises(ValueError):
             build(self.temp.name)
