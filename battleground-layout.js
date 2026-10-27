@@ -40,6 +40,10 @@ nationalButton.addEventListener('click',()=>switchView('national'));stateButton.
 summaryTab.addEventListener('click',()=>switchTab('overview'));countyTab.addEventListener('click',()=>switchTab('map'));tableTab.addEventListener('click',()=>switchTab('table'));
 picker.querySelector('select')?.addEventListener('change',()=>switchView('state'));
 window.addEventListener('electionhq:battleground-map-click',()=>switchView('state'));
+// Selecting a watchlist row is a navigation action, not just a hidden detail update.
+const watchRows=main.querySelector('#rows');
+watchRows?.addEventListener('click',event=>{if(event.target.closest('tr')&&!event.target.closest('a'))switchView('state')});
+watchRows?.addEventListener('keydown',event=>{if(event.key==='Enter'&&event.target.closest('tr'))switchView('state')});
 window.addEventListener('popstate',()=>{if(new URLSearchParams(location.search).has('state'))switchView('state')});
 switchView(new URLSearchParams(location.search).has('state')?'state':'national');
 })();
