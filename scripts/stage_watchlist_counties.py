@@ -9,7 +9,7 @@ import json
 import urllib.request
 from pathlib import Path
 from stage_callthemap_county_pilots import BASE
-from verify_tx_nc_fips import canonical, fetch_census
+from verify_tx_nc_fips import canonical, fetch_census, fetch_gazetteer
 from validate_county_publication_candidate import validate
 
 STATES={"VA":("51",133),"IA":("19",99),"WI":("55",72),"SC":("45",46)}
@@ -122,7 +122,14 @@ def main():
             req=urllib.request.Request(BASE+code+".json",headers={"User-Agent":"ElectionHQ-watchlist-staging/1.0"})
             with urllib.request.urlopen(req,timeout=30) as response:
                 payloads[code]=json.load(response)
-        census[code]=json.loads((Path(args.census_dir)/(code+".json")).read_text()) if args.census_dir else fetch_census(prefix)
+        if args.census_dir:
+            census[code]=json.loads((Path(args.census_dir)/(code+".json")).read_text())
+        else:
+            try:
+                census[code]=fetch_census(prefix)
+            except (OSError,ValueError) as exc:
+                print(f"{code}: Census API unavailable ({exc}); trying official Census Gazetteer")
+                census[code]=fetch_gazetteer(prefix)
     candidate=build(payloads,census)
     Path(args.output).write_text(json.dumps(candidate,indent=2)+"\n")
     print("Staged (unapproved):",", ".join(candidate["states"]) or "no county observations",
