@@ -9,7 +9,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 SOURCE="https://sos.mn.gov/election-administration-campaigns/data-maps/absentee-data/"
-CENSUS="https://api.census.gov/data/2020/dec/pl?get=NAME&for=county:*&in=state:27"
+CENSUS="https://api.census.gov/data/2023/acs/acs5?get=NAME&for=county%3A%2A&in=state%3A27"
 CREDIT="Minnesota Secretary of State, 2026 General Election Absentee Data"
 class Tables(HTMLParser):
     def __init__(self):
@@ -89,7 +89,10 @@ def main():
         raise ValueError("Staging must not write public county feeds")
     def get(url):
         with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-source-review/1.0"}),timeout=30) as r:return r.read()
-    result=parse(get(SOURCE).decode("utf-8"),json.loads(get(CENSUS)))
+    raw=get(CENSUS).decode("utf-8-sig")
+    if not raw.lstrip().startswith("["):
+        raise ValueError("Census county crosswalk endpoint did not return JSON: "+raw[:160])
+    result=parse(get(SOURCE).decode("utf-8"),json.loads(raw))
     target.write_text(json.dumps(result,indent=2)+"\n")
     print("Minnesota official county rows staged:",result["states"]["MN"]["county_count"])
 if __name__=="__main__":main()
