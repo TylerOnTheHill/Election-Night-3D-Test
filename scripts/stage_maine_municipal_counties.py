@@ -25,6 +25,9 @@ def build(source,units,geo):
         county=r[county_col].strip()
         for key in town_cols:
             if r[key].strip() and county:lookup[norm(r[key])].add(county)
+        for key in ("sos_labels","former_names"):
+            for alias in r.get(key,"").split("|"):
+                if alias.strip() and county:lookup[norm(alias)].add(county)
     fips={norm(f["properties"]["NAME"]):str(f["id"]).zfill(5) for f in geo["features"] if str(f["id"]).zfill(5).startswith("23")}
     totals=collections.defaultdict(lambda:{"mail":0,"in_person":0})
     unmatched=set();ambiguous={}
@@ -32,6 +35,8 @@ def build(source,units,geo):
         for item in items:
             name=item["name"]
             counties=lookup.get(norm(name),set())
+            if not counties and name.casefold().endswith(" twp"):
+                counties=lookup.get(norm(name[:-4]+" Township"),set())
             if len(counties)!=1:
                 if not counties:unmatched.add(name)
                 else:ambiguous[name]=sorted(counties)
@@ -40,7 +45,8 @@ def build(source,units,geo):
             code=fips.get(norm(county))
             if not code:raise ValueError("Unknown Maine county: "+county)
             totals[code]["mail" if method=="returned" else "in_person"]+=item["total"]
-    if unmatched or ambiguous:raise ValueError("Unmapped Maine municipalities: "+str(sorted(unmatched)[:25])+"; ambiguous: "+str(list(ambiguous.items())[:10])+"; crosswalk columns: "+str(cols))
+    if ambiguous:raise ValueError("Ambiguous Maine municipality geography: "+str(list(ambiguous.items())[:10]))
+    if unmatched:raise ValueError("Unmapped Maine municipalities: "+str(sorted(unmatched)[:35]))
     if len(totals)!=16:raise ValueError("Expected 16 Maine counties, found "+str(len(totals)))
     rows=[]
     for f in geo["features"]:
