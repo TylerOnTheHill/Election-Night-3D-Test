@@ -30,6 +30,8 @@ jobs:
       - name: Check battleground and county review JavaScript syntax
         run: |
           node --check battleground.js
+          node --check battleground-layout.js
+          node --check electionhq-map-controls.js
           node --check battleground-map.js
           node --check battleground-map-3d.js
           node --check battleground-county-3d.js
@@ -43,5 +45,6 @@ jobs:
           name: electionhq-battleground-browser-screenshots
           path: |
             /tmp/electionhq-battleground-*.png
+            /tmp/electionhq-state-explorer-*.png
             /tmp/electionhq-county-staging.png
           if-no-files-found: ignore
