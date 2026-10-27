@@ -34,6 +34,8 @@ try:
             page.locator("#battleground-map path[data-code='FL']").focus()
             page.keyboard.press("Enter")
             assert "Florida" in page.locator("#detail-name").inner_text()
+            assert page.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=FL"
+            assert "state=FL" in page.url
             assert page.locator("#rows tr.selected-row").count()==1
             assert page.locator("#rows tr.selected-row").get_attribute("data-code")=="FL"
             if by_code["FL"].get("source_url"):
@@ -60,6 +62,12 @@ try:
             assert not errors,errors
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
             page.close()
+        deep=browser.new_page()
+        deep.goto("http://127.0.0.1:8766/battleground.html?state=NH",wait_until="domcontentloaded")
+        deep.wait_for_function("document.querySelector('#detail-name').textContent.includes('New Hampshire')",timeout=30000)
+        assert "Not offered" in deep.locator("#detail-inperson").inner_text()
+        assert deep.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=NH"
+        deep.close()
         # Synthetic fixture: verify staging-only county geography and selection.
         # Values below are test fixtures, not election observations.
         reference=json.loads(Path("data/sources/tx-nc-county-fips-reference.json").read_text())
