@@ -50,14 +50,30 @@ def build(files):
             "party_counts_mean": "voter registration, never candidate votes",
             "states": states}
 
+def build_publication_candidate(files):
+    """Create a publication-ready candidate, NOT an approved public feed.
+
+    Approval must be an explicit separate step; a successful CI run alone
+    cannot turn staged election observations into published data.
+    """
+    candidate = build(files)
+    candidate["publication_approved"] = False
+    candidate["review_required"] = True
+    candidate["states"] = {
+        code: {**state, "status": "candidate_pending_publication_approval"}
+        for code, state in candidate["states"].items()
+    }
+    return candidate
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-dir", default="staging-county-pilots-fips")
     parser.add_argument("--output", default="staging-county-preview.json")
+    parser.add_argument("--candidate", action="store_true", help="Build unapproved publication candidate")
     args = parser.parse_args()
-    preview = build(args.input_dir)
+    preview = build_publication_candidate(args.input_dir) if args.candidate else build(args.input_dir)
     Path(args.output).write_text(json.dumps(preview, indent=2) + "\n")
-    print("Preview-only:", ", ".join(f"{code} {x['county_count']} counties" for code, x in preview["states"].items()))
+    print("Publication candidate (approval required):" if args.candidate else "Preview-only:", ", ".join(f"{code} {x['county_count']} counties" for code, x in preview["states"].items()))
 
 if __name__ == "__main__":
     main()
