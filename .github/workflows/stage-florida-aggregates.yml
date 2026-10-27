@@ -27,9 +27,18 @@ jobs:
             --returned-url "$FL_RETURNED_TSV_URL" \
             --outstanding-url "$FL_OUTSTANDING_TSV_URL" \
             --output florida-latest.json
+      - name: Test official Florida county candidate adapter
+        run: python -m unittest discover -s tests -p "test_stage_florida_county_candidate.py" -v
+      - name: Build unapproved Florida county publication candidate
+        run: |
+          python scripts/stage_florida_county_candidate.py \
+            --official-tsv-snapshot florida-latest.json \
+            --output florida-county-candidate-unapproved.json
       - name: Upload validated staging snapshot
         uses: actions/upload-artifact@v4
         with:
           name: florida-validated-snapshot
-          path: florida-latest.json
+          path: |
+            florida-latest.json
+            florida-county-candidate-unapproved.json
           retention-days: 14
