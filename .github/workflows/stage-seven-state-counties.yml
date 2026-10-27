@@ -10,6 +10,8 @@ on:
       - 'scripts/import_florida_tsv.py'
       - 'tests/test_florida_blank_compile_date.py'
       - 'scripts/stage_minnesota_counties.py'
+      - 'scripts/stage_remaining_eleven_counties.py'
+      - 'tests/test_stage_remaining_eleven_counties.py'
       - 'tests/test_stage_minnesota_counties.py'
       - 'scripts/audit_nineteen_state_pipeline.py'
       - 'tests/test_audit_nineteen_state_pipeline.py'
@@ -56,6 +58,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_audit_remaining_watchlist_county_sources.py' -v
       - name: Discover all 11 remaining county feeds in parallel
         run: python scripts/audit_remaining_watchlist_county_sources.py --output eleven-state-discovery-unapproved.json
+      - name: Batch-ingest remaining eleven county sources
+        run: |
+          python -m unittest discover -s tests -p 'test_stage_remaining_eleven_counties.py' -v
+          python scripts/stage_remaining_eleven_counties.py --output remaining-eleven-unapproved.json --gaps-output remaining-eleven-gaps.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -103,6 +109,8 @@ jobs:
           path: |
             nineteen-state-readiness-unapproved.json
             eleven-state-discovery-unapproved.json
+            remaining-eleven-unapproved.json
+            remaining-eleven-gaps.json
             nineteen-state-coverage-audit.json
             eight-states-unapproved.json
             eight-state-freshness-audit.json
