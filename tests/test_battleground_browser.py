@@ -31,6 +31,8 @@ try:
             assert page.locator("#map-zoom-in").count()==1
             assert page.locator("#map-reset").count()==1
             assert page.locator("#state-count").inner_text()=="19"
+            assert page.locator("#ehq-national-screen .overview > #ehq-state-table").count()==1
+            assert page.locator("#ehq-national-screen .overview > .map-panel").count()==1
             page.get_by_role("tab",name="State explorer").click()
             page.locator("#explorer-state").select_option("FL")
             assert "Florida" in page.locator("#detail-name").inner_text()
