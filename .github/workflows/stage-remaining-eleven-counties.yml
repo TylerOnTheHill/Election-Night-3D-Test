@@ -1,0 +1,36 @@
+name: Stage remaining 11 battleground county feeds (v7.2)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/stage_remaining_eleven_counties.py'
+      - 'scripts/stage_watchlist_counties.py'
+      - 'scripts/validate_county_publication_candidate.py'
+      - 'tests/test_stage_remaining_eleven_counties.py'
+      - '.github/workflows/stage-remaining-eleven-counties.yml'
+permissions:
+  contents: read
+jobs:
+  batch-stage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate eleven-state batch adapter
+        run: python -m unittest discover -s tests -p 'test_stage_remaining_eleven_counties.py' -v
+      - name: Fetch and normalize all eleven states concurrently
+        run: python scripts/stage_remaining_eleven_counties.py --output remaining-eleven-unapproved.json --gaps-output remaining-eleven-gaps.json
+      - name: Upload observed county data and explicit source gaps (never publish)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eleven-state-county-batch-not-for-publication
+          path: |
+            remaining-eleven-unapproved.json
+            remaining-eleven-gaps.json
+          if-no-files-found: ignore
+          retention-days: 7
