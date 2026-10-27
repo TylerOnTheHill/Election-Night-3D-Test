@@ -69,3 +69,20 @@ main>.eyebrow,main>h2,main>p.muted{display:none!important}
 #ehq-county-view #battleground-county-preview .scroll{max-height:470px!important}
 @media(max-width:1100px){#ehq-national-screen>.overview{grid-template-columns:1fr!important}#ehq-state-table .scroll{max-height:320px!important}#ehq-county-view:not([hidden]){grid-template-columns:1fr!important}#ehq-county-view>.county-panel,#ehq-county-view>aside{grid-column:1!important;grid-row:auto!important}}
 @media(max-width:650px){main{padding:0 12px 25px!important}.studio-hero{padding:20px 2px 14px}.studio-hero-meta{display:none}#ehq-national-screen>.cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}#ehq-national-screen>.cards>.card{padding:12px!important}#ehq-national-screen .map-stage{height:310px!important;min-height:310px!important}#ehq-national-screen .map-panel{padding:0 11px 11px!important}.studio-map-header h3{font-size:16px}.studio-map-chip{font-size:8px}#ehq-county-view #battleground-county-preview:not([hidden]){display:block!important}#ehq-county-view #county-preview-map{min-height:320px!important}.studio-state-mark{display:none}}
+
+/* County-first broadcast composition: move the actual map above explanatory copy. */
+#ehq-county-view>.county-panel{display:flex!important;flex-direction:column!important}
+#ehq-county-view>.county-panel>.eyebrow{order:0}
+#ehq-county-view>.county-panel>.section-title{order:1}
+#ehq-county-view>.county-panel>p.muted{order:5;font-size:11px!important;line-height:1.4!important;color:#8796a6!important;margin:9px 0 0!important}
+#ehq-county-view>.county-panel>#county-preview-status{order:6;font-size:11px!important}
+#ehq-county-view>.county-panel>#battleground-county-preview{order:2}
+#ehq-county-view #battleground-county-preview:not([hidden]){grid-template-columns:minmax(0,1fr) 220px!important;align-items:start}
+#ehq-county-view #battleground-county-preview>#county-preview-title{grid-column:1/-1;grid-row:1;font-size:12px!important;letter-spacing:.1em;text-transform:uppercase;color:#a3b8ca;margin:9px 0 0!important}
+#ehq-county-view #battleground-county-preview>#county-preview-total{grid-column:1/-1;grid-row:2;font-size:28px!important;font-weight:800!important;letter-spacing:-.03em;margin:0 0 6px!important}
+#ehq-county-view #battleground-county-preview>#county-preview-map{grid-column:1;grid-row:3 / span 4;min-height:580px!important;height:580px!important;border:1px solid #283747!important;border-radius:6px!important}
+#ehq-county-view #battleground-county-preview>.scroll{grid-column:2;grid-row:3 / span 4;max-height:580px!important;overflow:auto!important}
+#ehq-county-view #battleground-county-preview>#county-preview-legend{grid-column:1;grid-row:7;font-size:11px!important}
+#ehq-county-view #battleground-county-preview>#county-selected-detail{grid-column:1/-1;grid-row:8;font-size:12px!important}
+#ehq-county-view #battleground-county-preview>#county-preview-complete-note{grid-column:1/-1;grid-row:9;font-size:10px!important}
+@media(max-width:650px){#ehq-county-view #battleground-county-preview>#county-preview-map{height:350px!important;min-height:350px!important}#ehq-county-view #battleground-county-preview>.scroll{max-height:240px!important}}
