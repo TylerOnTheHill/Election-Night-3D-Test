@@ -32,6 +32,18 @@ class WatchlistStagingTests(unittest.TestCase):
             self.assertEqual(state["reporting_label"],"Partially reported")
             self.assertEqual(state["counties"][0]["fips"],STATES[code][0]+"001")
 
+    def test_virginia_city_and_county_with_same_name(self):
+        p,c=fixture("VA")
+        c[1]=["Fairfax County","51","059"]
+        c[2]=["Fairfax city","51","600"]
+        p["counties"]=[
+            {"county":"Fairfax County","state":"VA","total":30,
+             "source_url":"https://example.org","credit":"Fixture"},
+            {"county":"Fairfax city","state":"VA","total":40,
+             "source_url":"https://example.org","credit":"Fixture"}]
+        result=stage("VA",p,c)
+        self.assertEqual({r["fips"] for r in result["counties"]},{"51059","51600"})
+
     def test_no_observations_does_not_fabricate_state(self):
         p,c=fixture("IA")
         p["counties"][0]["total"]=None
