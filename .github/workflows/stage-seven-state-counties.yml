@@ -6,6 +6,7 @@ on:
     paths:
       - 'scripts/combine_county_candidates.py'
       - 'scripts/stage_georgia_counties.py'
+      - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
       - 'tests/test_combine_county_candidates.py'
       - 'tests/test_watchlist_interactive_review_browser.py'
@@ -54,6 +55,9 @@ jobs:
         run: |
           python scripts/review_county_source_freshness.py --candidate eight-states-unapproved.json --output eight-state-freshness-audit.json
           python scripts/audit_watchlist_county_reconciliation.py --candidate eight-states-unapproved.json --output eight-state-reconciliation-audit.json
+      - name: Build single 19-state readiness report
+        run: |
+          python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --output nineteen-state-readiness-unapproved.json
       - name: Build watermarked eight-state interactive dashboard
         run: python scripts/build_local_battleground_preview.py --candidate eight-states-unapproved.json --output eight-state-interactive-review
       - name: Install Chromium
@@ -71,6 +75,7 @@ jobs:
         with:
           name: eight-state-interactive-review-not-for-publication
           path: |
+            nineteen-state-readiness-unapproved.json
             eight-states-unapproved.json
             eight-state-freshness-audit.json
             eight-state-reconciliation-audit.json
