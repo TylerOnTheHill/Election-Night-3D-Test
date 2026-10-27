@@ -33,10 +33,16 @@ const summaryStage=node('section','ehq-summary-stage');summaryStage.id='ehq-stat
 const tableStage=node('section','ehq-table-stage');tableStage.id='ehq-county-table-view';tableStage.hidden=true;
 for(const [b,id] of [[mapTab,'ehq-county-view'],[overviewTab,'ehq-state-summary'],[tableTab,'ehq-county-table-view']]){b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-controls',id);tabs.append(b)}
 const countyTable=county.querySelector('.scroll'),placeholder=document.createComment('county-table-anchor');countyTable?.before(placeholder);
+const countyTableEmpty=node('p','ehq-county-table-empty','County ballot totals have not been published for this state. The county map shows geography only.');
+tableStage.append(countyTableEmpty);
+function syncCountyTable(){const rows=county.querySelector('#county-preview-rows');const hasData=!!rows?.children.length;const available=!!document.querySelector('#battleground-county-preview:not([hidden])');if(countyTable)countyTable.hidden=!hasData;countyTableEmpty.hidden=hasData;countyTableEmpty.textContent=available?'County ballot totals have not been published for this state. The county map shows geography only.':'County-level reporting is not yet available for this state.';}
+new MutationObserver(syncCountyTable).observe(county.querySelector('#county-preview-rows'),{childList:true});
+new MutationObserver(syncCountyTable).observe(document.getElementById('battleground-county-preview'),{attributes:true,attributeFilter:['hidden']});
 function showTab(which){const isMap=which==='map',isSummary=which==='summary',isTable=which==='table';
 countyStage.hidden=!isMap;summaryStage.hidden=!isSummary;tableStage.hidden=!isTable;
 if(isMap)countySide.append(detail);else if(isSummary)summaryStage.append(detail);else tableStage.append(detail);
 if(isTable&&countyTable)tableStage.append(countyTable);else if(countyTable&&countyTable.parentNode!==county)placeholder.after(countyTable);
+syncCountyTable();
 for(const [b,on] of [[mapTab,isMap],[overviewTab,isSummary],[tableTab,isTable]])b.setAttribute('aria-selected',String(on));
 if(isMap)window.dispatchEvent(new Event('resize'))}
 function showView(which){const on=which==='state';national.hidden=on;state.hidden=!on;nationalBtn.setAttribute('aria-selected',String(!on));stateBtn.setAttribute('aria-selected',String(on));if(on)showTab('map');window.dispatchEvent(new Event('resize'))}
@@ -50,5 +56,6 @@ window.addEventListener('popstate',()=>showView(new URLSearchParams(location.sea
 state.append(stateHead,stateTools,stateMetrics,tabs,countyStage,summaryStage,tableStage);
 const foot=node('div','ehq-foot');if(footer)foot.append(footer);
 shell.append(mast,nav,national,state,foot);main.replaceChildren(shell);
+syncCountyTable();
 showView(new URLSearchParams(location.search).has('state')?'state':'national');
 })();
