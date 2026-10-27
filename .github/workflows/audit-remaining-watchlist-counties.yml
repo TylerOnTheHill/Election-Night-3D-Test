@@ -7,6 +7,9 @@ on:
       - 'scripts/audit_remaining_watchlist_county_sources.py'
       - 'tests/test_audit_remaining_watchlist_county_sources.py'
       - '.github/workflows/audit-remaining-watchlist-counties.yml'
+concurrency:
+  group: remaining-watchlist-discovery-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
