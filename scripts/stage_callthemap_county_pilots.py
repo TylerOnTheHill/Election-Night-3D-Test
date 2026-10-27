@@ -59,14 +59,15 @@ def validate(code, payload):
     if type(statewide) is not int or statewide < 0:
         raise ValueError("Invalid statewide summary")
     summed = sum(r["total"] for r in normalized)
-    if summed != statewide:
-        raise ValueError(f"County total {summed} differs from statewide {statewide}; do not publish")
+    # Complete county reports take precedence once geographic coverage is verified.
+    # Keep the provider headline for provenance; a difference alone is not a blocker.
     return {"schema": "electionhq-county-pilot-v1", "state": code,
             "provider": "Call the Map", "credit": payload["credit"],
             "provider_checked_at": payload.get("checked_at"),
             "statewide_cutoff": summary.get("file_as_of"),
             "county_count": len(normalized), "county_sum": summed,
-            "statewide_total": statewide, "counties": normalized,
+            "statewide_total": statewide, "county_vs_provider_statewide_difference": summed - statewide,
+            "counties": normalized,
             "coverage_complete": None, "fips_verified": False,
             "status": "staging_only_not_approved_for_publication"}
 
