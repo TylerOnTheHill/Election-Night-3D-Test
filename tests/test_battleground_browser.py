@@ -31,6 +31,7 @@ try:
             assert page.locator("#map-zoom-in").count()==1
             assert page.locator("#map-reset").count()==1
             assert page.locator("#state-count").inner_text()=="19"
+            page.get_by_role("tab",name="State explorer").click()
             page.locator("#explorer-state").select_option("FL")
             assert "Florida" in page.locator("#detail-name").inner_text()
             assert page.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=FL"
@@ -47,11 +48,15 @@ try:
             assert "Not offered" in page.locator("#rows tr").inner_text()
             page.locator("#rows tr").focus()
             page.keyboard.press("Enter")
+            page.get_by_role("tab",name="State explorer").click()
             assert "Excuse-required absentee" in page.locator("#detail-description").inner_text()
+            page.get_by_role("tab",name="National overview").click()
             page.locator("#search").fill("Texas")
             assert page.locator("#rows tr").count()==1
             page.locator("#rows tr").click()
+            page.get_by_role("tab",name="State explorer").click()
             assert "Texas" in page.locator("#detail-name").inner_text()
+            page.get_by_role("tab",name="National overview").click()
             with page.expect_download() as download_info:
                 page.locator("#export-watchlist").click()
             download=download_info.value
