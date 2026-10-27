@@ -19,13 +19,23 @@ def audit(candidate):
             raise ValueError(f"{code}: invalid county aggregation")
         difference=None if statewide is None else county_total-statewide
         county_cutoffs=sorted({str(row["file_as_of"]) for row in state["counties"] if row.get("file_as_of")})
+        statewide_cutoff=state.get("statewide_cutoff")
+        county_cutoff_relation=("unknown" if not county_cutoffs or not statewide_cutoff else
+            "matching" if len(county_cutoffs)==1 and county_cutoffs[0]==statewide_cutoff else
+            "county_older" if county_cutoffs[-1]<statewide_cutoff else
+            "county_newer" if county_cutoffs[0]>statewide_cutoff else "mixed")
         result[code]={
             "reporting_label":state["reporting_label"],
             "geographic_coverage":f'{len(state["counties"])}/{state["geographic_count"]}',
             "county_total":county_total,
             "provider_statewide_total":statewide,
             "difference":difference,
-            "statewide_cutoff":state.get("statewide_cutoff"),
+            "county_vs_statewide_cutoff":county_cutoff_relation,
+            "reconciliation_status":("unavailable" if difference is None else
+                "matching" if difference==0 else
+                "same_cutoff_unreconciled" if county_cutoff_relation=="matching" else
+                "different_cutoffs_or_unknown"),
+            "statewide_cutoff":statewide_cutoff,
             "distinct_county_cutoffs":county_cutoffs,
             "county_cutoff_missing":sum(not row.get("file_as_of") for row in state["counties"]),
             "source_urls":sorted({row["source_url"] for row in state["counties"]}),
