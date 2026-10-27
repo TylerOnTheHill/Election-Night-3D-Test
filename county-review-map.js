@@ -44,7 +44,7 @@ function draw(){
  legend.textContent=code+' · '+matched+' of '+rows.length+' staged counties matched to boundary FIPS · darker blue = fewer reported ballots, brighter blue = more · staging only';
 }
 function choose(f){const fips=String(f.id).padStart(5,'0');if(!latest||!latest.rows.some(r=>r.fips===fips))return;window.dispatchEvent(new CustomEvent('electionhq:county-map-select',{detail:{fips}}))}
-window.addEventListener('electionhq:county-table-select',e=>{selectedFips=e.detail.fips;d3.select(host).selectAll('path').attr('stroke',function(){return this.dataset.fips===selectedFips?'#ffffff':'#273443'}).attr('stroke-width',function(){return this.dataset.fips===selectedFips?2:0.4})});
+window.addEventListener('electionhq:county-table-select',e=>{selectedFips=e.detail.fips;if(!window.d3)return;d3.select(host).selectAll('path').attr('stroke',function(){return this.dataset.fips===selectedFips?'#ffffff':'#273443'}).attr('stroke-width',function(){return this.dataset.fips===selectedFips?2:0.4})});
 window.addEventListener('electionhq:county-preview',e=>{latest=e.detail;draw()});
 load();
 })();
