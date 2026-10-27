@@ -50,6 +50,13 @@ try:
             assert page.locator("#rows tr").count()==1
             page.locator("#rows tr").click()
             assert "Texas" in page.locator("#detail-name").inner_text()
+            with page.expect_download() as download_info:
+                page.locator("#export-watchlist").click()
+            download=download_info.value
+            assert download.suggested_filename=="electionhq-battleground-watchlist-2026.csv"
+            content=Path(download.path()).read_text(encoding="utf-8-sig")
+            assert "Texas" in content and "New Hampshire" not in content
+            assert "Reporting cutoff" in content and "Source URL" in content
             assert not errors,errors
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
             page.close()
