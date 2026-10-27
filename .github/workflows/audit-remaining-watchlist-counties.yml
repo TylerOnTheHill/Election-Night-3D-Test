@@ -1,5 +1,7 @@
-name: Discover remaining 12 battleground county sources (v7.2)
+name: Discover remaining 11 battleground county sources (v7.2)
 on:
+  schedule:
+    - cron: "20 15,21 * * *"
   workflow_dispatch:
   push:
     branches: [feature/v7-2-national-county-data]
@@ -37,7 +39,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: remaining-12-county-source-discovery-not-for-publication
+          name: remaining-11-county-source-discovery-not-for-publication
           path: remaining-watchlist-county-discovery-unapproved.json
           if-no-files-found: ignore
           retention-days: 7
