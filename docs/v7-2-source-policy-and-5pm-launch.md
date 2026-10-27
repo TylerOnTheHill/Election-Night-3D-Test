@@ -2,6 +2,14 @@
 
 Decision from project owner (October 27, 2026): **Do not draft, suggest, submit, or send records requests or contact officials unless the owner explicitly asks.** Use public sources only. Target a usable nationwide tracker by approximately **5 p.m. Central today**. The target is a deadline, not permission to fabricate coverage, merge to main, or label estimates official.
 
+## Owner-approved county-total precedence (October 27, 2026)
+
+When the available county dataset includes **every county/jurisdiction in the state**, uses the same observed-ballot metric, and has valid nonduplicate geographic IDs, **the sum of those county counts is ElectionHQ's preferred displayed statewide total**, even if a separate state or third-party statewide headline differs. County reports are the preferred granular reporting basis. Record the county aggregation basis, county report cutoffs, provider, and any statewide-source difference as informational provenance. **Do not block publication solely because complete county sums differ from a separate statewide number.**
+
+If county coverage is incomplete, retain the available statewide figure and explicitly label county coverage as partial. Do not combine partial county counts with statewide totals, count missing counties as zero, or mix candidate votes, modeled preferences, registration, and observed early ballots. Preserve jurisdiction-specific distinctions (including Virginia independent cities and New Hampshire's absence of regular in-person early voting). Basic duplicate, valid-count, and completeness checks remain, but repeated reconciliation against a separate statewide figure is not a release gate.
+
+This replaces any older instruction below that implies state/county totals must numerically reconcile before a complete county aggregate can be used. The county preview remains staging-only until the owner approves production publication; this rule is not approval to merge to main.
+
 ## Revised source acceptance
 
 - **Tier A — government-published**: county/state elections offices, SOS, official GIS, official machine-readable reporting. Display source, as-of date, geography, metric definition.
