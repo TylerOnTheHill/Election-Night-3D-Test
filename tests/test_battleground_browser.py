@@ -70,7 +70,7 @@ try:
         page.locator("#file").set_input_files({"name":"staging-county-preview.json",
             "mimeType":"application/json","buffer":json.dumps(fixture).encode()})
         page.wait_for_function("document.querySelectorAll('#county-map svg path').length===254",timeout=30000)
-        assert "254 of 254" in page.locator("#county-map-legend").inner_text()
+        page.wait_for_function("document.querySelector('#county-map-legend').textContent.includes('254 of 254')",timeout=15000)
         first=states["TX"]["counties"][0]
         page.locator(f"#county-map path[data-fips='{first['fips']}']").focus()
         page.keyboard.press("Enter")
@@ -78,7 +78,7 @@ try:
         assert first["name"] in page.locator("#rows tr").inner_text()
         page.locator("#state").select_option("NC")
         page.wait_for_function("document.querySelectorAll('#county-map svg path').length===100",timeout=30000)
-        assert "100 of 100" in page.locator("#county-map-legend").inner_text()
+        page.wait_for_function("document.querySelector('#county-map-legend').textContent.includes('100 of 100')",timeout=15000)
         assert not errors,errors
         page.screenshot(path="/tmp/electionhq-county-staging.png",full_page=True)
         page.close()
