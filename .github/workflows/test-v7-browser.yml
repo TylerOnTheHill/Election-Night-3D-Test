@@ -1,7 +1,7 @@
 name: Test v7 national dashboard
 on:
   push:
-    branches: [feature/v7-national-early-vote]
+    branches: [feature/v7-national-early-vote, feature/v7-1-contextual-early-dashboard]
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,5 +22,7 @@ jobs:
         if: always()
         with:
           name: electionhq-v7-browser-screenshot
-          path: /tmp/electionhq-national.png
+          path: |
+            /tmp/electionhq-national.png
+            /tmp/electionhq-mobile.png
           if-no-files-found: ignore
