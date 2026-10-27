@@ -46,6 +46,19 @@ class WatchlistStagingTests(unittest.TestCase):
         result=stage("VA",p,c)
         self.assertEqual({r["fips"] for r in result["counties"]},{"51059","51600"})
 
+    def test_full_geography_does_not_imply_reconciled_reporting(self):
+        p,c=fixture("SC")
+        p["counties"]=[
+            {"county":f"County{i}","state":"SC","total":1,
+             "source_url":"https://example.org","credit":"Fixture"}
+            for i in range(1,47)]
+        p["summary"]={"total":100,"file_as_of":"2026-10-26"}
+        result=stage("SC",p,c)
+        self.assertEqual(result["county_count"],46)
+        self.assertTrue(result["coverage_complete"])
+        self.assertFalse(result["statewide_reconciled"])
+        self.assertEqual(result["reporting_label"],"Partially reported")
+
     def test_no_observations_does_not_fabricate_state(self):
         p,c=fixture("IA")
         p["counties"][0]["total"]=None
