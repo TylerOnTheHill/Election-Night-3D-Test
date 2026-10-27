@@ -25,7 +25,7 @@ class Table(html.parser.HTMLParser):
         if tag=="table":self.inside=False
 def get(url):
     req=urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-aggregate-election-data/1.0"})
-    with urllib.request.urlopen(req,timeout=40) as r:return r.read(3000000).decode("utf-8","replace")
+    with urllib.request.urlopen(req,timeout=40) as r:return r.read(12000000).decode("utf-8","replace")
 def parse_table(html,state,method):
     # Only the HTML after the actual 'By county' heading, not the daily history.
     marker=re.search(r"By county",html,re.I)
