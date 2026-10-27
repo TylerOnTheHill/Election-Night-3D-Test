@@ -221,6 +221,36 @@ try:
         assert "Reporting cutoff unavailable" in no_cutoff.locator("#county-preview-status").inner_text()
         assert "County ballots reported:" in no_cutoff.locator("#county-preview-total").inner_text()
         no_cutoff.close()
+        # Roadmap expansion: Florida renders real geography without invented ballots.
+        fl_geography=browser.new_page()
+        fl_geography.goto("http://127.0.0.1:8766/battleground.html?state=FL",wait_until="domcontentloaded")
+        fl_geography.wait_for_function("document.querySelector('#county-preview-map')?.dataset.county3d==='ready'",timeout=45000)
+        assert fl_geography.locator("#county-preview-map").get_attribute("data-county-meshes")=="67"
+        assert fl_geography.locator("#county-preview-map").get_attribute("data-reported-meshes")=="0"
+        assert "awaiting publication" in fl_geography.locator("#county-preview-total").inner_text()
+        fl_geography.close()
+        # Synthetic Florida partial feed: two observed counties, 65 still unreported.
+        fl_feed=json.loads(json.dumps(approved))
+        fl_feed["states"]["FL"]={
+            "status":"published","total_basis":"sum_of_reported_counties",
+            "provider":"Synthetic test","credit":"Synthetic test",
+            "statewide_cutoff":None,"geographic_count":67,
+            "coverage_complete":False,"total":300,
+            "counties":[
+                {"fips":"12001","name":"Alachua","total":100},
+                {"fips":"12003","name":"Baker","total":200}
+            ]
+        }
+        fl_partial=browser.new_page()
+        fl_partial.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(fl_feed)))
+        fl_partial.goto("http://127.0.0.1:8766/battleground.html?state=FL",wait_until="domcontentloaded")
+        fl_partial.wait_for_function("document.querySelector('#county-preview-map')?.dataset.reportedMeshes==='2'",timeout=45000)
+        assert fl_partial.locator("#county-preview-map").get_attribute("data-county-meshes")=="67"
+        assert "Partially reported" in fl_partial.locator("#county-preview-status").inner_text()
+        assert "2 of 67" in fl_partial.locator("#county-preview-status").inner_text()
+        assert fl_partial.locator("#county-preview-total").inner_text()=="County ballots reported: 300"
+        fl_partial.close()
         browser.close()
 finally:
     server.shutdown()
