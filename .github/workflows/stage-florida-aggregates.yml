@@ -7,6 +7,7 @@ on:
       - "scripts/stage_florida_county_candidate.py"
       - "tests/test_stage_florida_county_candidate.py"
       - ".github/workflows/stage-florida-aggregates.yml"
+      - "scripts/probe_florida_public_stats.py"
   schedule:
     - cron: '30 14 * * *'
 permissions:
@@ -14,7 +15,6 @@ permissions:
 jobs:
   validate-florida:
     runs-on: ubuntu-latest
-    if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,6 +22,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Inspect public Florida statistics endpoints
+        run: python scripts/probe_florida_public_stats.py
       - name: Fetch and validate official Florida aggregate files
         env:
           FL_EARLY_TSV_URL: ${{ vars.FL_EARLY_TSV_URL }}
