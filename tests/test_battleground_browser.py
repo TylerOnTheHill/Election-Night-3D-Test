@@ -89,6 +89,12 @@ try:
             page.locator("#sort").select_option("total")
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
             page.get_by_role("tab",name="State explorer").click()
+            # Unpublished county observations must still show real neutral geography.
+            page.wait_for_function("document.querySelector('#county-preview-map')?.dataset.county3d==='ready'",timeout=30000)
+            assert page.locator("#county-preview-map canvas").is_visible()
+            assert page.locator("#county-preview-map").get_attribute("data-county-meshes")=="254"
+            assert page.locator("#county-preview-map").get_attribute("data-reported-meshes")=="0"
+            assert "awaiting publication" in page.locator("#county-preview-total").inner_text()
             page.screenshot(path=f"/tmp/electionhq-state-explorer-{width}.png",full_page=True)
             page.close()
         deep=browser.new_page()
