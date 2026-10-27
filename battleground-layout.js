@@ -8,7 +8,7 @@ const node=(tag,cls,html)=>{const e=document.createElement(tag);e.className=cls|
 const shell=node('div','ehq-shell');
 const mast=node('div','ehq-mast','<div><div class="ehq-overline"><span class="ehq-dot"></span> ELECTIONHQ / 2026 MIDTERMS <span class="ehq-overline-sep">/</span> EARLY VOTE INTELLIGENCE</div><h1>Election <span>Intelligence.</span></h1><p>Observed early voting. Verified reporting. A clearer view of the electorate.</p></div><div class="ehq-mast-right"><div>THE OBSERVATION DESK</div><strong>2026</strong><small>Ballots cast, not candidate votes</small></div>');
 const nav=node('div','ehq-nav');nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Dashboard views');
-const nationalBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">◈</span> National Overview'),stateBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">▦</span> State Explorer');
+const nationalBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">◈</span> National overview'),stateBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">▦</span> State explorer');
 for(const b of [nationalBtn,stateBtn]){b.type='button';b.setAttribute('role','tab');nav.append(b)}
 const national=node('section','ehq-screen');national.id='ehq-national-screen';
 const state=node('section','ehq-screen');state.id='ehq-state-screen';state.hidden=true;
@@ -16,10 +16,10 @@ const summaryHeading=node('div','ehq-section-heading','<div><div class="ehq-kick
 const metrics=node('div','ehq-metrics');metrics.append(...Array.from(cards.children));cards.remove();
 const mapHeader=node('div','ehq-panel-head','<div><div class="ehq-kicker">NATIONAL GEOGRAPHY</div><h3>Early voting across America</h3><p>Explore states and reported ballot totals</p></div><div class="ehq-geometry-badge">3D MAP</div>');
 map.prepend(mapHeader);
-const watch=node('section','ehq-watch');
+const watch=node('section','ehq-watch');watch.id='ehq-state-table';
 watch.innerHTML='<div class="ehq-panel-head"><div><div class="ehq-kicker">LIVE REPORTING DESK</div><h3>The state watchlist</h3><p>Select any state to explore county reporting</p></div><div class="ehq-watch-counter">19 STATES</div></div>';
 const watchBody=node('div','ehq-watch-body');watchBody.append(controls,tablePanel);watch.append(watchBody);
-const split=node('div','ehq-main-grid');split.append(map,watch);
+const split=node('div','ehq-main-grid overview');split.append(map,watch);
 national.append(summaryHeading,metrics,split);
 const stateHead=node('div','ehq-state-heading','<div><div class="ehq-kicker">02 / STATE EXPLORER</div><h2>Inside the early vote.</h2><p>County-level observations, reporting coverage, and ballot methods</p></div><div class="ehq-heading-note">VERIFIED REPORTING / 2026</div>');
 const stateTools=node('div','ehq-state-toolbar');stateTools.append(picker);
