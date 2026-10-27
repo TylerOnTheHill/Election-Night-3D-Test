@@ -1,0 +1,66 @@
+name: Validate seven-state interactive county review (v7.2)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/combine_county_candidates.py'
+      - 'tests/test_combine_county_candidates.py'
+      - '.github/workflows/stage-seven-state-counties.yml'
+permissions:
+  contents: read
+jobs:
+  seven-state-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify duplicate-safe combination
+        run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
+      - name: Stage current Texas and North Carolina county observations
+        run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
+      - name: Stage current Virginia Iowa Wisconsin South Carolina observations
+        run: python scripts/stage_watchlist_counties.py --output four-states-unapproved.json
+      - name: Download official Florida aggregates
+        run: python scripts/fetch_florida_aggregates.py --output florida-official.json
+      - name: Stage Florida counties
+        run: python scripts/stage_florida_county_candidate.py --official-tsv-snapshot florida-official.json --output florida-unapproved.json
+      - name: Combine all seven without additive double counting
+        run: |
+          python scripts/combine_county_candidates.py \
+            --candidate tx-nc-unapproved.json \
+            --candidate four-states-unapproved.json \
+            --candidate florida-unapproved.json \
+            --output seven-states-unapproved.json
+          python scripts/validate_county_publication_candidate.py --candidate seven-states-unapproved.json
+      - name: Audit seven-state reporting cutoffs and reconciliation
+        run: |
+          python scripts/review_county_source_freshness.py --candidate seven-states-unapproved.json --output seven-state-freshness-audit.json
+          python scripts/audit_watchlist_county_reconciliation.py --candidate seven-states-unapproved.json --output seven-state-reconciliation-audit.json
+      - name: Build watermarked seven-state interactive dashboard
+        run: python scripts/build_local_battleground_preview.py --candidate seven-states-unapproved.json --output seven-state-interactive-review
+      - name: Install Chromium
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify all seven states in actual browser
+        env:
+          COUNTY_REVIEW_DIR: seven-state-interactive-review
+          COUNTY_CANDIDATE: seven-states-unapproved.json
+        run: python tests/test_watchlist_interactive_review_browser.py
+      - name: Upload unapproved seven-state interactive review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: seven-state-interactive-review-not-for-publication
+          path: |
+            seven-states-unapproved.json
+            seven-state-freshness-audit.json
+            seven-state-reconciliation-audit.json
+            seven-state-interactive-review/
+          if-no-files-found: ignore
+          retention-days: 7
