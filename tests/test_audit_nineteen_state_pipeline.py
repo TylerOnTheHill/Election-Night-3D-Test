@@ -34,6 +34,28 @@ class UnifiedPipelineTests(unittest.TestCase):
         r["states"].pop()
         with self.assertRaisesRegex(ValueError,"19"):
             audit(r,d)
+    def test_reject_unstaged_state_with_county_subtotal(self):
+        r,d=fixtures()
+        next(x for x in r["states"] if x["state"]=="TX")["county_staged"]=False
+        with self.assertRaisesRegex(ValueError,"Expected staged"):
+            audit(r,d)
+
+    def test_reject_malformed_staged_ballots(self):
+        for invalid in (None, -1, True, "100"):
+            with self.subTest(invalid=invalid):
+                r,d=fixtures()
+                next(x for x in r["states"] if x["state"]=="TX")["county_ballots"]=invalid
+                with self.assertRaisesRegex(ValueError,"subtotal"):
+                    audit(r,d)
+
+    def test_reject_malformed_reported_counties(self):
+        for invalid in (None, 0, -1, True, "1"):
+            with self.subTest(invalid=invalid):
+                r,d=fixtures()
+                next(x for x in r["states"] if x["state"]=="TX")["county_reported"]=invalid
+                with self.assertRaisesRegex(ValueError,"reported county"):
+                    audit(r,d)
+
     def test_reject_unapproved_state_promoted(self):
         r,d=fixtures()
         r["states"][0]["county_publication_approved"]=True
