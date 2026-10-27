@@ -1,4 +1,4 @@
-name: Validate eight-state interactive county review (v7.2)
+name: Validate all 19 battleground states (v7.2)
 on:
   workflow_dispatch:
   push:
@@ -12,19 +12,22 @@ on:
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
-      - 'scripts/stage_georgia_counties.py'
+      - 'scripts/audit_remaining_watchlist_county_sources.py'
+      - 'tests/test_audit_remaining_watchlist_county_sources.py'
+      - 'scripts/validate_official_county_source_leads.py'
+      - 'data/sources/remaining-watchlist-official-source-leads.json'
       - 'tests/test_combine_county_candidates.py'
       - 'tests/test_watchlist_interactive_review_browser.py'
       - 'scripts/audit_watchlist_county_reconciliation.py'
       - 'tests/test_audit_watchlist_county_reconciliation.py'
       - '.github/workflows/stage-seven-state-counties.yml'
 concurrency:
-  group: eight-state-county-review-${{ github.ref }}
+  group: nineteen-state-county-review-${{ github.ref }}
   cancel-in-progress: true
 permissions:
   contents: read
 jobs:
-  eight-state-review:
+  nineteen-state-review:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +44,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
       - name: Test reconciliation classifications
         run: python -m unittest discover -s tests -p "test_audit_watchlist_county_reconciliation.py" -v
+      - name: Test concurrent discovery of the remaining 11 states
+        run: python -m unittest discover -s tests -p 'test_audit_remaining_watchlist_county_sources.py' -v
+      - name: Discover all 11 remaining county feeds in parallel
+        run: python scripts/audit_remaining_watchlist_county_sources.py --output eleven-state-discovery-unapproved.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -67,6 +74,8 @@ jobs:
       - name: Build single 19-state readiness report
         run: |
           python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --output nineteen-state-readiness-unapproved.json
+      - name: Audit all 19 states have explicit county coverage status
+        run: python scripts/audit_nineteen_state_pipeline.py --readiness nineteen-state-readiness-unapproved.json --discovery eleven-state-discovery-unapproved.json --output nineteen-state-coverage-audit.json
       - name: Build watermarked eight-state interactive dashboard
         run: python scripts/build_local_battleground_preview.py --candidate eight-states-unapproved.json --output eight-state-interactive-review
       - name: Install Chromium
@@ -85,6 +94,8 @@ jobs:
           name: eight-state-interactive-review-not-for-publication
           path: |
             nineteen-state-readiness-unapproved.json
+            eleven-state-discovery-unapproved.json
+            nineteen-state-coverage-audit.json
             eight-states-unapproved.json
             eight-state-freshness-audit.json
             eight-state-reconciliation-audit.json
