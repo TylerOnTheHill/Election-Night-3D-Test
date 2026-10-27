@@ -34,8 +34,10 @@ def validate(candidate):
         if state.get("total_basis") != "sum_of_reported_counties":
             raise ValueError(code + ": incorrect total basis")
         if not all(isinstance(state.get(k), str) and state[k].strip() for k in
-                   ("provider", "credit", "census_geography_source", "census_geography_url", "statewide_cutoff")):
+                   ("provider", "credit", "census_geography_source", "census_geography_url")):
             raise ValueError(code + ": missing source provenance")
+        if state.get("statewide_cutoff") is not None and (not isinstance(state["statewide_cutoff"], str) or not state["statewide_cutoff"].strip()):
+            raise ValueError(code + ": invalid provided reporting cutoff")
         if state.get("provider_statewide_total") is not None and (type(state["provider_statewide_total"]) is not int or state["provider_statewide_total"] < 0):
             raise ValueError(code + ": invalid provider statewide total")
         seen = set()
