@@ -128,7 +128,8 @@ try:
             lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(approved)))
         automatic.goto("http://127.0.0.1:8766/battleground.html?state=NC",wait_until="domcontentloaded")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===100",timeout=30000)
-        automatic.wait_for_function("document.querySelector('#county-preview-map').dataset.county3d==='ready'",timeout=30000)
+        automatic.wait_for_function("['ready','fallback'].includes(document.querySelector('#county-preview-map').dataset.county3d)",timeout=45000)
+        assert automatic.locator("#county-preview-map").get_attribute("data-county3d")=="ready",automatic.locator("#county-preview-map").get_attribute("data-county3d-error")
         assert automatic.locator("#county-preview-map canvas.county-3d-canvas").count()==1
         assert automatic.locator("#county-preview-map").get_attribute("data-county-meshes")=="100"
         nc_first=approved["states"]["NC"]["counties"][0]
@@ -158,7 +159,8 @@ try:
             lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(partial)))
         partial_page.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
         partial_page.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
-        partial_page.wait_for_function("document.querySelector('#county-preview-map').dataset.reportedMeshes==='150'",timeout=30000)
+        partial_page.wait_for_function("document.querySelector('#county-preview-map').dataset.reportedMeshes==='150' || document.querySelector('#county-preview-map').dataset.county3d==='fallback'",timeout=45000)
+        assert partial_page.locator("#county-preview-map").get_attribute("data-county3d")=="ready",partial_page.locator("#county-preview-map").get_attribute("data-county3d-error")
         assert partial_page.locator("#county-preview-map").get_attribute("data-county-meshes")=="254"
         assert "Partially reported" in partial_page.locator("#county-preview-status").inner_text()
         assert "150 of 254" in partial_page.locator("#county-preview-status").inner_text()
