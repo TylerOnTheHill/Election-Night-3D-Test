@@ -33,6 +33,23 @@ try:
             assert page.locator("#state-count").inner_text()=="19"
             assert page.locator("#ehq-national-screen .overview > #ehq-state-table").count()==1
             assert page.locator("#ehq-national-screen .overview > .map-panel").count()==1
+            # Verify the approved charcoal theme is actually rendered, not merely declared in CSS.
+            surfaces=page.evaluate("""() => {
+                const rgb=selector=>getComputedStyle(document.querySelector(selector)).backgroundColor;
+                return [rgb('body'),rgb('.ehq-metrics > .card'),rgb('.ehq-watch')];
+            }""")
+            for color in surfaces:
+                values=[int(x.strip()) for x in color.removeprefix('rgb(').removesuffix(')').split(',')]
+                assert max(values)-min(values)<=8,(color,surfaces)
+            if width==1440:
+                bounds=page.evaluate("""() => {
+                    const box=s=>document.querySelector(s).getBoundingClientRect();
+                    const map=box('#ehq-national-screen .overview > .map-panel');
+                    const watch=box('#ehq-state-table');
+                    return {mapRight:map.right,watchLeft:watch.left,mapTop:map.top,watchTop:watch.top};
+                }""")
+                assert bounds['mapRight']<=bounds['watchLeft']+2,bounds
+                assert abs(bounds['mapTop']-bounds['watchTop'])<12,bounds
             page.get_by_role("tab",name="State explorer").click()
             page.locator("#explorer-state").select_option("FL")
             assert "Florida" in page.locator("#detail-name").inner_text()
