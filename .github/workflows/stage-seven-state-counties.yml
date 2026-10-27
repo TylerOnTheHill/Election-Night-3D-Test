@@ -14,6 +14,7 @@ on:
       - 'scripts/stage_uf_county_review.py'
       - 'scripts/stage_alaska_official_statewide.py'
       - 'scripts/stage_maine_aggregated_counties.py'
+      - 'scripts/stage_new_hampshire_source_status.py'
       - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
       - 'tests/test_stage_uf_county_review.py'
@@ -82,6 +83,8 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_stage_maine_aggregated_counties.py' -v
           python scripts/stage_maine_aggregated_counties.py --output maine-county-review.json
+      - name: Record New Hampshire official county source availability
+        run: python scripts/stage_new_hampshire_source_status.py --output new-hampshire-county-status.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -138,6 +141,7 @@ jobs:
             uf-eleven-county-source-review.json
             alaska-official-statewide-review.json
             maine-county-review.json
+            new-hampshire-county-status.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
             nineteen-state-coverage-audit.json
