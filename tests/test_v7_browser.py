@@ -21,7 +21,7 @@ with sync_playwright() as p:
     try:
         page.wait_for_function("document.querySelector('#details').textContent.includes('46 states reporting')",timeout=20000)
     except Exception:
-        print("DIAGNOSTIC details:",repr(page.locator("#details").inner_text()[:2000]))
+        print("DIAGNOSTIC details:",repr(page.locator("#details").text_content()[:2000]))
         print("DIAGNOSTIC body classes:",page.locator("body").get_attribute("class"))
         print("DIAGNOSTIC console errors:",errors)
         page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
