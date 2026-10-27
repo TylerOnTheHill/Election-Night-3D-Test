@@ -65,6 +65,30 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(result["reporting_label"], "Partially reported")
         self.assertEqual(result["total"], 150)
 
+    def test_reject_wrong_state_fips(self):
+        p = Path(self.temp.name, "TX.json")
+        d = json.loads(p.read_text())
+        d["counties"][0]["fips"] = "37001"
+        p.write_text(json.dumps(d))
+        with self.assertRaises(ValueError):
+            build(self.temp.name)
+
+    def test_reject_false_full_coverage_claim(self):
+        p = Path(self.temp.name, "TX.json")
+        d = json.loads(p.read_text())
+        d["counties"] = d["counties"][:150]
+        p.write_text(json.dumps(d))
+        with self.assertRaises(ValueError):
+            build(self.temp.name)
+
+    def test_reject_wrong_geographic_count(self):
+        p = Path(self.temp.name, "NC.json")
+        d = json.loads(p.read_text())
+        d["geographic_count"] = 99
+        p.write_text(json.dumps(d))
+        with self.assertRaises(ValueError):
+            build(self.temp.name)
+
     def test_reject_invalid_county_total(self):
         p = Path(self.temp.name, "NC.json")
         d = json.loads(p.read_text())
