@@ -41,6 +41,7 @@ try:
                 assert page.locator("#detail-source-link").get_attribute("href")==by_code["FL"]["source_url"]
             if "FL" in by_code:
                 assert page.locator("#detail-total").inner_text()==f"{by_code['FL']['total']:,}"
+            page.get_by_role("tab",name="National overview").click()
             page.locator("#search").fill("New Hampshire")
             assert page.locator("#rows tr").count()==1
             assert "Not offered" in page.locator("#rows tr").inner_text()
@@ -60,6 +61,8 @@ try:
             assert "Reporting cutoff" in content and "Source URL" in content
             assert not errors,errors
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
+            page.get_by_role("tab",name="State explorer").click()
+            page.screenshot(path=f"/tmp/electionhq-state-explorer-{width}.png",full_page=True)
             page.close()
         deep=browser.new_page()
         deep.goto("http://127.0.0.1:8766/battleground.html?state=NH",wait_until="domcontentloaded")
