@@ -34,11 +34,15 @@ with sync_playwright() as p:
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
     assert not page.locator(".ev-counties").is_visible()
     assert not page.locator(".ev-gradient").is_visible()
+    page.wait_for_function("document.querySelector('#ev-total').textContent === '29,398,708'",timeout=15000)
+    assert "Nationwide early ballots" in page.locator(".early-stats").text_content()
     # Select Florida using the same search control a visitor uses.
     florida=next(row for row in snapshot["states"] if row["state_name"]=="Florida")
     page.locator("#search").fill("Florida")
     page.locator("#search").press("Enter")
     page.wait_for_function("document.querySelector('#details').textContent.includes('Florida')",timeout=15000)
+    page.wait_for_function("document.querySelector('#ev-total').textContent === '3,142,750'",timeout=15000)
+    assert "Mail ballots" in page.locator(".early-stats").text_content()
     state_text=page.locator("#details").text_content()
     assert f"{florida['total']:,}" in state_text,("Florida ballot count missing",state_text[:1500])
     assert "Party registration, not candidate preference." in state_text or florida.get("dem") is None
@@ -53,6 +57,7 @@ with sync_playwright() as p:
     page.locator("#national").click()
     page.wait_for_function("document.querySelector('#state-name').textContent==='United States' && document.querySelector('#loading').style.display==='none'",timeout=45000)
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
+    page.wait_for_function("document.querySelector('#ev-total').textContent === '29,398,708'",timeout=15000)
     # Texas county navigation should restore its county-specific dashboard.
     page.locator("#search").fill("Texas")
     page.locator("#search").press("Enter")
@@ -60,6 +65,7 @@ with sync_playwright() as p:
     page.wait_for_function("document.querySelector('#state-name').textContent==='Texas' && document.querySelector('#loading').style.display==='none'",timeout=45000)
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('nontexas-early')")
     assert page.locator(".ev-counties").is_visible()
+    assert "Texas" in page.locator(".early-heading").text_content()
     page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
     page.get_by_role("tab",name="Election Night").click()
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('early')")
