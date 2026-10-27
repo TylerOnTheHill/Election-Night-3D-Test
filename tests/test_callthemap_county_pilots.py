@@ -38,6 +38,14 @@ class PilotTests(unittest.TestCase):
     def test_rejects_missing_source(self):
         f=fixture();f["counties"][0]["source_url"]="http://example.gov"
         with self.assertRaises(ValueError):validate("TX",f)
+    def test_missing_county_cutoff_does_not_discard_verified_count(self):
+        f=fixture();f["counties"][0]["file_as_of"]=None
+        r=validate("TX",f)
+        self.assertEqual(r["county_sum"],15)
+        self.assertIsNone(r["counties"][0]["file_as_of"])
+    def test_rejects_invalid_supplied_cutoff(self):
+        f=fixture();f["counties"][0]["file_as_of"]="not-a-date"
+        with self.assertRaises(ValueError):validate("TX",f)
     def test_north_carolina(self):
         self.assertEqual(validate("NC",fixture("NC"))["state"],"NC")
 
