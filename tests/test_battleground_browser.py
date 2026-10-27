@@ -114,6 +114,26 @@ try:
         assert public.locator("a[href='./county-review.html']").count()==0
         assert "Statewide" in public.locator("#county-preview-status").inner_text() or "County" in public.locator("#county-preview-status").inner_text()
         public.close()
+        # Synthetic approved-feed fixture exercises automatic loading, not a user upload.
+        # These are intentionally fabricated test counts and never checked into the public feed.
+        approved=json.loads(json.dumps(fixture))
+        approved["publication_approved"]=True
+        for state in approved["states"].values():
+            state["status"]="published"
+            state["total_basis"]="sum_of_complete_county_reports"
+            state["credit"]="Synthetic test"
+        automatic=browser.new_page()
+        automatic.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(approved)))
+        automatic.goto("http://127.0.0.1:8766/battleground.html?state=NC",wait_until="domcontentloaded")
+        automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===100",timeout=30000)
+        assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
+        assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
+        assert automatic.locator("input[type=file]").count()==0
+        automatic.locator("#battleground-map path[data-code='TX']").focus()
+        automatic.keyboard.press("Enter")
+        automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
+        automatic.close()
         browser.close()
 finally:
     server.shutdown()
