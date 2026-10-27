@@ -131,12 +131,20 @@ try:
         automatic.wait_for_function("document.querySelector('#county-preview-map').dataset.county3d==='ready'",timeout=30000)
         assert automatic.locator("#county-preview-map canvas.county-3d-canvas").count()==1
         assert automatic.locator("#county-preview-map").get_attribute("data-county-meshes")=="100"
+        nc_first=approved["states"]["NC"]["counties"][0]
+        automatic.locator(f"#county-preview-rows tr[data-fips='{nc_first['fips']}']").click()
+        assert nc_first["name"] in automatic.locator("#county-selected-detail").inner_text()
+        assert automatic.locator("#county-preview-map").evaluate(
+            "(host) => !!host.querySelector('canvas.county-3d-canvas')"
+        )
+        assert automatic.locator(f"#county-preview-rows tr[data-fips='{nc_first['fips']}']").get_attribute("class")=="selected-row"
         assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
         assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
         assert automatic.locator("input[type=file]").count()==0
         automatic.locator("#explorer-state").select_option("TX")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         automatic.wait_for_function("document.querySelector('#county-preview-map').dataset.countyMeshes==='254'",timeout=30000)
+        assert automatic.locator("#county-preview-map canvas.county-3d-canvas").count()==1
         automatic.close()
         # Partial TX feed: all geographic shapes remain; missing counties stay gray.
         partial=json.loads(json.dumps(approved))
