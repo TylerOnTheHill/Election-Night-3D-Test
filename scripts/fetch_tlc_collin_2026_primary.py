@@ -18,7 +18,7 @@ def convert_records(records):
     features=[]
     seen=set()
     for record,geo in records:
-        county=str(record.get("FIPS","")).strip()
+        county=str(record.get("FIPS",record.get("CNTY",""))).strip()
         if county not in (FIPS,"085","85"):
             continue
         raw=record.get("PREC")
@@ -61,17 +61,35 @@ def main():
             if len(candidates)!=1:
                 raise ValueError("Expected one shapefile in official archive")
             stem=candidates[0][:-4]
-            for ext in (".shp",".shx",".dbf"):
+            for ext in (".shp",".shx",".dbf",".prj"):
                 match=next((n for n in names if n.lower()==(stem+ext).lower()),None)
                 if match is None:raise ValueError("Missing shapefile component "+ext)
                 Path(temp,Path(match).name).write_bytes(z.read(match))
             base=Path(temp,Path(stem).name)
             reader=shapefile.Reader(str(base),encoding="utf-8")
             fields=[x[0] for x in reader.fields[1:]]
-            if not {"FIPS","PREC"}.issubset(fields):
+            if "PREC" not in fields or not ({"FIPS","CNTY"} & set(fields)):
                 raise ValueError("Unexpected TLC fields: "+str(fields))
-            records=((dict(zip(fields,sr.record)),sr.shape.__geo_interface__) for sr in reader.iterShapeRecords())
-            result=convert_records(records)
+            try:
+                from pyproj import CRS, Transformer
+            except ImportError as e:
+                raise SystemExit("Install pyproj for CRS conversion") from e
+            crs=CRS.from_wkt(base.with_suffix(".prj").read_text())
+            transformer=Transformer.from_crs(crs,"EPSG:4326",always_xy=True)
+            def transform_coords(coords):
+                if isinstance(coords[0],(float,int)):
+                    x,y=transformer.transform(coords[0],coords[1])
+                    return [x,y]
+                return [transform_coords(c) for c in coords]
+            def records():
+                for sr in reader.iterShapeRecords():
+                    props=dict(zip(fields,sr.record))
+                    if str(props.get("FIPS",props.get("CNTY",""))).strip() not in (FIPS,"085","85"):
+                        continue
+                    geom=sr.shape.__geo_interface__
+                    geom={"type":geom["type"],"coordinates":transform_coords(geom["coordinates"])}
+                    yield props,geom
+            result=convert_records(records())
     Path(args.output).write_text(json.dumps(result,separators=(",",":"))+"\n")
     report={"schema":"electionhq-tlc-2026-primary-geometry-report-v1",
             "status":"staging_only_primary_boundaries_not_general_verified",
