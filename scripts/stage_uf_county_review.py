@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""Discover UF Election Lab 2026 county observations across 11 states in parallel.
+
+UF Election Lab data is CC BY-NC-ND 4.0. This output is a restricted
+internal source-review artifact; do not redistribute its data or publish it.
+County measures are NOT additive unless their definitions explicitly permit it.
+"""
+import argparse
+import csv
+import io
+import json
+import urllib.error
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from pathlib import Path
+from audit_remaining_watchlist_county_sources import STATES
+
+BASE = "https://election.lab.ufl.edu/data-downloads/earlyvote/2026/"
+CREDIT = "University of Florida Election Lab (2026 early vote; CC BY-NC-ND 4.0)"
+
+def parse(code, raw):
+    rows = list(csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))))
+    if not rows:
+        return {"state":code, "status":"no_rows", "rows":0, "columns":[]}
+    columns = list(rows[0])
+    county_key = next((c for c in ("county","County","COUNTY") if c in columns), None)
+    if not county_key:
+        return {"state":code,"status":"county_column_missing","rows":len(rows),"columns":columns}
+    # Use only explicitly named cumulative cast-ballot metrics. Never add
+    # returned mail and in-person when 'voted_total' already includes both.
+    candidates = ("voted_total", "voted", "accept_total", "accepted_total")
+    metric = next((m for m in candidates if m in columns), None)
+    if metric is None:
+        return {"state":code,"status":"metric_mapping_required","rows":len(rows),
+                "columns":columns,"sample_county_names":[r.get(county_key) for r in rows[:4]]}
+    observations = []
+    for row in rows:
+        name = (row.get(county_key) or "").strip()
+        value = (row.get(metric) or "").replace(",","").strip()
+        if not name or value in ("", "NA", "N/A", "-"):
+            continue
+        if not value.isdigit():
+            raise ValueError(code+": invalid county ballot metric for "+name)
+        observations.append({"county":name,"ballots":int(value)})
+    return {"state":code,"status":"observations_for_review" if observations else "no_observed_totals",
+            "rows":len(rows),"columns":columns,"metric":metric,
+            "observations":observations,"source_url":BASE+code+"_county.csv",
+            "credit":CREDIT,"license":"CC BY-NC-ND 4.0",
+            "publication_approved":False}
+
+def main():
+    p=argparse.ArgumentParser()
+    p.add_argument("--input-dir",type=Path)
+    p.add_argument("--output",type=Path,default=Path("uf-eleven-county-source-review.json"))
+    a=p.parse_args()
+    if a.output.resolve().is_relative_to((Path.cwd()/"data/early-vote").resolve()):
+        raise ValueError("Internal source review cannot be a public feed")
+    def fetch(code):
+        if a.input_dir:
+            return (a.input_dir/(code+"_county.csv")).read_bytes()
+        req=urllib.request.Request(BASE+code+"_county.csv",headers={"User-Agent":"ElectionHQ-source-review/1.0"})
+        with urllib.request.urlopen(req,timeout=35) as response:
+            return response.read(8_000_001)
+    results={}
+    with ThreadPoolExecutor(max_workers=11) as pool:
+        jobs={pool.submit(fetch,code):code for code in STATES}
+        for future in as_completed(jobs):
+            code=jobs[future]
+            try:
+                raw=future.result()
+                if len(raw)>8_000_000:
+                    raise ValueError("File exceeds review size limit")
+                results[code]=parse(code,raw)
+            except (OSError,ValueError,UnicodeError) as exc:
+                results[code]={"state":code,"status":"source_unavailable_or_invalid",
+                               "reason":str(exc),"publication_approved":False}
+    output={"schema":"electionhq-uf-eleven-county-source-review-v1",
+            "license":"CC BY-NC-ND 4.0","redistribution_authorized":False,
+            "publication_approved":False,"states":dict(sorted(results.items()))}
+    a.output.write_text(json.dumps(output,indent=2)+"\n")
+    print("UF source review:",{code:row["status"] for code,row in sorted(results.items())})
+
+if __name__=="__main__":
+    main()
