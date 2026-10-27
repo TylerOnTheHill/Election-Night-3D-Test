@@ -1,0 +1,45 @@
+name: Probe Call the Map Florida county feed (v7.2 staging)
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/reconcile_callthemap_florida.py'
+      - '.github/workflows/probe-callthemap-florida.yml'
+      - 'data/early-vote/FL.json'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download provider data and inspect shape without publishing
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          url = 'https://www.callthemap.com/early-vote/data/FL.json'
+          req = urllib.request.Request(url, headers={'User-Agent':'ElectionHQ-staging-probe/1.0'})
+          with urllib.request.urlopen(req, timeout=30) as response:
+              data=json.load(response)
+          print('Top-level fields:', sorted(data))
+          print('County count:', len(data.get('counties', [])) if isinstance(data.get('counties'),list) else 'not a list')
+          print('Summary fields:', sorted(data.get('summary', {})) if isinstance(data.get('summary'),dict) else 'not a dict')
+          if isinstance(data.get('counties'),list) and data['counties']:
+              print('County fields:', sorted(data['counties'][0]))
+          print('Schema:', data.get('schema'))
+          with open('florida-ctm-staging-input.json','w') as out: json.dump(data,out)
+          PY
+      - name: Validate and reconcile against official snapshot
+        run: python scripts/reconcile_callthemap_florida.py --feed florida-ctm-staging-input.json --output florida-ctm-staging-report.json
+      - name: Upload staging reconciliation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: florida-ctm-reconciliation-probe
+          path: florida-ctm-staging-report.json
+          if-no-files-found: ignore
+          retention-days: 7
