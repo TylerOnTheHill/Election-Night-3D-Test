@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from build_county_preview import build
+from build_county_preview import build, build_publication_candidate
 
 class PreviewTests(unittest.TestCase):
     def setUp(self):
@@ -29,6 +29,12 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(len(preview["states"]["TX"]["counties"]), 254)
         self.assertEqual(len(preview["states"]["NC"]["counties"]), 100)
         self.assertIn("registration", preview["party_counts_mean"])
+    def test_candidate_requires_separate_publication_approval(self):
+        candidate = build_publication_candidate(self.temp.name)
+        self.assertIs(candidate["publication_approved"], False)
+        self.assertIs(candidate["review_required"], True)
+        self.assertEqual(candidate["states"]["TX"]["status"], "candidate_pending_publication_approval")
+        self.assertEqual(candidate["states"]["NC"]["total"], 100)
     def test_reject_unverified(self):
         p = Path(self.temp.name, "TX.json")
         d = json.loads(p.read_text())
