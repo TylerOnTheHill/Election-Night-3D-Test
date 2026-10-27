@@ -1,0 +1,35 @@
+name: Refresh Florida county aggregates (v7.2 staging)
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 13,16,19,22 * * *'
+permissions:
+  contents: read
+jobs:
+  validate-florida:
+    runs-on: ubuntu-latest
+    if: ${{ vars.FL_EARLY_TSV_URL != '' && vars.FL_RETURNED_TSV_URL != '' && vars.FL_OUTSTANDING_TSV_URL != '' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch and validate official Florida aggregate files
+        env:
+          FL_EARLY_TSV_URL: ${{ vars.FL_EARLY_TSV_URL }}
+          FL_RETURNED_TSV_URL: ${{ vars.FL_RETURNED_TSV_URL }}
+          FL_OUTSTANDING_TSV_URL: ${{ vars.FL_OUTSTANDING_TSV_URL }}
+        run: |
+          python scripts/fetch_florida_aggregates.py \
+            --early-url "$FL_EARLY_TSV_URL" \
+            --returned-url "$FL_RETURNED_TSV_URL" \
+            --outstanding-url "$FL_OUTSTANDING_TSV_URL" \
+            --output florida-latest.json
+      - name: Upload validated staging snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: florida-validated-snapshot
+          path: florida-latest.json
+          retention-days: 14
