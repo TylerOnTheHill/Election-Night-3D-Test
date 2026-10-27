@@ -1,0 +1,31 @@
+name: Stage TX and NC Call the Map county pilots (v7.2)
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/stage_callthemap_county_pilots.py'
+      - 'tests/test_callthemap_county_pilots.py'
+      - '.github/workflows/stage-callthemap-county-pilots.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  stage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run county validation tests
+        run: python -m unittest discover -s tests -p 'test_callthemap_county_pilots.py' -v
+      - name: Download, validate, and stage real TX/NC county data
+        run: python scripts/stage_callthemap_county_pilots.py --output-dir staging-county-pilots
+      - name: Upload staging-only county records
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tx-nc-county-pilot-staging
+          path: staging-county-pilots/
+          if-no-files-found: ignore
+          retention-days: 7
