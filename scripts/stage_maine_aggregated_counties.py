@@ -52,7 +52,10 @@ def aggregate(ballots, units):
         totals[crosswalk[key]]+=int(raw)
         count+=1
     if not count:
-        raise ValueError("No 2026 general-election Maine absentee observations")
+        return {"state":"ME","election":ELECTION,"status":"no_2026_general_election_rows",
+                "source_url":SOURCE,"geography_url":UNITS,"county_ballots":None,
+                "county_count":0,"reporting_label":"Not reported",
+                "publication_approved":False}
     return {"state":"ME","election":ELECTION,"source_url":SOURCE,
             "geography_url":UNITS,"credit":"Maine Political Data / Maine Policy Institute (CC BY 4.0)",
             "metric":metric,"reporting_label":"Partially reported",
@@ -80,6 +83,6 @@ def main():
         result={"state":"ME","status":"source_unavailable_or_schema_review_required",
                 "reason":str(exc)[:300],"source_url":SOURCE,"publication_approved":False}
     a.output.write_text(json.dumps(result,indent=2)+chr(10))
-    print("Maine:",result.get("county_count",result["status"] if "status" in result else "unknown"))
+    print("Maine:",result.get("status","observed_counties"),"county_count:",result.get("county_count"))
 if __name__=="__main__":
     main()
