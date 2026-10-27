@@ -92,6 +92,21 @@ jobs:
         run: python scripts/stage_ctm_ten_state_statewide.py --output ten-state-statewide-observations.json
       - name: Stage 2026 Michigan and Ohio actual county ballot aggregates
         run: python scripts/stage_michigan_ohio_verified_counties.py --output michigan-ohio-county-candidates.json
+      - name: Assert Michigan Ohio county artifact integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("michigan-ohio-county-candidates.json").read_text())["states"]
+          for state,expected in (("MI",83),("OH",88)):
+            rows=d[state]["counties"]
+            assert len(rows)==expected
+            assert len({r["fips"] for r in rows})==expected
+            assert sum(r["total"] for r in rows)==d[state]["total"]
+            assert all(r["fips"].startswith({"MI":"26","OH":"39"}[state]) for r in rows)
+          assert d["OH"]["total"]==d["OH"]["returned_total"]+d["OH"]["in_person_total"]
+          print("Michigan and Ohio: 171 unique county FIPS and reconciled subtotals")
+          PY
       - name: Retrieve real county tables for ten states concurrently
         run: python scripts/stage_public_county_tables_ten_states.py --output ten-state-provider-county-tables.json
       - name: Reconcile ten states county-first against available statewide figures
