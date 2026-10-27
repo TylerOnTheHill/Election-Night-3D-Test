@@ -4,6 +4,8 @@ on:
     branches: [feature/v7-2-national-county-data]
     paths:
       - 'data/early-vote/US.json'
+      - 'data/early-vote/public-source-fallbacks.json'
+      - 'scripts/validate_public_source_fallbacks.py'
       - 'scripts/validate_national_early_vote.py'
       - 'tests/test_validate_national_early_vote.py'
       - '.github/workflows/validate-national-early-vote.yml'
@@ -22,6 +24,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_validate_national_early_vote.py' -v
       - name: Validate actual national feed and report provenance
         run: python scripts/validate_national_early_vote.py --report /tmp/national-source-audit.json
+      - name: Validate independently sourced fallback observations
+        run: python scripts/validate_public_source_fallbacks.py
       - name: Upload audit report
         uses: actions/upload-artifact@v4
         with:
