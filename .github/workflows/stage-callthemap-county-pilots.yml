@@ -19,6 +19,8 @@ on:
       - 'tests/test_collin_2026_geometry_manifest.py'
       - 'tests/test_collin_precinct_integration.py'
       - 'tests/test_county_preview.py'
+      - 'scripts/validate_county_publication_candidate.py'
+      - 'tests/test_county_publication_candidate.py'
       - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
   workflow_dispatch:
@@ -58,6 +60,10 @@ jobs:
         run: python scripts/build_county_preview.py --input-dir staging-county-pilots-fips --output staging-county-preview.json
       - name: Build TX/NC county publication candidate (approval still required)
         run: python scripts/build_county_preview.py --candidate --input-dir staging-county-pilots-fips --output staging-county-publication-candidate.json
+      - name: Test publication candidate review gate
+        run: python -m unittest discover -s tests -p 'test_county_publication_candidate.py' -v
+      - name: Validate candidate without publishing
+        run: python scripts/validate_county_publication_candidate.py --candidate staging-county-publication-candidate.json
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
