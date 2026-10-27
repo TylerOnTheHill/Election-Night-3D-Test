@@ -7,6 +7,8 @@ on:
       - 'scripts/combine_county_candidates.py'
       - 'tests/test_combine_county_candidates.py'
       - 'tests/test_watchlist_interactive_review_browser.py'
+      - 'scripts/audit_watchlist_county_reconciliation.py'
+      - 'tests/test_audit_watchlist_county_reconciliation.py'
       - '.github/workflows/stage-seven-state-counties.yml'
 permissions:
   contents: read
@@ -22,6 +24,8 @@ jobs:
           python-version: '3.12'
       - name: Verify duplicate-safe combination
         run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
+      - name: Test reconciliation classifications
+        run: python -m unittest discover -s tests -p "test_audit_watchlist_county_reconciliation.py" -v
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
