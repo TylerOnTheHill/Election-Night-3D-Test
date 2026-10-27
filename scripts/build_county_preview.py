@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+"""Build a non-publication county dashboard preview from verified staging files."""
+import argparse
+import json
+from pathlib import Path
+
+EXPECTED = {"TX": 254, "NC": 100}
+def build(files):
+    states = {}
+    for code in EXPECTED:
+        payload = json.loads((Path(files) / (code + ".json")).read_text())
+        if payload.get("state") != code or payload.get("status") != "staging_only_fips_and_coverage_verified":
+            raise ValueError("Unverified staging state: " + code)
+        if payload.get("fips_verified") is not True or payload.get("coverage_complete") is not True:
+            raise ValueError("Missing FIPS or geographic verification: " + code)
+        rows = payload.get("counties")
+        if not isinstance(rows, list) or len(rows) != EXPECTED[code]:
+            raise ValueError("Incomplete county rows: " + code)
+        if any(not isinstance(r.get("fips"), str) or len(r["fips"]) != 5 or
+               not r["fips"].isdigit() for r in rows):
+            raise ValueError("Invalid county FIPS: " + code)
+        if len({r["fips"] for r in rows}) != len(rows):
+            raise ValueError("Duplicate county FIPS: " + code)
+        if sum(r["total"] for r in rows) != payload["statewide_total"]:
+            raise ValueError("County totals no longer reconcile: " + code)
+        states[code] = {
+            "status": "preview_only_not_approved_for_publication",
+            "provider": payload["provider"],
+            "credit": payload["credit"],
+            "provider_checked_at": payload.get("provider_checked_at"),
+            "statewide_cutoff": payload.get("statewide_cutoff"),
+            "census_geography_source": payload["census_geography_source"],
+            "census_geography_url": payload["census_geography_url"],
+            "county_count": len(rows),
+            "total": payload["statewide_total"],
+            "counties": [{"fips": r["fips"], "name": r["county"], "total": r["total"],
+                          "mail": r["mail"], "in_person": r["in_person"],
+                          "registered_dem": r["registered_dem"],
+                          "registered_rep": r["registered_rep"],
+                          "registered_unaffiliated_other": r["registered_unaffiliated_other"],
+                          "file_as_of": r["file_as_of"], "source_url": r["source_url"],
+                          "credit": r["credit"]} for r in rows]
+        }
+    return {"schema": "electionhq-county-preview-v1", "publication_approved": False,
+            "party_counts_mean": "voter registration, never candidate votes",
+            "states": states}
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--input-dir", default="staging-county-pilots-fips")
+    parser.add_argument("--output", default="staging-county-preview.json")
+    args = parser.parse_args()
+    preview = build(args.input_dir)
+    Path(args.output).write_text(json.dumps(preview, indent=2) + "\n")
+    print("Preview-only:", ", ".join(f"{code} {x['county_count']} counties" for code, x in preview["states"].items()))
+
+if __name__ == "__main__":
+    main()
