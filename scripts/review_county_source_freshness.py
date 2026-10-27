@@ -55,7 +55,9 @@ def review(candidate, now=None):
             "county_vs_statewide_cutoff": county_vs_statewide_cutoff,
             "reconciliation_status": ("unavailable" if difference is None else
                 "matching" if difference == 0 else
-                "different_cutoffs" if county_vs_statewide_cutoff != "matching" else
+                "cutoffs_unknown" if county_vs_statewide_cutoff == "unknown" else
+                "different_cutoffs" if county_vs_statewide_cutoff in ("county_older", "county_newer") else
+                "mixed_cutoffs_unreconciled" if county_vs_statewide_cutoff == "mixed" else
                 "same_cutoff_unreconciled"),
             "provider_checked_at": provider_checked.isoformat() if provider_checked else None,
             "statewide_source_cutoff": statewide_cutoff.isoformat() if statewide_cutoff else None,
