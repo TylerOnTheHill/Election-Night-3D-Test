@@ -6,6 +6,7 @@ on:
       - 'scripts/stage_callthemap_county_pilots.py'
       - 'scripts/run_tx_nc_county_pipeline.py'
       - 'tests/test_run_tx_nc_county_pipeline.py'
+      - 'tests/preview_real_county_candidate_browser.py'
       - 'tests/test_callthemap_county_pilots.py'
       - 'scripts/verify_tx_nc_fips.py'
       - 'scripts/build_county_preview.py'
@@ -74,6 +75,12 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_run_tx_nc_county_pipeline.py' -v
       - name: Run integrated real-data county pipeline
         run: python scripts/run_tx_nc_county_pipeline.py --output staging-county-integrated-candidate.json
+      - name: Install headless browser for real-data dashboard preview
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Render actual staged county totals in existing dashboard
+        run: python tests/preview_real_county_candidate_browser.py
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,5 +92,6 @@ jobs:
             staging-county-preview.json
             staging-county-publication-candidate.json
             staging-county-integrated-candidate.json
+            staging-county-browser-preview/
           if-no-files-found: ignore
           retention-days: 7
