@@ -68,6 +68,8 @@ try:
             assert "Texas" in content and "New Hampshire" not in content
             assert "Reporting cutoff" in content and "Source URL" in content
             assert not errors,errors
+            page.locator("#search").fill("")
+            page.locator("#sort").select_option("total")
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
             page.get_by_role("tab",name="State explorer").click()
             page.screenshot(path=f"/tmp/electionhq-state-explorer-{width}.png",full_page=True)
