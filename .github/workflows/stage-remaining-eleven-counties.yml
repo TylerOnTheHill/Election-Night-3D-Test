@@ -26,7 +26,7 @@ jobs:
       - name: Fetch and normalize all eleven states concurrently
         run: python scripts/stage_remaining_eleven_counties.py --output remaining-eleven-unapproved.json --gaps-output remaining-eleven-gaps.json
       - name: Review UF Election Lab county sources across all eleven states
-        run: python scripts/stage_uf_county_review.py --output uf-eleven-county-source-review.json
+        run: python scripts/stage_uf_county_review.py --output uf-eleven-county-source-review.json --candidate-output uf-eleven-fips-candidate-restricted.json
       - name: Upload observed county data and explicit source gaps (never publish)
         if: always()
         uses: actions/upload-artifact@v4
@@ -36,5 +36,6 @@ jobs:
             remaining-eleven-unapproved.json
             remaining-eleven-gaps.json
             uf-eleven-county-source-review.json
+            uf-eleven-fips-candidate-restricted.json
           if-no-files-found: ignore
           retention-days: 7
