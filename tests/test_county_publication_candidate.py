@@ -16,7 +16,7 @@ def candidate():
             "county_count": expected, "geographic_count": expected,
             "coverage_complete": True, "reporting_label": "Fully reported",
             "total_basis": "sum_of_reported_counties", "total": 2 * expected,
-            "provider": "Fixture", "credit": "Fixture",
+            "provider": "Fixture", "credit": "Fixture", "statewide_cutoff": "2026-10-27",
             "census_geography_source": "Fixture", "census_geography_url": "https://example.org"}
     return {"schema": "electionhq-county-preview-v1",
             "publication_approved": False, "review_required": True, "states": states}
@@ -54,6 +54,18 @@ class CandidateGateTests(unittest.TestCase):
     def test_rejects_missing_provenance(self):
         c = candidate()
         c["states"]["TX"]["counties"][0]["source_url"] = ""
+        with self.assertRaises(ValueError):
+            validate(c)
+
+    def test_rejects_missing_statewide_cutoff(self):
+        c = candidate()
+        c["states"]["TX"]["statewide_cutoff"] = None
+        with self.assertRaises(ValueError):
+            validate(c)
+
+    def test_rejects_boolean_total(self):
+        c = candidate()
+        c["states"]["NC"]["total"] = True
         with self.assertRaises(ValueError):
             validate(c)
 
