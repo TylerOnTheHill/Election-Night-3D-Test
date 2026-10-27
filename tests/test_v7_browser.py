@@ -18,9 +18,15 @@ with sync_playwright() as p:
     page.goto("http://127.0.0.1:8765/",wait_until="domcontentloaded")
     page.wait_for_function("window.__mapWebGLReady===true",timeout=90000)
     page.get_by_role("tab",name="Early Vote").click()
-    page.wait_for_function("document.querySelector('#details').textContent.includes('states reporting')",timeout=20000)
-    assert "46 states reporting" in page.locator("#details").inner_text()
-    assert "29,398,708" in page.locator("#details").inner_text()
+    try:
+        page.wait_for_function("document.querySelector('#details').textContent.includes('46 states reporting')",timeout=20000)
+    except Exception:
+        print("DIAGNOSTIC details:",repr(page.locator("#details").inner_text()[:2000]))
+        print("DIAGNOSTIC body classes:",page.locator("body").get_attribute("class"))
+        print("DIAGNOSTIC console errors:",errors)
+        page.screenshot(path="/tmp/electionhq-national.png",full_page=True)
+        raise
+    assert "29,398,708" in page.locator("#details").inner_text(),repr(page.locator("#details").inner_text())
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
     assert not page.locator(".ev-counties").is_visible()
     assert not page.locator(".ev-gradient").is_visible()
