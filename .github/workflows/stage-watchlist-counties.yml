@@ -7,6 +7,7 @@ on:
       - 'scripts/stage_watchlist_counties.py'
       - 'scripts/audit_watchlist_county_reconciliation.py'
       - 'scripts/review_county_source_freshness.py'
+      - 'tests/test_review_county_source_freshness.py'
       - 'tests/test_stage_watchlist_counties.py'
       - 'scripts/validate_county_publication_candidate.py'
       - '.github/workflows/stage-watchlist-counties.yml'
@@ -22,6 +23,8 @@ jobs:
           python-version: '3.12'
       - name: Verify four-state partial reporting behavior
         run: python -m unittest discover -s tests -p 'test_stage_watchlist_counties.py' -v
+      - name: Verify source freshness classification tests
+        run: python -m unittest discover -s tests -p 'test_review_county_source_freshness.py' -v
       - name: Download and stage provider county observations
         run: python scripts/stage_watchlist_counties.py --output watchlist-county-candidate-unapproved.json
       - name: Audit county and statewide reconciliation without publication
