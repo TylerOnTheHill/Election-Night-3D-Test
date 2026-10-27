@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 EXPECTED = {"TX": 254, "NC": 100}
+FIPS_PREFIX = {"TX": "48", "NC": "37"}
 def build(files):
     states = {}
     for code in EXPECTED:
@@ -17,12 +18,16 @@ def build(files):
         if not isinstance(rows, list) or not 0 < len(rows) <= EXPECTED[code]:
             raise ValueError("Incomplete county rows: " + code)
         if any(not isinstance(r.get("fips"), str) or len(r["fips"]) != 5 or
-               not r["fips"].isdigit() for r in rows):
+               not r["fips"].isdigit() or not r["fips"].startswith(FIPS_PREFIX[code]) for r in rows):
             raise ValueError("Invalid county FIPS: " + code)
         if len({r["fips"] for r in rows}) != len(rows):
             raise ValueError("Duplicate county FIPS: " + code)
         if any(not isinstance(r.get("total"), int) or isinstance(r["total"], bool) or r["total"] < 0 for r in rows):
             raise ValueError("Invalid county ballot count: " + code)
+        if payload.get("coverage_complete") is not (len(rows) == EXPECTED[code]):
+            raise ValueError("Inconsistent county coverage flag: " + code)
+        if payload.get("geographic_count") is not None and payload["geographic_count"] != EXPECTED[code]:
+            raise ValueError("Inconsistent geographic county count: " + code)
         county_total = sum(r["total"] for r in rows)
         reported_statewide = payload.get("statewide_total")
         states[code] = {
