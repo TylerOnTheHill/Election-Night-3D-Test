@@ -219,7 +219,7 @@ try:
         no_cutoff.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
         no_cutoff.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         assert "Reporting cutoff unavailable" in no_cutoff.locator("#county-preview-status").inner_text()
-        assert "Partially reported:" in no_cutoff.locator("#county-preview-total").inner_text()
+        assert "County ballots reported:" in no_cutoff.locator("#county-preview-total").inner_text()
         no_cutoff.close()
         browser.close()
 finally:
