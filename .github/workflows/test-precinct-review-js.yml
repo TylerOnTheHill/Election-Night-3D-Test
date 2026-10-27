@@ -1,0 +1,35 @@
+name: Test precinct review JavaScript (v7.2)
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'precinct-review.js'
+      - 'county-review.js'
+      - 'county-dashboard-bridge.js'
+      - '.github/workflows/test-precinct-review-js.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check precinct and county staging scripts parse
+        run: |
+          node --check precinct-review.js
+          node --check county-review.js
+          node --check county-dashboard-bridge.js
+      - name: Verify no direct network or production publishing from local precinct preview
+        run: |
+          node - <<'JS'
+          const fs=require('node:fs');
+          const s=fs.readFileSync('precinct-review.js','utf8');
+          if(/\bfetch\s*\(|\bXMLHttpRequest\b|\blocalStorage\b|\bsendBeacon\s*\(/.test(s))throw Error('Unexpected network or storage in precinct review');
+          if(!s.includes('publication_approved!==false'))throw Error('Missing staging-only guard');
+          if(!s.includes('unmatched.length)throw'))throw Error('Missing unmatched geography guard');
+          console.log('Staging-only precinct preview checks passed');
+          JS
