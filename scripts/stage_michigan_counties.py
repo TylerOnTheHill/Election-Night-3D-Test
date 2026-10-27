@@ -16,7 +16,7 @@ def parse(raw,geo):
     headers=list(rows[0])
     def field(needles):
         found=[x for x in headers if any(n in x.casefold().replace("_"," ") for n in needles)]
-        if len(found)!=1:raise ValueError("Ambiguous Michigan CSV field "+repr(needles)+": "+repr(found))
+        if len(found)!=1:raise ValueError("Ambiguous Michigan CSV field "+repr(needles)+": "+repr(found)+"; actual columns="+repr(headers))
         return found[0]
     county_key=field(["county"])
     total_key=field(["ballots recorded","ballots cast","total ballots","total early"])
