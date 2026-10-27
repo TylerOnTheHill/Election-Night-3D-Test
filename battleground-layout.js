@@ -9,7 +9,7 @@ const shell=node('div','ehq-shell');
 const mast=node('div','ehq-mast','<div><div class="ehq-overline"><span class="ehq-dot"></span> ELECTIONHQ / 2026 MIDTERMS <span class="ehq-overline-sep">/</span> EARLY VOTE INTELLIGENCE</div><h1>Election <span>Intelligence.</span></h1><p>Observed early voting. Verified reporting. A clearer view of the electorate.</p></div><div class="ehq-mast-right"><div>THE OBSERVATION DESK</div><strong>2026</strong><small>Ballots cast, not candidate votes</small></div>');
 const nav=node('div','ehq-nav');nav.setAttribute('role','tablist');nav.setAttribute('aria-label','Dashboard views');
 const nationalBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">◈</span> National overview'),stateBtn=node('button','ehq-nav-btn','<span class="ehq-nav-icon">▦</span> State explorer');
-for(const b of [nationalBtn,stateBtn]){b.type='button';b.setAttribute('role','tab');nav.append(b)}
+for(const [b,label] of [[nationalBtn,'National overview'],[stateBtn,'State explorer']]){b.type='button';b.setAttribute('role','tab');b.setAttribute('aria-label',label);nav.append(b)}
 const national=node('section','ehq-screen');national.id='ehq-national-screen';
 const state=node('section','ehq-screen');state.id='ehq-state-screen';state.hidden=true;
 const summaryHeading=node('div','ehq-section-heading','<div><div class="ehq-kicker">01 / THE NATIONAL PICTURE</div><h2>Early vote dashboard</h2></div><div class="ehq-heading-note">19-STATE WATCHLIST <span class="ehq-dot"></span> SOURCE-REPORTED DATA</div>');
