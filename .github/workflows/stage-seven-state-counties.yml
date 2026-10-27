@@ -20,6 +20,7 @@ on:
       - 'scripts/stage_michigan_counties.py'
       - 'scripts/reconcile_remaining_ten_counties.py'
       - 'scripts/stage_public_county_tables_ten_states.py'
+      - 'scripts/stage_michigan_ohio_verified_counties.py'
       - 'scripts/stage_new_hampshire_source_status.py'
       - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
@@ -89,6 +90,8 @@ jobs:
         run: python scripts/stage_michigan_counties.py --output michigan-unapproved.json || echo "Michigan CSV schema requires review; do not publish"
       - name: Ingest verified credited statewide early-vote totals for remaining ten
         run: python scripts/stage_ctm_ten_state_statewide.py --output ten-state-statewide-observations.json
+      - name: Stage 2026 Michigan and Ohio actual county ballot aggregates
+        run: python scripts/stage_michigan_ohio_verified_counties.py --output michigan-ohio-county-candidates.json
       - name: Retrieve real county tables for ten states concurrently
         run: python scripts/stage_public_county_tables_ten_states.py --output ten-state-provider-county-tables.json
       - name: Reconcile ten states county-first against available statewide figures
@@ -181,6 +184,7 @@ jobs:
             ten-state-statewide-observations.json
             ten-state-county-reconciliation.json
             ten-state-provider-county-tables.json
+            michigan-ohio-county-candidates.json
             new-hampshire-county-status.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
