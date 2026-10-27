@@ -117,7 +117,12 @@ try:
         integrated.wait_for_function("document.querySelectorAll('#county-preview-map svg path').length===254",timeout=30000)
         assert integrated.locator("#county-preview-total").inner_text()==f"State total: {states['TX']['total']:,}*"
         assert "Sum of complete county reports" in integrated.locator("#battleground-county-preview").inner_text()
-        integrated.locator("#battleground-map path[data-code='NC']").click()
+        integrated.locator(f"#county-preview-map path[data-fips='{first['fips']}']").focus()
+        integrated.keyboard.press("Enter")
+        assert first["name"] in integrated.locator("#county-selected-detail").inner_text()
+        assert integrated.locator(f"#county-preview-rows tr[data-fips='{first['fips']}']").get_attribute("class")=="selected-row"
+        integrated.locator("#battleground-map path[data-code='NC']").focus()
+        integrated.keyboard.press("Enter")
         integrated.wait_for_function("document.querySelectorAll('#county-preview-map svg path').length===100",timeout=30000)
         assert integrated.locator("#county-preview-total").inner_text()==f"State total: {states['NC']['total']:,}*"
         integrated.locator("#battleground-map path[data-code='FL']").focus()
