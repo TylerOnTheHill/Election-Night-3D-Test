@@ -1,6 +1,12 @@
 name: Validate Florida daily official county aggregates (v7.2 staging)
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - "scripts/stage_florida_county_candidate.py"
+      - "tests/test_stage_florida_county_candidate.py"
+      - ".github/workflows/stage-florida-aggregates.yml"
   schedule:
     - cron: '30 14 * * *'
 permissions:
