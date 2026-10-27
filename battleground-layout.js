@@ -34,7 +34,7 @@ function switchTab(name){const selected=name==='overview'?summary:name==='map'?c
  // The county renderer observes its host size; keep the map in the visible section.
  if(selected===countyView)window.dispatchEvent(new Event('resize'));
 }
-function switchView(name){const isState=name==='state';national.hidden=isState;state.hidden=!isState;nationalButton.setAttribute('aria-selected',String(!isState));stateButton.setAttribute('aria-selected',String(isState));if(isState)switchTab('overview')}
+function switchView(name){const isState=name==='state';national.hidden=isState;state.hidden=!isState;nationalButton.setAttribute('aria-selected',String(!isState));stateButton.setAttribute('aria-selected',String(isState));if(isState)switchTab('map')}
 nationalButton.addEventListener('click',()=>switchView('national'));stateButton.addEventListener('click',()=>switchView('state'));
 summaryTab.addEventListener('click',()=>switchTab('overview'));countyTab.addEventListener('click',()=>switchTab('map'));tableTab.addEventListener('click',()=>switchTab('table'));
 picker.querySelector('select')?.addEventListener('change',()=>switchView('state'));
