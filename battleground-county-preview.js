@@ -88,5 +88,7 @@ async function loadPublished(){
  }
 }
 window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();});
+// Keep county geography synchronized with the visible state picker even if a separate state detail update is delayed.
+document.getElementById('explorer-state')?.addEventListener('change',e=>{const code=e.target.value?.toUpperCase();if(code&&code!==selected){selected=code;if(preview)render();}});
 loadPublished();
 })();
