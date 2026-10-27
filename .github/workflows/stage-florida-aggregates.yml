@@ -8,6 +8,7 @@ on:
       - "tests/test_stage_florida_county_candidate.py"
       - ".github/workflows/stage-florida-aggregates.yml"
       - "scripts/fetch_florida_aggregates.py"
+      - "scripts/import_florida_tsv.py"
   schedule:
     - cron: '30 14 * * *'
 permissions:
