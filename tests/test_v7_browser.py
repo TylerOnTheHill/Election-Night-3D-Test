@@ -30,7 +30,7 @@ with sync_playwright() as p:
     # is intentionally hidden there, so do not attempt to click it.
     # Verify the national total in the loaded source, and the state coverage in UI.
     assert snapshot["national"]["total"] == 29398708
-    assert "46 states reporting" in page.locator("#details").inner_text(),repr(page.locator("#details").inner_text())
+    assert "46 states reporting" in page.locator("#details").text_content(),repr(page.locator("#details").text_content())
     assert page.locator("body").evaluate("(el)=>el.classList.contains('national-early')")
     assert not page.locator(".ev-counties").is_visible()
     assert not page.locator(".ev-gradient").is_visible()
