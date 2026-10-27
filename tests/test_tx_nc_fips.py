@@ -12,7 +12,7 @@ class CensusCrosswalkTests(unittest.TestCase):
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as z:
             z.writestr("2020_Gazetteer_counties_national.txt",
-                       "USPS\\tGEOID\\tNAME\\nTX\\t48453\\tTravis County\\nNC\\t37183\\tWake County\\n")
+                       "USPS\tGEOID\tNAME\nTX\t48453\tTravis County\nNC\t37183\tWake County\n")
         class Response:
             def __enter__(self): return self
             def __exit__(self, *args): return False
