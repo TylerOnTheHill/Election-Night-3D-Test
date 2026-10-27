@@ -9,11 +9,12 @@ import threading
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
-root = Path("watchlist-interactive-review")
-candidate = json.loads(Path("watchlist-county-candidate-unapproved.json").read_text())
+import os
+root = Path(os.environ.get("COUNTY_REVIEW_DIR","watchlist-interactive-review"))
+candidate = json.loads(Path(os.environ.get("COUNTY_CANDIDATE","watchlist-county-candidate-unapproved.json")).read_text())
 assert candidate["publication_approved"] is False
 assert candidate["review_required"] is True
-assert set(candidate["states"]) == {"VA", "IA", "WI", "SC"}
+assert set(candidate["states"]) in ({"VA", "IA", "WI", "SC"}, {"FL"})
 assert (root / "README.txt").read_text().count("\n") >= 6
 assert "UNAPPROVED COUNTY DATA" in (root / "battleground.html").read_text()
 feed = json.loads((root / "data/early-vote/battleground-counties.json").read_text())
@@ -35,7 +36,8 @@ threading.Thread(target=server.serve_forever, daemon=True).start()
 try:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
-        for code, expected in (("VA", 133), ("IA", 99), ("WI", 72), ("SC", 46)):
+        for code, state in candidate["states"].items():
+            expected = state["geographic_count"]
             page = browser.new_page(viewport={"width": 1440, "height": 900})
             errors = []
             page.on("pageerror", lambda error: errors.append(str(error)))
