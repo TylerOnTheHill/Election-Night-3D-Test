@@ -57,6 +57,25 @@ try:
             assert page.locator("input[type=file]").count() == 0
             assert not errors, (code, errors)
             page.close()
+        # Release regression: exercise the same real seven-state observations on
+        # narrow mobile screens, including state switching and county table.
+        for code, state in candidate["states"].items():
+            page = browser.new_page(viewport={"width":390,"height":844},is_mobile=True,
+                                    has_touch=True)
+            errors=[]
+            page.on("pageerror",lambda error:errors.append(str(error)))
+            page.goto(f"http://127.0.0.1:{server.server_address[1]}/battleground.html?state={code}",
+                      wait_until="domcontentloaded")
+            page.wait_for_function(
+                "(n) => document.querySelectorAll('#county-preview-rows tr').length===n",
+                arg=state["county_count"],timeout=45000)
+            page.wait_for_function(
+                "(n) => document.querySelectorAll('#county-preview-map path').length===n",
+                arg=state["geographic_count"],timeout=45000)
+            assert state["reporting_label"] in page.locator("#county-preview-status").inner_text()
+            assert page.locator("input[type=file]").count()==0
+            assert not errors,(code,errors)
+            page.close()
         browser.close()
 finally:
     server.shutdown()
