@@ -26,6 +26,9 @@ class FloridaTSVTests(unittest.TestCase):
             self.assertEqual(result["coverage"]["counties_reported"], 67)
             self.assertEqual(result["statewide"]["mail_return_rate"], 0.5)
             self.assertEqual(result["counties"][0]["mail_return_rate"], 0.5)
+            self.assertEqual(result["counties"][0]["mail_return_rate_by_registration"]["republican"], 0.5)
+            self.assertIsNone(result["counties"][0]["mail_return_rate_by_registration"]["democrat"])
+            self.assertEqual(result["statewide"]["mail_return_rate_by_registration"]["republican"], 0.5)
 
     def test_rejects_incomplete_counties(self):
         with tempfile.TemporaryDirectory() as d:
