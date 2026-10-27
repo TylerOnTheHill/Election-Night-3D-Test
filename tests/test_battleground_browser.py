@@ -47,11 +47,12 @@ try:
             page.get_by_role("tab",name="National overview").click()
             page.locator("#search").fill("New Hampshire")
             assert page.locator("#rows tr").count()==1
-            assert "Not offered" in page.locator("#rows tr").inner_text()
+            # Compact watchlist intentionally hides method columns; verify the visible state detail instead.
             page.locator("#rows tr").focus()
             page.keyboard.press("Enter")
             page.get_by_role("tab",name="State explorer").click()
             assert "Excuse-required absentee" in page.locator("#detail-description").inner_text()
+            assert "Not offered" in page.locator("#detail-inperson").inner_text()
             page.get_by_role("tab",name="National overview").click()
             page.locator("#search").fill("Texas")
             assert page.locator("#rows tr").count()==1
