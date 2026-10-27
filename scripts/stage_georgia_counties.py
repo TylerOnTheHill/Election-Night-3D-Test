@@ -56,7 +56,8 @@ def stage(doc):
     county_sum=sum(r["total"] for r in counties)
     if county_sum>statewide_total:
         raise ValueError("County totals exceed provider statewide total")
-    matching=len(counties)==EXPECTED and county_sum==statewide_total
+    reconciled=county_sum==statewide_total
+    matching=len(counties)==EXPECTED and reconciled
     return {"schema":"electionhq-county-preview-v1","publication_approved":False,
         "review_required":True,"party_counts_mean":"not provided; no candidate vote inference",
         "states":{"GA":{"status":"candidate_pending_publication_approval",
@@ -67,7 +68,7 @@ def stage(doc):
             "county_count":len(counties),"geographic_count":EXPECTED,
             "coverage_complete":len(counties)==EXPECTED,
             "reporting_label":"Fully reported" if matching else "Partially reported",
-            "statewide_reconciled":matching,"total":county_sum,
+            "statewide_reconciled":reconciled,"total":county_sum,
             "total_basis":"sum_of_reported_counties",
             "provider_statewide_total":statewide_total,
             "county_vs_provider_statewide_difference":county_sum-statewide_total,
