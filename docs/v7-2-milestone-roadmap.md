@@ -36,5 +36,12 @@ Status: active development on `feature/v7-2-national-county-data`. Production `m
 ## Reporting freshness rule (owner correction, 2026-10-27)
 County geographic completeness is NOT a prerequisite for displaying verified early-vote observations. Show partial reporting as it arrives; distinguish reporting coverage from the statewide headline and compare source cutoffs before choosing the headline. Never add county sums to a statewide total. When county coverage is incomplete, label the reporting status **Partially reported** and display the reported/expected county count. Any county sum must remain explicitly identified as a partial county aggregation, not a complete statewide total; do not use “reported-county subtotal” as the user-facing status label. The earlier full-county gate is superseded.
 
+## Engineering checkpoint — national refresh safeguards (2026-10-27)
+- The national refresh now treats every source download as a **replacement snapshot**, never an additive increment.
+- It validates state-specific reporting cutoffs against the previous snapshot and rejects regressions or disappearing reporting states.
+- It writes validated data atomically, preserving the prior snapshot on failure.
+- Regression tests cover newer cutoffs, same-cutoff corrections, stale states, failed refresh preservation, and no double counting; the refresh workflow runs these tests before ingestion.
+- **Verification pending:** The workflow tests must pass before this checkpoint is marked verified. No changes have been deployed to production.
+
 ## Current next action
-Produce an approved-data publication path for TX/NC county feed without changing public UX. Do not mark Milestone 2 complete until the public page automatically renders real county observations from that feed.
+Complete the TX/NC county publication readiness gate and source freshness verification, then expand verified county coverage without waiting for geographic completeness. Keep the owner-approval requirement for public county data. Do not mark Milestone 2 complete until the public page automatically renders approved real county observations.
