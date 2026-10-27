@@ -108,7 +108,7 @@ async function loadNationalEarly(){
   if(data.schema!=='ctm-early-vote-download-v1'||!Array.isArray(data.states))throw Error('Unexpected data schema');
   const next=new Map();
   for(const r of data.states){if(typeof r.state_name!=='string'||!Number.isFinite(Number(r.total))||Number(r.total)<0)continue;next.set(r.state_name,r);}
-  if(next.size<30)throw Error('Incomplete national feed');
+  if(next.size<30||next.size>50)throw Error('Incomplete national feed');
   nationalEarly.clear();for(const [k,v] of next)nationalEarly.set(k,v);
   nationalChecked=data.checked_at||'';
   nationalStatus=`${next.size} states reporting · data checked ${nationalChecked.slice(0,10)}`;
