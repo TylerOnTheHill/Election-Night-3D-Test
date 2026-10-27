@@ -66,13 +66,11 @@ def import_files(early, returned, outstanding):
              "mail_outstanding": (outstanding, "Vote-by-Mail Provided (Not Yet Returned)")}
     tables = {}
     totals = {}
-    times = set()
+    times = {}
     for category, (path, label) in files.items():
         table, total, compiled = read_table(path, label)
         tables[category], totals[category] = table, total
-        times.add(compiled)
-    if len(times) != 1:
-        raise ValueError("Category downloads have different compilation times")
+        times[category] = compiled
     if not (set(tables["voted_early"]) == set(tables["voted_mail"]) == set(tables["mail_outstanding"])):
         raise ValueError("County coverage differs between categories")
     records = []
@@ -104,7 +102,8 @@ def import_files(early, returned, outstanding):
     return {
         "schema": "electionhq-florida-county-aggregate-v1",
         "election_id": "49894", "state_fips": "12", "source_url": SOURCE,
-        "compiled_at_local": next(iter(times)).isoformat(),
+        "compiled_at_local": min(times["voted_early"],times["voted_mail"]).isoformat(),
+        "method_compiled_at_local": {key:value.isoformat() for key,value in times.items()},
         "mail_return_rate_definition": "voted_mail / (voted_mail + mail_outstanding)",
         "statewide": {**totals, "mail_return_rate": round(returned_total / (returned_total + outstanding_total), 6),
                       "mail_return_rate_by_registration": statewide_by_party},
