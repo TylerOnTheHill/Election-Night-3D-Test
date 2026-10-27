@@ -23,6 +23,27 @@ class CountySourceReviewTests(unittest.TestCase):
         self.assertIs(tx["freshness_verified"], False)
         self.assertIs(result["states"]["NC"]["publication_approved"], False)
 
+    def test_unknown_cutoffs_do_not_claim_different_cutoffs(self):
+        doc = candidate()
+        tx = doc["states"]["TX"]
+        tx["statewide_cutoff"] = None
+        tx["provider_statewide_total"] = 800
+        for county in tx["counties"]:
+            county["file_as_of"] = None
+        result = review(doc, NOW)["states"]["TX"]
+        self.assertEqual(result["county_vs_statewide_cutoff"], "unknown")
+        self.assertEqual(result["reconciliation_status"], "cutoffs_unknown")
+
+    def test_mixed_cutoffs_are_not_explained_as_different(self):
+        doc = candidate()
+        tx = doc["states"]["TX"]
+        tx["statewide_cutoff"] = "2026-10-27"
+        tx["provider_statewide_total"] = 800
+        tx["counties"][0]["file_as_of"] = "2026-10-25"
+        result = review(doc, NOW)["states"]["TX"]
+        self.assertEqual(result["county_vs_statewide_cutoff"], "mixed")
+        self.assertEqual(result["reconciliation_status"], "mixed_cutoffs_unreconciled")
+
     def test_reconciliation_difference_is_explicit_not_added(self):
         doc = candidate()
         doc["states"]["TX"]["provider_statewide_total"] = 800
