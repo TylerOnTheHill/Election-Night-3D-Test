@@ -17,7 +17,7 @@ EXPECTED=67
 CATEGORIES={"voted_mail","voted_early"}
 
 def canonical(name):
-    return re.sub(r"[^a-z0-9]","",re.sub(r"\\b(county)\\b","",name.lower()))
+    return re.sub(r"[^a-z0-9]","",re.sub(r"\b(county)\b","",name.lower()))
 
 def from_official_tsv_snapshot(snapshot):
     """Adapt the existing scheduled Florida official TSV pipeline output."""
@@ -41,7 +41,7 @@ def stage(normalized, census_rows):
         raise ValueError("Census NAME/state/county crosswalk required")
     lookup={}
     for name,state,county in census_rows[1:]:
-        if state!="12" or not re.fullmatch(r"\\d{3}",county):
+        if state!="12" or not re.fullmatch(r"\d{3}",county):
             raise ValueError("Invalid Florida Census county GEOID")
         key=canonical(name.split(",",1)[0])
         if key in lookup:
