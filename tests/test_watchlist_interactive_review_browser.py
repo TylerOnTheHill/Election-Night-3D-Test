@@ -14,7 +14,7 @@ candidate = json.loads(Path("watchlist-county-candidate-unapproved.json").read_t
 assert candidate["publication_approved"] is False
 assert candidate["review_required"] is True
 assert set(candidate["states"]) == {"VA", "IA", "WI", "SC"}
-assert (root / "README.txt").read_text().count("\\n") >= 6
+assert (root / "README.txt").read_text().count("\n") >= 6
 assert "UNAPPROVED COUNTY DATA" in (root / "battleground.html").read_text()
 feed = json.loads((root / "data/early-vote/battleground-counties.json").read_text())
 assert feed["publication_approved"] is True  # Local simulation only.
