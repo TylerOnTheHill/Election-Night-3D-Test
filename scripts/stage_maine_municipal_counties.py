@@ -42,6 +42,15 @@ def build(source,units,geo,official):
                 if alias.strip() and county:lookup[norm(alias)].add(county)
     for r in official:
         lookup[norm(r["municipality"])].add(r["county"].removesuffix(" County"))
+    # Verified source exceptions missing from the municipal crosswalks.
+    # Maine Title 30-A §67: Louds Island is in Lincoln County.
+    # Somerset County government unorganized-territories list: Spring Lake.
+    verified_exceptions={"Louds Island Twp":"Lincoln","Spring Lake Twp":"Somerset"}
+    for municipality,county in verified_exceptions.items():
+        key=norm(municipality)
+        if lookup.get(key) and lookup[key]!={county}:
+            raise ValueError("Geographic source conflict for "+municipality)
+        lookup[key].add(county)
     fips={norm(f["properties"]["NAME"]):str(f["id"]).zfill(5) for f in geo["features"] if str(f["id"]).zfill(5).startswith("23")}
     totals=collections.defaultdict(lambda:{"mail":0,"in_person":0})
     unmatched=set();ambiguous={}
