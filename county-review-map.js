@@ -19,6 +19,12 @@ function draw(){
  const lookup=new Map(rows.map(r=>[String(r.fips).padStart(5,'0'),r]));
  const prefix=code==='TX'?'48':'37';
  const shapes=geography.filter(f=>String(f.id).padStart(5,'0').startsWith(prefix));
+ const matched=shapes.filter(f=>lookup.has(String(f.id).padStart(5,'0'))).length;
+ if(shapes.length!==rows.length||matched!==rows.length){
+  host.textContent='County geography did not match the validated FIPS roster. Map withheld; review the table instead.';
+  legend.textContent=code+' · '+matched+' of '+rows.length+' FIPS matched; county map not rendered.';
+  return;
+ }
  const width=850,height=510;
  const max=Math.max(1,...rows.map(r=>r.total));
  const collection={type:'FeatureCollection',features:shapes};
