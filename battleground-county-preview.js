@@ -1,11 +1,13 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
+const COUNTY_STATES={TX:{name:'Texas',fips:'48',count:254},NC:{name:'North Carolina',fips:'37',count:100},FL:{name:'Florida',fips:'12',count:67},VA:{name:'Virginia',fips:'51',count:133},IA:{name:'Iowa',fips:'19',count:99},WI:{name:'Wisconsin',fips:'55',count:72},SC:{name:'South Carolina',fips:'45',count:46}};
 let preview=null,selected=new URLSearchParams(location.search).get('state')?.toUpperCase()||'TX',atlas=null,renderVersion=0;
 function validate(p){
  if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==true)throw Error('County dataset is not approved for publication.');
- for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
-  const s=p.states?.[code],seen=new Set();
-  if(!s||s.status!=='published'||!Array.isArray(s.counties)||s.counties.length<1||s.counties.length>n)throw Error('Incomplete '+code+' published county coverage.');
+ for(const [code,s] of Object.entries(p.states||{})){
+  const config=COUNTY_STATES[code];if(!config)throw Error('Unsupported published county state: '+code);
+  const n=config.count,prefix=config.fips,seen=new Set();
+  if(s.status!=='published'||!Array.isArray(s.counties)||s.counties.length<1||s.counties.length>n)throw Error('Invalid '+code+' published county coverage.');
   if(s.total_basis!=='sum_of_reported_counties'||!Number.isSafeInteger(s.total)||s.total<0||(s.statewide_cutoff!=null&&(typeof s.statewide_cutoff!=='string'||!s.statewide_cutoff.trim()))||!s.provider||!s.credit)throw Error('Missing verified county total provenance: '+code);
   let sum=0;
   for(const r of s.counties){
@@ -27,11 +29,11 @@ async function render(){
  const version=++renderVersion,code=selected;
  const host=$('battleground-county-preview'),status=$('county-preview-status');
  if(!preview)return;
- if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level reporting is currently available for Texas and North Carolina. Select either state to explore.';return;}
+ if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level ballot totals have not yet been published for '+(COUNTY_STATES[code]?.name||'this state')+'.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
  status.textContent=(s.coverage_complete?'Fully reported':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
- $('county-preview-title').textContent=code==='TX'?'Texas counties':'North Carolina counties';
+ $('county-preview-title').textContent=COUNTY_STATES[code].name+' counties';
  $('county-preview-total').textContent='County ballots reported: '+fmt(s.total);
  // County observations are a geographic subset; never present their sum as a statewide total.
  $('county-preview-complete-note').hidden=!s.coverage_complete;
@@ -48,7 +50,7 @@ async function render(){
  map.textContent='Loading county boundaries…';
  try{
   const geo=await getAtlas();if(version!==renderVersion)return;if(!window.d3||!window.topojson)throw Error('Map libraries unavailable');
-  const shapes=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(code==='TX'?'48':'37'));
+  const shapes=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(COUNTY_STATES[code].fips));
   const lookup=new Map(s.counties.map(r=>[r.fips,r]));
   if(shapes.length!==s.geographic_count||s.counties.some(r=>!shapes.some(f=>String(f.id).padStart(5,'0')===r.fips)))throw Error('County boundary coverage mismatch; county table remains available.');
   const w=850,h=510,collection={type:'FeatureCollection',features:shapes};
@@ -80,9 +82,9 @@ function highlight(fips){
 async function renderBoundariesOnly(){
  const version=++renderVersion,code=selected,host=$('battleground-county-preview'),status=$('county-preview-status');
  window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
- if(!['TX','NC'].includes(code)){host.hidden=true;status.textContent='County geography preview is currently available for Texas and North Carolina.';return;}
+ if(!COUNTY_STATES[code]){host.hidden=true;status.textContent='County geography is not yet available for this state.';return;}
  host.hidden=false;
- $('county-preview-title').textContent=code==='TX'?'Texas county geography':'North Carolina county geography';
+ $('county-preview-title').textContent=COUNTY_STATES[code].name+' county geography';
  $('county-preview-total').textContent='County totals awaiting publication';
  $('county-preview-complete-note').hidden=true;
  $('county-preview-rows').replaceChildren();
@@ -93,7 +95,7 @@ async function renderBoundariesOnly(){
  try{
   const geo=await getAtlas();if(version!==renderVersion)return;
   if(!window.topojson||!window.d3)throw Error('County geography libraries unavailable');
-  const prefix=code==='TX'?'48':'37',count=code==='TX'?254:100;
+  const prefix=COUNTY_STATES[code].fips,count=COUNTY_STATES[code].count;
   const features=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(prefix));
   if(features.length!==count)throw Error('County boundary coverage mismatch');
   const w=850,h=510,collection={type:'FeatureCollection',features};
