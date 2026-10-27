@@ -121,7 +121,7 @@ def main():
         with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-county-geography/1.0"}),timeout=30) as response:
             census=json.load(response)
     candidate=stage(normalized,census)
-    Path(args.output).write_text(json.dumps(candidate,indent=2)+"\\n")
+    Path(args.output).write_text(json.dumps(candidate,indent=2)+"\n")
     print("FL staged, not published:",candidate["states"]["FL"]["county_count"],"counties")
 
 if __name__=="__main__":
