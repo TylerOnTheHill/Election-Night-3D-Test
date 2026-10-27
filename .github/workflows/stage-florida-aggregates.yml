@@ -34,6 +34,10 @@ jobs:
           python scripts/stage_florida_county_candidate.py \
             --official-tsv-snapshot florida-latest.json \
             --output florida-county-candidate-unapproved.json
+      - name: Validate Florida candidate without publishing
+        run: python scripts/validate_county_publication_candidate.py --candidate florida-county-candidate-unapproved.json
+      - name: Build local Florida interactive review
+        run: python scripts/build_local_battleground_preview.py --candidate florida-county-candidate-unapproved.json --output florida-interactive-review
       - name: Upload validated staging snapshot
         uses: actions/upload-artifact@v4
         with:
@@ -41,4 +45,5 @@ jobs:
           path: |
             florida-latest.json
             florida-county-candidate-unapproved.json
+            florida-interactive-review/
           retention-days: 14
