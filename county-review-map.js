@@ -35,7 +35,6 @@ function draw(){
   .on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(f)}})
   .attr('fill',f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return r&&Number.isFinite(r.total)?d3.interpolateRgb('#15345d','#268cff')(0.15+0.85*Math.sqrt(r.total/max)):'#222b36'})
   .append('title').text(f=>{const id=String(f.id).padStart(5,'0'),r=lookup.get(id);return r?r.name+': '+r.total.toLocaleString('en-US')+' reported early ballots':'County '+id+': no staged observation'});
- const matched=shapes.filter(f=>lookup.has(String(f.id).padStart(5,'0'))).length;
  legend.textContent=code+' · '+matched+' of '+rows.length+' staged counties matched to boundary FIPS · darker blue = fewer reported ballots, brighter blue = more · staging only';
 }
 function choose(f){const fips=String(f.id).padStart(5,'0');if(!latest||!latest.rows.some(r=>r.fips===fips))return;window.dispatchEvent(new CustomEvent('electionhq:county-map-select',{detail:{fips}}))}
