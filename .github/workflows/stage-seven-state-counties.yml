@@ -9,6 +9,8 @@ on:
       - 'battleground-county-preview.js'
       - 'scripts/import_florida_tsv.py'
       - 'tests/test_florida_blank_compile_date.py'
+      - 'scripts/audit_nineteen_state_pipeline.py'
+      - 'tests/test_audit_nineteen_state_pipeline.py'
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
@@ -44,6 +46,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
       - name: Test reconciliation classifications
         run: python -m unittest discover -s tests -p "test_audit_watchlist_county_reconciliation.py" -v
+      - name: Test all-19 coverage invariants
+        run: python -m unittest discover -s tests -p 'test_audit_nineteen_state_pipeline.py' -v
       - name: Test concurrent discovery of the remaining 11 states
         run: python -m unittest discover -s tests -p 'test_audit_remaining_watchlist_county_sources.py' -v
       - name: Discover all 11 remaining county feeds in parallel
