@@ -1,0 +1,28 @@
+name: Audit nationwide Call the Map county coverage (v7.2 staging)
+on:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/audit_callthemap_counties.py'
+      - '.github/workflows/audit-callthemap-counties.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Audit each state-specific county feed
+        run: python scripts/audit_callthemap_counties.py --output national-county-source-audit.json
+      - name: Preserve audit report even if a state fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: national-county-source-audit
+          path: national-county-source-audit.json
+          if-no-files-found: ignore
+          retention-days: 7
