@@ -1,0 +1,46 @@
+name: Probe official Collin precinct geometry (staging)
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'scripts/fetch_collin_precinct_geojson.py'
+      - 'scripts/normalize_collin_precinct_geojson.py'
+      - 'tests/test_fetch_collin_precinct_geojson.py'
+      - '.github/workflows/probe-collin-precinct-geometry.yml'
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify downloader tests
+        run: python -m unittest discover -s tests -p 'test_fetch_collin_precinct_geojson.py' -v
+      - name: Download public county precinct polygons
+        run: |
+          mkdir -p staging-collin-geometry
+          python scripts/fetch_collin_precinct_geojson.py --output staging-collin-geometry/collin-precincts.geojson
+      - name: Summarize staging geometry (no voter records)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('staging-collin-geometry/collin-precincts.geojson')
+          d=json.loads(p.read_text())
+          ids=[f['properties']['area_id'] for f in d['features']]
+          summary={'status':'staging_only_not_approved_for_publication','county_fips':'48085','source_url':'https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer/0','boundary_vintage_verified_for_2026_general':False,'precinct_count':len(ids),'unique_precinct_count':len(set(ids)),'sample_precinct_ids':sorted(ids)[:12]}
+          Path('staging-collin-geometry/report.json').write_text(json.dumps(summary,indent=2)+'\n')
+          print(json.dumps(summary,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: collin-precinct-geography-staging
+          path: staging-collin-geometry/
+          if-no-files-found: warn
+          retention-days: 7
