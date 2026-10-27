@@ -128,11 +128,15 @@ try:
             lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(approved)))
         automatic.goto("http://127.0.0.1:8766/battleground.html?state=NC",wait_until="domcontentloaded")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===100",timeout=30000)
+        automatic.wait_for_function("document.querySelector('#county-preview-map').dataset.county3d==='ready'",timeout=30000)
+        assert automatic.locator("#county-preview-map canvas.county-3d-canvas").count()==1
+        assert automatic.locator("#county-preview-map").get_attribute("data-county-meshes")=="100"
         assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
         assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
         assert automatic.locator("input[type=file]").count()==0
         automatic.locator("#explorer-state").select_option("TX")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
+        automatic.wait_for_function("document.querySelector('#county-preview-map').dataset.countyMeshes==='254'",timeout=30000)
         automatic.close()
         # Partial TX feed: all geographic shapes remain; missing counties stay gray.
         partial=json.loads(json.dumps(approved))
