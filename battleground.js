@@ -9,7 +9,7 @@ function render(){
  let rows=data.filter(x=>(x.name.toLowerCase().includes(q)||x.code.toLowerCase().includes(q))&&(filter==='all'||filter==='reported'&&x.reported||filter==='missing'&&!x.reported||filter==='added'&&EXTRA.has(x.code)));
  rows.sort((a,b)=>sort==='total'?(b.total??-1)-(a.total??-1)||a.name.localeCompare(b.name):sort==='date'?(b.date||'').localeCompare(a.date||'')||a.name.localeCompare(b.name):a.name.localeCompare(b.name));
  $('rows').innerHTML=rows.length?rows.map(x=>'<tr><td><strong>'+safe(x.name)+'</strong> <span class="source">'+safe(x.code)+'</span></td><td><span class="pill'+(EXTRA.has(x.code)?' warn':'')+'">'+(EXTRA.has(x.code)?'Added':'VoteHub selection')+'</span></td><td class="num">'+fmt(x.total)+'</td><td class="num">'+fmt(x.mail)+'</td><td class="num">'+fmt(x.inPerson)+'</td><td>'+safe(x.date||'Not reported')+'</td><td>'+(x.sourceUrl?'<a href="'+safe(x.sourceUrl)+'" target="_blank" rel="noopener noreferrer">'+safe(x.sourceName||'Source')+'</a>':'No current count')+'</td></tr>').join(''):'<tr><td colspan="7">No matching states</td></tr>';
- document.querySelectorAll('#rows tr').forEach((tr,i)=>tr.addEventListener('click',()=>selectState(rows[i].code)));
+ document.querySelectorAll('#rows tr').forEach((tr,i)=>{tr.tabIndex=0;tr.addEventListener('click',e=>{if(e.target.closest('a'))return;selectState(rows[i].code)});tr.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();selectState(rows[i].code)}})});
  $('status').textContent='Showing '+rows.length+' of 19 selected states. Ballot figures are not adjusted to a common reporting date.';
 }
 async function load(){
@@ -23,6 +23,7 @@ async function load(){
   $('reported-count').textContent=data.filter(x=>x.reported).length+' / '+WATCH.length;
   $('ballot-total').textContent=fmt(data.reduce((sum,x)=>sum+(x.total||0),0));
   $('feed-date').textContent=checked.slice(0,16).replace('T',' ')+' UTC';
+  window.dispatchEvent(new CustomEvent('electionhq:battleground-data',{detail:{states:data}}));
   render();selectState(selectedCode);
  }catch(e){$('rows').innerHTML='<tr><td colspan="7">Early-vote snapshot unavailable. Please try again later.</td></tr>';$('status').textContent=e.message;console.warn('Battlegrounds:',e);}
 }
