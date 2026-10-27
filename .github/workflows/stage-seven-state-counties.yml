@@ -11,7 +11,7 @@ on:
       - 'tests/test_watchlist_interactive_review_browser.py'
       - 'scripts/audit_watchlist_county_reconciliation.py'
       - 'tests/test_audit_watchlist_county_reconciliation.py'
-      - '.github/workflows/stage-eight-state-counties.yml'
+      - '.github/workflows/stage-seven-state-counties.yml'
 concurrency:
   group: eight-state-county-review-${{ github.ref }}
   cancel-in-progress: true
