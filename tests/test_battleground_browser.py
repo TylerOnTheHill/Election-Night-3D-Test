@@ -36,6 +36,12 @@ try:
             assert "Florida" in page.locator("#detail-name").inner_text()
             if "FL" in by_code:
                 assert page.locator("#detail-total").inner_text()==f"{by_code['FL']['total']:,}"
+            page.locator("#search").fill("New Hampshire")
+            assert page.locator("#rows tr").count()==1
+            assert "Not offered" in page.locator("#rows tr").inner_text()
+            page.locator("#rows tr").focus()
+            page.keyboard.press("Enter")
+            assert "Excuse-required absentee" in page.locator("#detail-description").inner_text()
             page.locator("#search").fill("Texas")
             assert page.locator("#rows tr").count()==1
             page.locator("#rows tr").click()
