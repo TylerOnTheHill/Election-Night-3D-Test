@@ -1,0 +1,46 @@
+{
+  "schema": "electionhq-official-county-source-leads-v1",
+  "publication_approved": false,
+  "leads": [
+    {
+      "state": "OH",
+      "source_name": "Ohio Secretary of State early and absentee voting dashboard",
+      "source_url": "https://www.ohiosos.gov/data",
+      "evidence_url": "https://www.ohiosos.gov/office/media-center/categories/press-releases/2026-10-13a",
+      "evidence": "Official state describes county-board daily reporting and county-level drilldown",
+      "status": "official_county_dashboard_identified",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
+    },
+    {
+      "state": "GA",
+      "source_name": "Georgia Early Vote Dashboard (third-party rendering of official data)",
+      "source_url": "https://earlyvote.truenorth-inc.com/",
+      "evidence_url": "https://earlyvote.truenorth-inc.com/",
+      "evidence": "Displays county early ballots and states source is official Georgia accepted-ballot data; original official downloadable source still needs verification",
+      "status": "secondary_county_dashboard_identified",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
+    },
+    {
+      "state": "AZ",
+      "source_name": "Arizona Secretary of State 2026 election information",
+      "source_url": "https://azsos.gov/elections/election-information/2026-election-info",
+      "evidence_url": "https://azsos.gov/elections/election-information/2026-election-info",
+      "evidence": "Official election-information page, but election-night drop-off counts are not current early-vote county ballot totals",
+      "status": "official_portal_identified_not_early_vote_feed",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
+    },
+    {
+      "state": "OH",
+      "source_name": "ColdSpark Ohio 2026 county early-vote dashboard (secondary)",
+      "source_url": "https://ohio.coldspark.com/",
+      "evidence_url": "https://ohio.coldspark.com/",
+      "evidence": "County-level vote totals and mail/in-person modes with documented Oct 25 cutoff; requires source and licensing review",
+      "status": "secondary_county_dashboard_identified",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
+    }
+  ]
+}
