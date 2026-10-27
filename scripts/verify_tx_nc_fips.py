@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Join staged TX/NC county records to Census 2020 PL 94-171 county GEOIDs.
+"""Join staged TX/NC county records to vendored Census-derived county GEOIDs.
 
 No inferred identifiers: missing/ambiguous matches are fatal. Census API is
 the authoritative geography crosswalk; turnout remains sourced to Call the Map.
@@ -105,6 +105,18 @@ def fetch_gazetteer(state):
             rows.append([name, state, geoid[2:]])
     return rows
 
+def fetch_vendored(code, reference_path="data/sources/tx-nc-county-fips-reference.json"):
+    reference = json.loads(pathlib.Path(reference_path).read_text())
+    entries = reference["states"][code]
+    state = STATES[code]
+    rows = [["NAME", "state", "county"]]
+    for entry in entries:
+        fips = entry["fips"]
+        if not re.fullmatch(r"\d{5}", fips) or fips[:2] != state:
+            raise ValueError("Invalid vendored GEOID")
+        rows.append([entry["name"], state, fips[2:]])
+    return rows, reference["source"]
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--input-dir", default="staging-county-pilots")
@@ -114,13 +126,10 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     for code, state in STATES.items():
         staged = json.loads((pathlib.Path(args.input_dir) / (code + ".json")).read_text())
-        try:
-            census = fetch_census(state)
-            enriched = crosswalk(code, census, staged)
-        except (OSError, ValueError, zipfile.BadZipFile) as primary_error:
-            print(code, "Census API unavailable/invalid:", primary_error, "; trying official Census Gazetteer")
-            census = fetch_gazetteer(state)
-            enriched = crosswalk(code, census, staged, "2020 Census Gazetteer counties national", GAZETTEER)
+        census, reference_url = fetch_vendored(code)
+        enriched = crosswalk(code, census, staged,
+                             "Vendored Census-derived county FIPS mirror (2020 vintage not independently verified)",
+                             reference_url)
         (out / (code + ".json")).write_text(json.dumps(enriched, indent=2) + "\n")
         print(code, len(enriched["counties"]), "counties matched to unique Census FIPS; STAGING ONLY")
 
