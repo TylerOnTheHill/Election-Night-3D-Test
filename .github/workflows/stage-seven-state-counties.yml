@@ -12,6 +12,7 @@ on:
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
+      - 'scripts/stage_georgia_counties.py'
       - 'tests/test_combine_county_candidates.py'
       - 'tests/test_watchlist_interactive_review_browser.py'
       - 'scripts/audit_watchlist_county_reconciliation.py'
