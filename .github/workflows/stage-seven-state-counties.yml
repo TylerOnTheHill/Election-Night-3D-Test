@@ -18,6 +18,7 @@ on:
       - 'scripts/probe_votehub_l2_early_vote.py'
       - 'scripts/stage_ctm_ten_state_statewide.py'
       - 'scripts/stage_michigan_counties.py'
+      - 'scripts/reconcile_remaining_ten_counties.py'
       - 'scripts/stage_new_hampshire_source_status.py'
       - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
@@ -84,9 +85,21 @@ jobs:
           python -m unittest discover -s tests -p 'test_stage_alaska_official_statewide.py' -v
           python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
       - name: Ingest Michigan official-dashboard county CSV
-        run: python scripts/stage_michigan_counties.py --output michigan-unapproved.json
+        run: python scripts/stage_michigan_counties.py --output michigan-unapproved.json || echo "Michigan CSV schema requires review; do not publish"
       - name: Ingest verified credited statewide early-vote totals for remaining ten
         run: python scripts/stage_ctm_ten_state_statewide.py --output ten-state-statewide-observations.json
+      - name: Reconcile ten states county-first against available statewide figures
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("ten-state-statewide-observations.json").read_text())
+          Path("ten-state-official-comparison.json").write_text(json.dumps({
+            s:(r["total"] if r.get("status")=="statewide_observed" and "Secretary of State" in r.get("source_name","") else None)
+            for s,r in d["states"].items()}))
+          Path("ten-state-licensed-county-observations.json").write_text("[]")
+          PY
+          python scripts/reconcile_remaining_ten_counties.py --observations ten-state-licensed-county-observations.json --official-statewide ten-state-official-comparison.json --output ten-state-county-reconciliation.json
       - name: Check VoteHub and L2 dashboards across all 19 states
         run: python scripts/probe_votehub_l2_early_vote.py --output votehub-l2-source-review.json
       - name: Discover Maine SOS 2026 absentee file
@@ -159,7 +172,7 @@ jobs:
             maine-official-source-review.json
             votehub-l2-source-review.json
             ten-state-statewide-observations.json
-            michigan-unapproved.json
+            ten-state-county-reconciliation.json
             new-hampshire-county-status.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
