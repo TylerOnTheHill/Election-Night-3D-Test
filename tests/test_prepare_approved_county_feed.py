@@ -33,6 +33,19 @@ class PublicationConversionTests(unittest.TestCase):
         self.assertFalse(result["states"]["TX"]["coverage_complete"])
         self.assertIsNone(result["states"]["TX"]["statewide_cutoff"])
 
+    def test_tx_nc_approval_does_not_authorize_florida(self):
+        c = candidate()
+        c["states"]["FL"] = {
+            **c["states"]["TX"],
+            "counties":[{"fips":"12001","name":"Alachua","total":10,
+                         "file_as_of":"2026-10-27","source_url":"https://example.org",
+                         "credit":"Fixture"}],
+            "county_count":1,"geographic_count":67,
+            "coverage_complete":False,"reporting_label":"Partially reported","total":10
+        }
+        with self.assertRaisesRegex(ValueError, "separate owner approval"):
+            prepare(c, "OWNER_APPROVED_TX_NC_COUNTY_PUBLICATION")
+
     def test_bad_candidate_never_becomes_approved(self):
         c = candidate()
         c["states"]["TX"]["total"] += 1
