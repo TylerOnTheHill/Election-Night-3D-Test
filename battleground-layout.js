@@ -7,8 +7,11 @@ const nav=el('div','ehq-view-nav');nav.setAttribute('role','tablist');nav.setAtt
 const nationalButton=el('button','','National overview'),stateButton=el('button','','State explorer');
 for(const [button,id] of [[nationalButton,'ehq-national-screen'],[stateButton,'ehq-state-screen']]){button.type='button';button.setAttribute('role','tab');button.setAttribute('aria-controls',id);nav.append(button)}
 const national=el('section','ehq-view');national.id='ehq-national-screen';
+const hero=el('div','studio-hero');hero.innerHTML='<div><div class="studio-kicker">2026 MIDTERM ELECTIONS <span class="studio-live">● EARLY VOTING</span></div><h1>Election <em>Intelligence.</em></h1><p>Reported early ballots · 19-state watchlist · source-verified observations</p></div><div class="studio-hero-meta"><span>LIVE OBSERVATION DESK</span><strong>2026 / US</strong><small>Counts are ballots, not candidate votes</small></div>';
+const mapHeader=el('div','studio-map-header');mapHeader.innerHTML='<div><span class="studio-kicker">NATIONAL OVERVIEW</span><h3>Where America is voting</h3></div><span class="studio-map-chip">3D GEOGRAPHY</span>';
+const railHeader=el('div','studio-rail-header');railHeader.innerHTML='<span class="studio-kicker">THE WATCHLIST</span><h3>State reporting desk</h3><p>Select a state to open its county explorer</p>';
 const state=el('section','ehq-view');state.id='ehq-state-screen';state.hidden=true;
-const heading=el('div','');heading.id='ehq-state-header';heading.append(el('div','eyebrow','STATE EXPLORER · OBSERVED EARLY BALLOTS'));
+const heading=el('div','studio-state-hero');heading.id='ehq-state-header';heading.innerHTML='<div><div class="studio-kicker">STATE INTELLIGENCE / COUNTY REPORTING</div><h2>County Explorer</h2><p>Verified county-level early ballot reporting · select a county for details</p></div><div class="studio-state-mark">ELECTIONHQ <span> / 2026</span></div>';
 const stateTabs=el('div','ehq-state-tabs');stateTabs.setAttribute('role','tablist');stateTabs.setAttribute('aria-label','State explorer sections');
 const summaryTab=el('button','','Overview'),countyTab=el('button','','County map'),tableTab=el('button','','County table');
 const summary=el('section','ehq-tab-content state-metrics'),countyView=el('section','ehq-tab-content'),tableView=el('section','ehq-tab-content');
@@ -18,7 +21,7 @@ const tableSection=el('section','ehq-tab-content');tableSection.id='ehq-state-ta
 const controls=main.querySelector('.controls'),stateTable=controls?.nextElementSibling;
 if(controls&&stateTable){tableSection.append(controls,stateTable)}
 // Move existing live widgets rather than creating duplicate state or county data components.
-overview.replaceChildren(map,tableSection);national.append(cards,overview);
+map.prepend(mapHeader);tableSection.prepend(railHeader);overview.replaceChildren(map,tableSection);national.append(hero,cards,overview);
 summary.append(detail);
 countyView.append(county);
 state.append(heading,picker,stateTabs,summary,countyView,tableView);
