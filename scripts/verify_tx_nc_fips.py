@@ -9,9 +9,11 @@ import json
 import pathlib
 import re
 import urllib.request
+import urllib.parse
+import time
 
 STATES = {"TX": "48", "NC": "37"}
-API = "https://api.census.gov/data/2020/dec/pl?get=NAME&for=county:*&in=state:"
+API = "https://api.census.gov/data/2020/dec/pl"
 
 def canonical(value):
     value = value.lower().replace("&", " and ")
@@ -53,8 +55,31 @@ def crosswalk(code, census_rows, staged):
     return {**staged, "counties": output, "fips_verified": True,
             "coverage_complete": True, "census_geography_source":
             "2020 Census PL 94-171 county geography API",
-            "census_geography_url": API + STATES[code],
+            "census_geography_url": census_url(STATES[code]),
             "status": "staging_only_fips_and_coverage_verified"}
+
+def census_url(state):
+    return API + "?" + urllib.parse.urlencode({"get": "NAME", "for": "county:*", "in": "state:" + state})
+
+def fetch_census(state):
+    url = census_url(state)
+    last = None
+    for attempt in range(3):
+        try:
+            req = urllib.request.Request(url, headers={"User-Agent": "ElectionHQ-county-fips-audit/1.0", "Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=30) as response:
+                raw = response.read(3_000_000)
+                content_type = response.headers.get("Content-Type", "")
+                status = response.status
+            try:
+                return json.loads(raw)
+            except (ValueError, UnicodeDecodeError) as exc:
+                raise ValueError(f"Census returned non-JSON (HTTP {status}, content-type {content_type!r}, first 250 bytes {raw[:250]!r})") from exc
+        except (OSError, ValueError) as exc:
+            last = exc
+            if attempt < 2:
+                time.sleep(2 ** attempt)
+    raise ValueError(f"Census county geography unavailable for state {state}: {last}")
 
 def main():
     p = argparse.ArgumentParser()
@@ -65,9 +90,7 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     for code, state in STATES.items():
         staged = json.loads((pathlib.Path(args.input_dir) / (code + ".json")).read_text())
-        req = urllib.request.Request(API + state, headers={"User-Agent": "ElectionHQ-county-fips-audit/1.0"})
-        with urllib.request.urlopen(req, timeout=30) as response:
-            census = json.load(response)
+        census = fetch_census(state)
         enriched = crosswalk(code, census, staged)
         (out / (code + ".json")).write_text(json.dumps(enriched, indent=2) + "\n")
         print(code, len(enriched["counties"]), "counties matched to unique Census FIPS; STAGING ONLY")
