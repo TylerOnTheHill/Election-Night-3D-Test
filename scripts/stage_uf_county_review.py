@@ -28,12 +28,19 @@ def parse(code, raw):
         return {"state":code,"status":"county_column_missing","rows":len(rows),"columns":columns}
     # Use only explicitly named cumulative cast-ballot metrics. Never add
     # returned mail and in-person when 'voted_total' already includes both.
-    candidates = ("voted_total", "voted", "accept_total", "accepted_total")
+    candidates = ("voted_all", "voted_total")
     metric = next((m for m in candidates if m in columns), None)
     if metric is None:
         return {"state":code,"status":"metric_mapping_required","rows":len(rows),
                 "columns":columns,"sample_county_names":[r.get(county_key) for r in rows[:4]]}
+    # Maine's county file is actually a municipality/district table; its
+    # "county" column contains town names. Do not mislabel towns as counties.
+    if code == "ME":
+        return {"state":code,"status":"municipal_rows_not_counties",
+                "rows":len(rows),"columns":columns,
+                "reason":"County-labelled CSV contains municipal/district observations; county crosswalk needed"}
     observations = []
+    seen = set()
     for row in rows:
         name = (row.get(county_key) or "").strip()
         value = (row.get(metric) or "").replace(",","").strip()
@@ -41,6 +48,10 @@ def parse(code, raw):
             continue
         if not value.isdigit():
             raise ValueError(code+": invalid county ballot metric for "+name)
+        key = name.casefold()
+        if key in seen:
+            raise ValueError(code+": duplicate county "+name)
+        seen.add(key)
         observations.append({"county":name,"ballots":int(value)})
     return {"state":code,"status":"observations_for_review" if observations else "no_observed_totals",
             "rows":len(rows),"columns":columns,"metric":metric,
