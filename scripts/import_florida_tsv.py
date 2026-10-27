@@ -46,10 +46,12 @@ def read_table(path, expected_type):
         total = integer(row["GrandTotal"])
         if total != sum(parties.values()):
             raise ValueError("Party totals do not reconcile")
-        compiled.add(datetime.strptime(row["CompileDate"].strip(), "%m/%d/%Y  %I:%M%p"))
+        stamp = row["CompileDate"].strip()
+        if stamp:
+            compiled.add(datetime.strptime(stamp, "%m/%d/%Y  %I:%M%p"))
         result[name.casefold()] = {"county": name, "total": total, "registration": parties}
     if len(compiled) != 1:
-        raise ValueError("Mixed compilation times in a file")
+        raise ValueError("Missing or mixed compilation times in a file")
     statewide = result.pop("state totals", None)
     if statewide is None or len(result) != 67:
         raise ValueError("Missing statewide row or counties")
