@@ -56,6 +56,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_collin_precinct_integration.py' -v
       - name: Build non-publication county preview
         run: python scripts/build_county_preview.py --input-dir staging-county-pilots-fips --output staging-county-preview.json
+      - name: Build TX/NC county publication candidate (approval still required)
+        run: python scripts/build_county_preview.py --candidate --input-dir staging-county-pilots-fips --output staging-county-publication-candidate.json
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
@@ -65,5 +67,6 @@ jobs:
             staging-county-pilots/
             staging-county-pilots-fips/
             staging-county-preview.json
+            staging-county-publication-candidate.json
           if-no-files-found: ignore
           retention-days: 7
