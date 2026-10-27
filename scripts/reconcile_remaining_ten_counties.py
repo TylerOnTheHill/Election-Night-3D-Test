@@ -26,7 +26,7 @@ def choose(state,observations,official_statewide=None):
             if not isinstance(fips,str) or len(fips)!=5 or not fips.isdigit() or fips in seen:valid=False;break
             if type(c.get("total")) is not int or c["total"]<0:valid=False;break
             seen.add(fips)
-        if valid:candidates.append(row)
+        if valid and all(c["fips"][:2]=={"AK":"02","AZ":"04","KS":"20","ME":"23","MI":"26","MS":"28","NE":"31","NH":"33","NV":"32","OH":"39"}[state] for c in counties):candidates.append(row)
     candidates.sort(key=lambda x:(x["provider_type"]!="official", -datetime.date.fromisoformat(x["as_of"]).toordinal(),
                                   PROVIDERS.index(x["provider_type"])))
     if not candidates:return {"state":state,"status":"county_source_unavailable","county_total":None,
