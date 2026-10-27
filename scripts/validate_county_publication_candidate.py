@@ -52,8 +52,9 @@ def validate(candidate):
                 raise ValueError(code + ": invalid ballot count")
             if not isinstance(row.get("name"), str) or not row["name"].strip():
                 raise ValueError(code + ": missing county name")
-            if not isinstance(row.get("file_as_of"), str) or not row["file_as_of"].strip():
-                raise ValueError(code + ": missing county reporting cutoff")
+            cutoff = row.get("file_as_of")
+            if cutoff is not None and (not isinstance(cutoff, str) or not cutoff.strip()):
+                raise ValueError(code + ": invalid supplied county reporting cutoff")
             if not isinstance(row.get("source_url"), str) or not row["source_url"].startswith("https://"):
                 raise ValueError(code + ": missing county source URL")
             if not isinstance(row.get("credit"), str) or not row["credit"].strip():
