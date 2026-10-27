@@ -75,10 +75,40 @@ function highlight(fips){
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
+// Geometry-only fallback: display authentic county boundaries when publication is pending.
+async function renderBoundariesOnly(){
+ const version=++renderVersion,code=selected,host=$('battleground-county-preview'),status=$('county-preview-status');
+ window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
+ if(!['TX','NC'].includes(code)){host.hidden=true;status.textContent='County geography preview is currently available for Texas and North Carolina.';return;}
+ host.hidden=false;
+ $('county-preview-title').textContent=code==='TX'?'Texas county geography':'North Carolina county geography';
+ $('county-preview-total').textContent='County totals awaiting publication';
+ $('county-preview-complete-note').hidden=true;
+ $('county-preview-rows').replaceChildren();
+ $('county-selected-detail').textContent='County boundaries only. No county-level ballot totals are published in this view.';
+ $('county-preview-legend').textContent='Neutral county boundaries · County reporting not yet published';
+ status.textContent='County geography shown · Reported county totals not yet published';
+ const map=$('county-preview-map');map.textContent='Loading county geography…';
+ try{
+  const geo=await getAtlas();if(version!==renderVersion)return;
+  if(!window.topojson||!window.d3)throw Error('County geography libraries unavailable');
+  const prefix=code==='TX'?'48':'37',count=code==='TX'?254:100;
+  const features=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(prefix));
+  if(features.length!==count)throw Error('County boundary coverage mismatch');
+  const w=850,h=510,collection={type:'FeatureCollection',features};
+  const projection=d3.geoMercator().fitExtent([[20,20],[w-20,h-20]],collection),path=d3.geoPath(projection);
+  map.replaceChildren();
+  const svg=d3.select(map).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('role','img').attr('aria-label',$('county-preview-title').textContent+' (boundaries only)');
+  svg.selectAll('path').data(features).join('path').attr('d',path).attr('fill','#414246').attr('stroke','#787a80').attr('stroke-width',.65)
+    .append('title').text('County boundary · No published early-ballot total');
+  window.electionhqCounty3dPayload={code,features,rows:[]};
+  window.dispatchEvent(new CustomEvent('electionhq:county-3d-data',{detail:window.electionhqCounty3dPayload}));
+ }catch(e){if(version!==renderVersion)return;map.textContent='County boundaries unavailable';console.warn('County geography fallback:',e.message);}
+}
 async function loadPublished(){
  try{
   const response=await fetch('./data/early-vote/battleground-counties.json',{cache:'no-store'});
-  if(response.status===404){$('county-preview-status').textContent='County-level maps are being prepared. Statewide early-vote totals are available above.';return;}
+  if(response.status===404){await renderBoundariesOnly();return;}
   if(!response.ok)throw Error('County feed unavailable');
   preview=validate(await response.json());await render();
  }catch(e){preview=null;renderVersion++;$('battleground-county-preview').hidden=true;
@@ -87,8 +117,8 @@ async function loadPublished(){
   console.warn('Battleground county data:',e.message);
  }
 }
-window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();});
+window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();else renderBoundariesOnly();});
 // Keep county geography synchronized with the visible state picker even if a separate state detail update is delayed.
-document.getElementById('explorer-state')?.addEventListener('change',e=>{const code=e.target.value?.toUpperCase();if(code&&code!==selected){selected=code;if(preview)render();}});
+document.getElementById('explorer-state')?.addEventListener('change',e=>{const code=e.target.value?.toUpperCase();if(code&&code!==selected){selected=code;if(preview)render();else renderBoundariesOnly();}});
 loadPublished();
 })();
