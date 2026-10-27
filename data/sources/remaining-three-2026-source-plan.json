@@ -1,0 +1,27 @@
+{
+  "schema": "electionhq-remaining-three-source-plan-v1",
+  "updated": "2026-10-27",
+  "states": {
+    "ME": {
+      "priority": "official_statewide_absentee_voter_data",
+      "official_url": "https://www3.maine.gov/sos/elections-voting/voter-data",
+      "alternative_url": "https://mainepoliticaldata.com/data/",
+      "validation": "Aggregate 2026 general-election returned/accepted ballots by municipality to the 16 Maine counties using verified municipal-to-county geography. Do not count requests or issued ballots as votes; avoid publishing individual voter records.",
+      "status": "official_source_identified_aggregation_required"
+    },
+    "AK": {
+      "priority": "official_statewide_received_ballots",
+      "official_url": "https://www.elections.alaska.gov/research/statistics/",
+      "alternative_url": "https://www.juneauindependent.com/post/on-first-day-of-voting-election-officials-receive-983-ballots-in-juneau-s-two-districts-11-878-sta",
+      "validation": "Statewide official received-ballot snapshot is available, but county-equivalent or regional coverage cannot be derived from it. Investigate official Combined Report for geography and verified district-to-borough crosswalk.",
+      "status": "statewide_official_source_identified_county_source_missing"
+    },
+    "NH": {
+      "priority": "local_clerk_aggregate_absentee_returns",
+      "official_url": "https://www.sos.nh.gov/2026-general-election-results",
+      "alternative_url": "https://www.nhpr.org/nh-news/2026-10-14/absentee-ballots-newhampshire-nh-election-voting",
+      "validation": "State election-results page is post-election, not current early-vote totals. Locate town/city clerk published aggregate returned absentee counts, map towns to counties and label incomplete coverage. Do not scrape personal ballot-status lookup.",
+      "status": "no_verified_current_public_aggregate_feed"
+    }
+  }
+}
