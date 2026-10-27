@@ -50,7 +50,7 @@ def build(payloads, geojson):
     original_expected = dict(EXPECTED)
     try:
         STAGING_STATES.update(GEOIDS)
-        EXPECTED.update(GEOIDS)
+        EXPECTED.update({code: (expected, prefix) for code, (prefix, expected) in GEOIDS.items()})
         for code in STATES:
             try:
                 prefix, expected = GEOIDS[code]
