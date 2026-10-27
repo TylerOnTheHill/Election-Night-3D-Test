@@ -59,10 +59,61 @@ def parse(code, raw):
             "credit":CREDIT,"license":"CC BY-NC-ND 4.0",
             "publication_approved":False}
 
+def to_internal_candidate(review, geojson):
+    """Build a restricted, non-publication FIPS-matched candidate from UF review."""
+    from stage_remaining_eleven_counties import GEOIDS, geography
+    from verify_tx_nc_fips import canonical
+    states = {}
+    gaps = {}
+    for code in STATES:
+        source = review["states"][code]
+        if source["status"] != "observations_for_review":
+            gaps[code] = source["status"]
+            continue
+        prefix, expected = GEOIDS[code]
+        crosswalk = geography(geojson, prefix)
+        names = {}
+        for name, st, county in crosswalk[1:]:
+            key = canonical(name)
+            if key in names:
+                raise ValueError(code+": ambiguous geographic name "+name)
+            names[key] = st + county
+        if len(names) != expected:
+            gaps[code] = "Census geography count mismatch"
+            continue
+        observations = []
+        for row in source["observations"]:
+            key = canonical(row["county"])
+            if key not in names:
+                raise ValueError(code+": UF county cannot match GEOID: "+row["county"])
+            observations.append({"fips":names[key],"name":row["county"],
+                                 "total":row["ballots"],"file_as_of":None,
+                                 "source_url":source["source_url"],"credit":CREDIT})
+        if len(set(row["fips"] for row in observations)) != len(observations):
+            raise ValueError(code+": duplicate county GEOID")
+        if not observations:
+            gaps[code] = "No observed county ballots"
+            continue
+        states[code] = {"status":"restricted_source_review_only",
+                        "provider":"University of Florida Election Lab",
+                        "credit":CREDIT,"license":"CC BY-NC-ND 4.0",
+                        "county_count":len(observations),"geographic_count":expected,
+                        "coverage_complete":len(observations)==expected,
+                        "reporting_label":"Partially reported",
+                        "statewide_reconciled":False,
+                        "total":sum(row["total"] for row in observations),
+                        "total_basis":"sum_of_reported_counties",
+                        "counties":sorted(observations,key=lambda row:row["fips"])}
+    return {"schema":"electionhq-county-preview-v1",
+            "publication_approved":False,"redistribution_authorized":False,
+            "review_required":True,"states":states,
+            "states_without_county_observations":sorted(gaps)}, gaps
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--input-dir",type=Path)
     p.add_argument("--output",type=Path,default=Path("uf-eleven-county-source-review.json"))
+    p.add_argument("--candidate-output",type=Path)
     a=p.parse_args()
     if a.output.resolve().is_relative_to((Path.cwd()/"data/early-vote").resolve()):
         raise ValueError("Internal source review cannot be a public feed")
@@ -89,6 +140,16 @@ def main():
             "license":"CC BY-NC-ND 4.0","redistribution_authorized":False,
             "publication_approved":False,"states":dict(sorted(results.items()))}
     a.output.write_text(json.dumps(output,indent=2)+"\n")
+    if a.candidate_output:
+        if a.candidate_output.resolve().is_relative_to((Path.cwd()/"data/early-vote").resolve()):
+            raise ValueError("Restricted candidate cannot be a public feed")
+        from stage_remaining_eleven_counties import GEOJSON_MIRROR
+        geo_request=urllib.request.Request(GEOJSON_MIRROR,headers={"User-Agent":"ElectionHQ-geography-review/1.0"})
+        with urllib.request.urlopen(geo_request,timeout=35) as response:
+            geojson=json.load(response)
+        candidate, gaps=to_internal_candidate(output,geojson)
+        a.candidate_output.write_text(json.dumps(candidate,indent=2)+"\\n")
+        print("Restricted FIPS-matched UF county candidates:",len(candidate["states"]),"gaps:",gaps)
     print("UF source review:",{code:row["status"] for code,row in sorted(results.items())})
 
 if __name__=="__main__":
