@@ -1,8 +1,8 @@
-name: Refresh Florida county aggregates (v7.2 staging)
+name: Validate Florida daily official county aggregates (v7.2 staging)
 on:
   workflow_dispatch:
   schedule:
-    - cron: '15 13,16,19,22 * * *'
+    - cron: '30 14 * * *'
 permissions:
   contents: read
 jobs:
