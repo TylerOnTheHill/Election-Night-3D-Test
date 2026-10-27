@@ -85,7 +85,7 @@ function render(){
  }
  const national=feed?.national;
  set(0,'Nationwide early ballots',fmt(national?.total),'Sum of reporting states · dates vary');
- set(1,'States reporting',fmt(feed?.states?.length),'Not all states report');
+ set(1,'Jurisdictions reporting',feed?.states?.length+' / 51','Missing: AL, DC, MA, NH, NY · not zero ballots');
  set(2,'Reporting date range',national?.counts_through?.first&&national?.counts_through?.last?national.counts_through.first+' – '+national.counts_through.last:'Unavailable','State reporting dates vary');
  set(3,'Vs 2022 · matched states',national?.compared_with_2022?.change||'Unavailable','Only '+(national?.compared_with_2022?.states?.length||0)+' comparable states; not nationwide');
 }
