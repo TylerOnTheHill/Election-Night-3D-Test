@@ -8,17 +8,19 @@ import argparse
 import json
 from pathlib import Path
 
-EXPECTED = {"TX": (254, "48"), "NC": (100, "37")}
+EXPECTED = {"TX": (254, "48"), "NC": (100, "37"), "FL": (67, "12"), "VA": (133, "51"), "IA": (99, "19"), "WI": (72, "55"), "SC": (46, "45")}
 
 def validate(candidate):
     if candidate.get("schema") != "electionhq-county-preview-v1":
         raise ValueError("Unexpected county schema")
     if candidate.get("publication_approved") is not False or candidate.get("review_required") is not True:
         raise ValueError("Candidate must remain unapproved and require review")
-    if set(candidate.get("states", {})) != set(EXPECTED):
-        raise ValueError("Unexpected or missing states")
+    states = candidate.get("states")
+    if not isinstance(states, dict) or not states or set(states) - set(EXPECTED):
+        raise ValueError("Empty or unsupported county candidate states")
     summary = {}
-    for code, (expected, prefix) in EXPECTED.items():
+    for code in sorted(states):
+        expected, prefix = EXPECTED[code]
         state = candidate["states"][code]
         rows = state.get("counties")
         if state.get("status") != "candidate_pending_publication_approval":
