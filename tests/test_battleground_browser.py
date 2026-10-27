@@ -70,17 +70,17 @@ try:
         page.locator("#file").set_input_files({"name":"staging-county-preview.json",
             "mimeType":"application/json","buffer":json.dumps(fixture).encode()})
         page.wait_for_function("document.querySelectorAll('#county-map svg path').length===254",timeout=30000)
-        page.wait_for_timeout(1000)
-        print("TX map legend:",page.locator("#county-map-legend").inner_text(),flush=True)
-        print("TX page errors:",errors,flush=True)
-        print("TX map sample FIPS:",page.locator("#county-map path").evaluate_all("(els)=>els.slice(0,8).map(e=>e.dataset.fips)"),flush=True)
-        print("TX fixture sample FIPS:",[x["fips"] for x in states["TX"]["counties"][:8]],flush=True)
         page.wait_for_function("document.querySelector('#county-map-legend').textContent.includes('254 of 254')",timeout=15000)
         first=states["TX"]["counties"][0]
         page.locator(f"#county-map path[data-fips='{first['fips']}']").focus()
         page.keyboard.press("Enter")
         assert page.locator("#rows tr").count()==1
         assert first["name"] in page.locator("#rows tr").inner_text()
+        page.locator("#search").fill("")
+        page.locator("#rows tr").first.focus()
+        selected=page.locator("#rows tr").first.locator("td").nth(1).inner_text()
+        page.keyboard.press("Enter")
+        assert page.locator(f"#county-map path[data-fips='{selected}']").get_attribute("stroke")=="#ffffff"
         page.locator("#state").select_option("NC")
         page.wait_for_function("document.querySelectorAll('#county-map svg path').length===100",timeout=30000)
         page.wait_for_function("document.querySelector('#county-map-legend').textContent.includes('100 of 100')",timeout=15000)
