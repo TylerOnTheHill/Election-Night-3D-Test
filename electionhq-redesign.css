@@ -41,3 +41,10 @@ main{max-width:none!important;padding:0!important;margin:0!important}
 .ehq-summary-stage>aside,.ehq-table-stage{padding:20px!important}.ehq-foot{padding:15px 0;color:#8195a8!important}.ehq-foot .footer{font-size:10px!important;line-height:1.6!important}
 @media(max-width:1120px){.ehq-main-grid{grid-template-columns:1fr}.ehq-watch-body .scroll{max-height:320px!important}.ehq-county-stage{grid-template-columns:1fr}.ehq-county-side{grid-row:2}}
 @media(max-width:700px){.ehq-mast{padding:20px 0}.ehq-mast-right,.ehq-heading-note{display:none}.ehq-mast h1{font-size:36px}.ehq-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.ehq-metrics>.card{padding:12px!important}.ehq-main-grid>.map-panel{padding:0 11px 12px!important}.ehq-main-grid #battleground-map{height:340px!important;min-height:340px!important}.ehq-panel-head h3{font-size:17px!important}.ehq-state-toolbar .explorer-picker{flex-wrap:wrap!important}#battleground-county-preview:not([hidden]){display:flex!important;flex-direction:column!important}#battleground-county-preview>#county-preview-map{height:350px!important;min-height:350px!important;width:100%!important}#battleground-county-preview>.scroll{width:100%!important;max-height:230px!important}.ehq-nav-btn{padding:10px 12px!important}.ehq-state-tabs button{padding:10px 12px!important}}
+
+/* Correct the inherited legacy overview layout: real desktop split, not stacked cards. */
+@media(min-width:1121px){
+ #ehq-national-screen .ehq-main-grid.overview{display:grid!important;grid-template-columns:minmax(0,1.7fr) minmax(350px,.82fr)!important;gap:14px!important;align-items:stretch!important}
+ #ehq-national-screen .ehq-main-grid.overview>.map-panel{grid-column:1!important;grid-row:1!important;width:auto!important;min-width:0!important}
+ #ehq-national-screen .ehq-main-grid.overview>#ehq-state-table{grid-column:2!important;grid-row:1!important;width:auto!important;min-width:0!important}
+}
