@@ -16,7 +16,7 @@ def payload(code):
 class SourceDiscoveryTests(unittest.TestCase):
     def test_all_remaining_states_are_checked_without_zero_fill(self):
         result=discover({code:payload(code) for code in STATES})
-        self.assertEqual(len(result["states"]),12)
+        self.assertEqual(len(result["states"]),11)
         self.assertEqual(set(result["states_with_county_observations"]),set(STATES))
         for state in result["states"].values():
             self.assertEqual(state["county_rows_with_observed_totals"],1)
@@ -38,10 +38,10 @@ class SourceDiscoveryTests(unittest.TestCase):
             inspect("AZ",doc)
 
     def test_missing_provenance_rejected(self):
-        doc=payload("GA")
+        doc=payload("KS")
         doc["counties"][0]["source_url"]=""
         with self.assertRaisesRegex(ValueError,"provenance"):
-            inspect("GA",doc)
+            inspect("KS",doc)
 
 if __name__=="__main__":
     unittest.main()
