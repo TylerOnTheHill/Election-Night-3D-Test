@@ -49,6 +49,7 @@ def stage(code,payload,census):
             raise ValueError("Duplicate county observation")
         total=row.get("total")
         if total is None:
+            observations[fips]=None
             continue
         if type(total)!=int or total<0:
             raise ValueError("Invalid county total")
@@ -64,9 +65,9 @@ def stage(code,payload,census):
             "registered_dem":row.get("dem"),"registered_rep":row.get("rep"),
             "registered_unaffiliated_other":row.get("unaffiliated_other"),
             "file_as_of":cutoff,"source_url":source,"credit":credit}
-    if not observations:
+    if not any(r is not None for r in observations.values()):
         return None
-    counties=sorted(observations.values(),key=lambda r:r["fips"])
+    counties=sorted((r for r in observations.values() if r is not None),key=lambda r:r["fips"])
     summary=payload.get("summary") or {}
     statewide=summary.get("total")
     if statewide is not None and (type(statewide)!=int or statewide<0):
