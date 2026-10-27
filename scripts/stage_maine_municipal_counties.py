@@ -3,16 +3,28 @@
 Maine Political Data's published town/county geography crosswalk.
 Never guess ambiguous town-to-county matches.
 """
-import argparse,csv,io,json,re,urllib.request,collections
+import argparse,csv,io,json,re,urllib.request,urllib.parse,collections
 from pathlib import Path
 from validate_county_publication_candidate import validate
 UNITS="https://mainepoliticaldata.com/data/registration/units.csv"
 CENSUS="https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json"
 SOURCE="https://election-watch.50501vets.com/map/ME?cat=returned"
+OFFICIAL="https://gis.maine.gov/mapservices/rest/services/escb/escbContributorFeature/FeatureServer/23/query"
 def get(url):
     with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ/1.0"}),timeout=45) as r:return r.read().decode("utf-8-sig")
 def norm(s):return re.sub(r"[^a-z0-9]","",s.casefold().replace("town of ","").replace("city of ",""))
-def build(source,units,geo):
+def official_municipalities():
+    query=urllib.parse.urlencode({"where":"1=1","outFields":"MUNICIPALITY,COUNTY",
+        "returnGeometry":"false","f":"json","resultRecordCount":2000})
+    data=json.loads(get(OFFICIAL+"?"+query))
+    if "error" in data or data.get("exceededTransferLimit"):
+        raise ValueError("Maine official municipality source incomplete: "+str(data.get("error")))
+    features=data.get("features",[])
+    if len(features)<500:raise ValueError("Official Maine municipality mapping unexpectedly sparse")
+    return [{"municipality":f["attributes"]["MUNICIPALITY"],"county":f["attributes"]["COUNTY"]}
+            for f in features if f["attributes"].get("MUNICIPALITY") and f["attributes"].get("COUNTY")]
+
+def build(source,units,geo,official):
     methods={r["method"]:r["counties"] for r in source["observations"] if r["state"]=="ME" and r.get("status")=="county_table_found"}
     if "returned" not in methods:raise ValueError("Maine returned municipal source absent")
     if not units:raise ValueError("Maine crosswalk empty")
@@ -28,6 +40,8 @@ def build(source,units,geo):
         for key in ("sos_labels","former_names"):
             for alias in r.get(key,"").split("|"):
                 if alias.strip() and county:lookup[norm(alias)].add(county)
+    for r in official:
+        lookup[norm(r["municipality"])].add(r["county"])
     fips={norm(f["properties"]["NAME"]):str(f["id"]).zfill(5) for f in geo["features"] if str(f["id"]).zfill(5).startswith("23")}
     totals=collections.defaultdict(lambda:{"mail":0,"in_person":0})
     unmatched=set();ambiguous={}
@@ -57,6 +71,8 @@ def build(source,units,geo):
                      "file_as_of":"2026-10-27","source_url":SOURCE,
                      "credit":"50501 Vets / civicAPI; Maine Political Data town/county geography"})
     total=sum(r["total"] for r in rows)
+    expected=sum(item["total"] for items in methods.values() for item in items)
+    if total!=expected:raise ValueError(f"Maine municipal/county ballot mismatch: {total} != {expected}")
     state={"status":"candidate_pending_publication_approval","provider":"50501 Vets / civicAPI",
       "credit":"50501 Vets / civicAPI; Maine Political Data geography","census_geography_source":"Plotly US Census county GeoJSON",
       "census_geography_url":CENSUS,"statewide_cutoff":"2026-10-27","county_count":16,
@@ -69,7 +85,7 @@ def main():
     p=argparse.ArgumentParser();p.add_argument("--source",type=Path,required=True);p.add_argument("--output",type=Path,required=True);a=p.parse_args()
     units=list(csv.DictReader(io.StringIO(get(UNITS))))
     geo=json.loads(get(CENSUS))
-    result=build(json.loads(a.source.read_text()),units,geo)
+    result=build(json.loads(a.source.read_text()),units,geo,official_municipalities())
     a.output.write_text(json.dumps(result,indent=2)+"\n")
     print("Maine county total:",result["states"]["ME"]["total"])
 if __name__=="__main__":main()
