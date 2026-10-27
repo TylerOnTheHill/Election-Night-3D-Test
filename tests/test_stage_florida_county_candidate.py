@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from stage_florida_county_candidate import stage
+from stage_florida_county_candidate import stage, from_official_tsv_snapshot
 
 def fixture():
     census=[["NAME","state","county"]]
@@ -19,6 +19,23 @@ def fixture():
     return normalized,census
 
 class FloridaCountyStagingTests(unittest.TestCase):
+    def test_existing_official_tsv_snapshot_adapter(self):
+        data,census=fixture()
+        counties=[]
+        for county in ("County1","County2"):
+            entries={r["category"]:{"total":r["total"],"registration":r["registration"]}
+                     for r in data["records"] if r["county"]==county}
+            counties.append({"county":county,**entries})
+        snapshot={"schema":"electionhq-florida-county-aggregate-v1",
+                  "election_id":"49894","state_fips":"12",
+                  "source_url":data["source_url"],
+                  "compiled_at_local":"2026-10-27T08:00:00","counties":counties}
+        converted=from_official_tsv_snapshot(snapshot)
+        candidate=stage(converted,census)
+        self.assertEqual(candidate["states"]["FL"]["total"],60)
+        self.assertEqual(candidate["states"]["FL"]["county_count"],2)
+        self.assertFalse(candidate["publication_approved"])
+
     def test_partial_counties_and_no_zero_fill(self):
         data,census=fixture()
         candidate=stage(data,census)
