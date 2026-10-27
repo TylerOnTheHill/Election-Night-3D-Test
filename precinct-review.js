@@ -8,12 +8,13 @@ function rings(g){
 }
 function validate(d,g){
  if(d.schema!=="electionhq-local-returns-v1"||d.state!=="TX"||d.publication_approved!==false||d.coverage_complete===true||d.area_type!=="voting_precinct")throw Error("Unsupported or publication-approved local dataset.");
- if(!["ballots_cast","prior_primary_participation"].includes(d.metric_kind)||!d.file_as_of||!d.geometry_vintage||!/^https:\/\//.test(d.source_url||"")||!/^https:\/\//.test(d.geometry_source_url||""))throw Error("Missing required data provenance.");
+ if(d.metric_kind!=="ballots_cast"||!d.file_as_of||!d.geometry_vintage||!/^https:\/\//.test(d.source_url||"")||!/^https:\/\//.test(d.geometry_source_url||""))throw Error("Missing required data provenance.");
  if(g.type!=="FeatureCollection"||!Array.isArray(g.features))throw Error("Invalid GeoJSON.");
  if(!Array.isArray(d.areas)||!d.areas.length||d.areas.length>20000||g.features.length>20000)throw Error("Invalid or excessive precinct count.");
  const data=new Map(),shapes=new Map();let sum=0;
  for(const a of d.areas){
-  if(!/^48[0-9]{3}$/.test(a.county_fips)||typeof a.area_id!=="string"||!a.area_id||!Number.isSafeInteger(a.ballots_total)||a.ballots_total<0||a.candidate_dem_votes!=null||a.candidate_rep_votes!=null)throw Error("Invalid local-area record.");
+  if(a.prior_dem_primary!=null||a.prior_rep_primary!=null)throw Error("Prior primary participation is not supported by this neutral ballot preview.");
+  if(!/^48[0-9]{3}$/.test(a.county_fips)||typeof a.area_id!=="string"||!a.area_id||!Number.isSafeInteger(a.ballots_total)||a.ballots_total<0||Object.keys(a).some(k=>/candidate|vote_share|party_votes/i.test(k)))throw Error("Invalid local-area record.");
   const key=a.county_fips+"|"+a.area_id;if(data.has(key))throw Error("Duplicate data key: "+key);
   data.set(key,a);sum+=a.ballots_total;
  }
@@ -38,11 +39,13 @@ $("render").addEventListener("click",async()=>{
   const df=$("data").files[0],gf=$("geo").files[0];if(!df||!gf)throw Error("Select both files.");
   if(df.size>8e6||gf.size>40e6)throw Error("Input exceeds local review size limit.");
   const d=JSON.parse(await df.text()),g=JSON.parse(await gf.text()),v=validate(d,g);
-  const xs=v.points.map(p=>p[0]),ys=v.points.map(p=>p[1]),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+  for(const p of v.points){minX=Math.min(minX,p[0]);maxX=Math.max(maxX,p[0]);minY=Math.min(minY,p[1]);maxY=Math.max(maxY,p[1]);}
   const scale=Math.min(950/Math.max(maxX-minX,1e-9),510/Math.max(maxY-minY,1e-9));
   const ox=(1000-(maxX-minX)*scale)/2,oy=(560-(maxY-minY)*scale)/2;
   const coord=p=>[(ox+(p[0]-minX)*scale).toFixed(2),(560-oy-(p[1]-minY)*scale).toFixed(2)];
   const svg=$("map");svg.replaceChildren();
+  $("details").textContent="Select a precinct to inspect its staging count. No official 2026 general-election geography has been certified by this preview.";
   for(const [key,shape] of v.shapes){
    const path=document.createElementNS(ns,"path");
    path.setAttribute("d",shape.rings.map(r=>r.map((p,i)=>(i?"L":"M")+coord(p).join(",")).join(" ")+" Z").join(" "));
