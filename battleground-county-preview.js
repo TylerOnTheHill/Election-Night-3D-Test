@@ -2,10 +2,10 @@
 const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
 let preview=null,selected='TX',atlas=null,renderVersion=0;
 function validate(p){
- if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==false)throw Error('Expected a staging-only county preview.');
+ if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==true)throw Error('County dataset is not approved for publication.');
  for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
   const s=p.states?.[code],seen=new Set();
-  if(!s||s.status!=='preview_only_not_approved_for_publication'||s.counties?.length!==n)throw Error('Incomplete '+code+' staging county coverage.');
+  if(!s||s.status!=='published'||s.counties?.length!==n)throw Error('Incomplete '+code+' staging county coverage.');
   let sum=0;
   for(const r of s.counties){
    if(typeof r.fips!=='string'||!new RegExp('^'+prefix+'[0-9]{3}$').test(r.fips)||seen.has(r.fips)||!Number.isSafeInteger(r.total)||r.total<0)throw Error('Invalid or duplicate '+code+' county observation.');
@@ -28,7 +28,7 @@ async function render(){
  if(!preview.states[code]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
- status.textContent='Local staging data loaded; nothing uploaded or published.';
+ status.textContent='County data available · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
  $('county-preview-title').textContent=code==='TX'?'Texas counties':'North Carolina counties';
  $('county-preview-total').textContent='State total: '+fmt(s.total)+'*';
  const body=$('county-preview-rows');body.replaceChildren();
@@ -68,10 +68,17 @@ function highlight(fips){
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
-$('county-preview-file').addEventListener('change',async e=>{
- try{const file=e.target.files?.[0];if(!file)return;if(file.size>4000000)throw Error('Preview file too large');
-  preview=validate(JSON.parse(await file.text()));await render();
- }catch(err){preview=null;renderVersion++;$('battleground-county-preview').hidden=true;$('county-preview-status').textContent='Cannot load preview: '+err.message;}
-});
+async function loadPublished(){
+ try{
+  const response=await fetch('./data/early-vote/battleground-counties.json',{cache:'no-store'});
+  if(response.status===404){$('county-preview-status').textContent='County-level maps are being prepared. Statewide early-vote totals are available above.';return;}
+  if(!response.ok)throw Error('County feed unavailable');
+  preview=validate(await response.json());await render();
+ }catch(e){preview=null;renderVersion++;$('battleground-county-preview').hidden=true;
+  $('county-preview-status').textContent='County map temporarily unavailable; statewide reporting remains accessible.';
+  console.warn('Battleground county data:',e.message);
+ }
+}
 window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();});
+loadPublished();
 })();
