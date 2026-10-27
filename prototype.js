@@ -6,7 +6,7 @@ const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(38,1,.1,500);c
 scene.add(new THREE.HemisphereLight(0xd6e5ff,0x101e38,1.55));const sun=new THREE.DirectionalLight(0xffffff,2.25);sun.position.set(-16,20,36);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-38;sun.shadow.camera.right=38;sun.shadow.camera.top=38;sun.shadow.camera.bottom=-38;sun.shadow.bias=-.0006;scene.add(sun);
 const rim=new THREE.DirectionalLight(0x70a9ff,1.25);rim.position.set(18,-10,16);scene.add(rim);
 // Floating sculpture: no ground plane or grid.
-let projectionRegion='';let projectedGeometry=false;let trackerMode='night';window.setTrackerMode=(v)=>{trackerMode=v;setMapColor();refreshPanel();};let demoMode=true;let backdropNames=new Set();let clickTimer=null;let transitionLock=false;let senateCalls={D:0,R:0};let houseCalls={D:0,R:0};let group=new THREE.Group();scene.add(group);let meshes=[], selected=null, rows=new Map(), activeState='Texas', activeStateFips='48', view='state', projection={lon:-99.5,lat:31,sx:.85,sy:1.05}, stateFeatures=null, projectedStates=null, countyFeatures=null, stateMap=new Map(), regionNames=[];const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();const ease=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?1:.14;
+let projectionRegion='';let projectedGeometry=false;let trackerMode=document.body.classList.contains('early')?'early':'night';window.setTrackerMode=(v)=>{trackerMode=v;setMapColor();refreshPanel();updateFloatingPanel();};let demoMode=true;let backdropNames=new Set();let clickTimer=null;let transitionLock=false;let senateCalls={D:0,R:0};let houseCalls={D:0,R:0};let group=new THREE.Group();scene.add(group);let meshes=[], selected=null, rows=new Map(), activeState='Texas', activeStateFips='48', view='state', projection={lon:-99.5,lat:31,sx:.85,sy:1.05}, stateFeatures=null, projectedStates=null, countyFeatures=null, stateMap=new Map(), regionNames=[];const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();const ease=()=>matchMedia('(prefers-reduced-motion: reduce)').matches?1:.14;
 function clean(x){return String(x||'').trim().toUpperCase()}function number(x){return Number(x).toLocaleString('en-US')}
 function polygonToShape(rings){const outer=rings[0];if(!outer||outer.length<4)return null;const shape=new THREE.Shape();outer.forEach((p,i)=>i?shape.lineTo(...project(p)):shape.moveTo(...project(p)));for(const hole of rings.slice(1)){if(hole.length<4)continue;const path=new THREE.Path();hole.forEach((p,i)=>i?path.lineTo(...project(p)):path.moveTo(...project(p)));shape.holes.push(path)}return shape}
 function project(p){
@@ -94,6 +94,7 @@ if(early){if(!mesh.userData.originalTopMaterial){mesh.userData.originalTopMateri
 mesh.material[0].color.set(color);mesh.userData.baseColor=color;mesh.userData.edges.material.opacity=mesh.userData.selected?1:(available?.40:.13);if(trackerMode!=='early'&&available&&x.flip)makeStripes(mesh,x.party==='D'?'#9BBEF4':'#F1A1AA');else if(mesh.userData.stripes){mesh.remove(mesh.userData.stripes);mesh.userData.stripes.geometry.dispose();mesh.userData.stripes.material.dispose();mesh.userData.stripes=null}}}
 function refreshPanel(){if(selected)updateFloatingPanel();if(trackerMode==='early'){const r=rows.get(clean(selected||''));detail.innerHTML=`<div class="sub">EARLY VOTE · VERIFIED TEXAS SNAPSHOT</div><h2>${selected|| (view==='national'?'United States':activeState)}</h2><p class="muted">${r?'Cumulative early ballots: '+number(r.cumulative_total):'No verified county turnout available for this selection.'}</p><p class="notice">Source: Texas county CSV · October 23, 2026. No partisan election results.</p>`;return;}if(view==='national')detail.innerHTML=racePanel(selected?'state':'national',selected||'United States');else detail.innerHTML=racePanel(selected?'county':'state',selected||activeState);attachChamberButtons();const explore=$('explore-state');if(explore)explore.onclick=()=>enterState(selected);}
 function choose(name,{focus=true}={}){
+ trackerMode=document.body.classList.contains('early')?'early':'night';
  if(selected===name)name=null;
  panelRace=null;
  selected=name;search.value=name||'';suggestions.hidden=true;
@@ -108,6 +109,8 @@ window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail
 let panelRace=null;
 const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content');
 function updateFloatingPanel(){
+ // The tab is the authoritative UI mode even if the module loaded after the tab switched.
+ trackerMode=document.body.classList.contains('early')?'early':'night';
  const open=!!selected;
  floatingPanel.hidden=!open;
  if(!open){panelRace=null;return;}
