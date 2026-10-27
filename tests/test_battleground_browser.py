@@ -106,31 +106,14 @@ try:
         assert not errors,errors
         page.screenshot(path="/tmp/electionhq-county-staging.png",full_page=True)
         page.close()
-        # Integrated Battlegrounds county explorer: local staging fixture, not public data.
-        integrated=browser.new_page(viewport={"width":1440,"height":900})
-        errors=[]
-        integrated.on("pageerror",lambda e:errors.append(str(e)))
-        integrated.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
-        integrated.wait_for_function("document.querySelector('#detail-name').textContent.includes('Texas')",timeout=30000)
-        integrated.locator("#county-preview-file").set_input_files({"name":"staging-county-preview.json",
-            "mimeType":"application/json","buffer":json.dumps(fixture).encode()})
-        integrated.wait_for_function("document.querySelectorAll('#county-preview-map svg path').length===254",timeout=30000)
-        assert integrated.locator("#county-preview-total").inner_text()==f"State total: {states['TX']['total']:,}*"
-        assert "Sum of complete county reports" in integrated.locator("#battleground-county-preview").inner_text()
-        integrated.locator(f"#county-preview-map path[data-fips='{first['fips']}']").focus()
-        integrated.keyboard.press("Enter")
-        assert first["name"] in integrated.locator("#county-selected-detail").inner_text()
-        assert integrated.locator(f"#county-preview-rows tr[data-fips='{first['fips']}']").get_attribute("class")=="selected-row"
-        integrated.locator("#battleground-map path[data-code='NC']").focus()
-        integrated.keyboard.press("Enter")
-        integrated.wait_for_function("document.querySelectorAll('#county-preview-map svg path').length===100",timeout=30000)
-        assert integrated.locator("#county-preview-total").inner_text()==f"State total: {states['NC']['total']:,}*"
-        integrated.locator("#battleground-map path[data-code='FL']").focus()
-        integrated.keyboard.press("Enter")
-        assert integrated.locator("#battleground-county-preview").is_hidden()
-        assert "Texas and North Carolina" in integrated.locator("#county-preview-status").inner_text()
-        assert not errors,errors
-        integrated.close()
+        # Public Battlegrounds never asks visitors to upload a data file.
+        public=browser.new_page()
+        public.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
+        public.wait_for_function("document.querySelector('#detail-name').textContent.includes('Texas')",timeout=30000)
+        assert public.locator("input[type=file]").count()==0
+        assert public.locator("a[href='./county-review.html']").count()==0
+        assert "Statewide" in public.locator("#county-preview-status").inner_text() or "County" in public.locator("#county-preview-status").inner_text()
+        public.close()
         browser.close()
 finally:
     server.shutdown()
