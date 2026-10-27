@@ -42,9 +42,10 @@ def validate(code, payload):
         if all(v is not None for v in methods) and sum(methods) != total:
             raise ValueError("Voting methods do not reconcile")
         cutoff = row.get("file_as_of")
-        if not isinstance(cutoff, str) or not cutoff:
-            raise ValueError("Missing county source cutoff")
-        datetime.fromisoformat(cutoff.replace("Z", "+00:00"))
+        if cutoff is not None:
+            if not isinstance(cutoff, str) or not cutoff.strip():
+                raise ValueError("Invalid supplied county source cutoff")
+            datetime.fromisoformat(cutoff.replace("Z", "+00:00"))
         if not isinstance(row.get("source_url"), str) or not row["source_url"].startswith("https://"):
             raise ValueError("Missing HTTPS source")
         if not row.get("credit"):
