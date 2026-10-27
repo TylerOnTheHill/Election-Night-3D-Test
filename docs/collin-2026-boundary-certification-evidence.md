@@ -17,7 +17,7 @@ This is **documented adoption of the January 2026 precinct boundary changes**. I
 
 Texas Election Code §42.037 requires a map of the affected precincts to be filed with the Secretary of State within 120 days after the boundary-change order. Texas SOS guidance: https://www.sos.state.tx.us/elections/laws/advisory2021-14.shtml
 
-Request or locate the **maps filed pursuant to §42.037 for Court Order 2025-1013-09-22**, and ask Collin County Elections whether any subsequent precinct boundary changes were adopted for the November 3, 2026 general election. A dated county-certified general-election precinct GIS layer or written county confirmation tied to the TLC 26P dataset could close the remaining vintage question.
+Locate publicly accessible **maps filed pursuant to §42.037 for Court Order 2025-1013-09-22**, and check published Collin County records for whether any subsequent precinct boundary changes were adopted for the November 3, 2026 general election. A publicly accessible dated county general-election precinct GIS layer, or a traceable reputable third-party November 2026 boundary source, can support the map with its actual provider and vintage labeled. No outreach or records requests.
 
 ## ElectionHQ gate status
 
