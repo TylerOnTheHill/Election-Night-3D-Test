@@ -1,8 +1,12 @@
 import sys
 import unittest
+import tempfile
+import json
+from unittest.mock import patch
+from urllib.error import URLError
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
-from stage_alaska_official_statewide import parse
+from stage_alaska_official_statewide import parse, main
 
 class AlaskaOfficialTests(unittest.TestCase):
     def test_2026_general_received_not_issued_or_primary(self):
@@ -17,6 +21,15 @@ class AlaskaOfficialTests(unittest.TestCase):
         self.assertEqual(result["received_ballots"],46403)
         self.assertEqual(result["source_cutoff"],"October 26, 2026 at 1:33 pm")
         self.assertIsNone(result["county_equivalent_observations"])
+    def test_unreachable_source_writes_explicit_gap(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output=Path(temp)/"alaska.json"
+            with patch.object(sys,"argv",["stage_alaska_official_statewide.py","--output",str(output)]):
+                with patch("stage_alaska_official_statewide.urllib.request.urlopen",side_effect=URLError("certificate error")):
+                    main()
+            record=json.loads(output.read_text())
+            self.assertEqual(record["status"],"source_unavailable")
+            self.assertFalse(record["publication_approved"])
     def test_missing_cutoff_fails(self):
         with self.assertRaises(ValueError):
             parse("2026 General Election Total Ballots Issued: 20 Total Ballots Received: 10 2026 Primary Election")
