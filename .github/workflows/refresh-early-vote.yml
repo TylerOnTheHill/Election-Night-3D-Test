@@ -13,6 +13,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify snapshot freshness and no-double-counting safeguards
+        run: python -m unittest discover -s tests -p test_refresh_early_vote.py -v
       - name: Validate and mirror aggregate feed
         run: python scripts/refresh_early_vote.py
       - name: Commit changed snapshot
