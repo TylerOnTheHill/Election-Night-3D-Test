@@ -92,5 +92,21 @@ with sync_playwright() as p:
     assert not page.locator("body").evaluate("(el)=>el.classList.contains('early')")
     assert not errors, errors
     print("PASS: national totals, Florida selection and attribution, non-Texas isolation, national return, Texas county dashboard, mode toggle")
+    mobile=browser.new_page(viewport={"width":390,"height":844},device_scale_factor=1,is_mobile=True,has_touch=True)
+    mobile_errors=[]
+    mobile.on("pageerror",lambda e: mobile_errors.append(str(e)))
+    mobile.goto("http://127.0.0.1:8765/",wait_until="domcontentloaded")
+    mobile.wait_for_function("window.__mapWebGLReady===true",timeout=90000)
+    mobile.get_by_role("tab",name="Early Vote").click()
+    mobile.wait_for_function("document.querySelector('#details').textContent.includes('states reporting')",timeout=30000)
+    mobile.wait_for_function("document.querySelector('.early-stats').textContent.includes('Nationwide early ballots')",timeout=15000)
+    assert mobile.locator(".early-stats").is_visible()
+    assert mobile.locator("#stage").is_visible()
+    mobile.screenshot(path="/tmp/electionhq-mobile.png",full_page=True)
+    overflow=mobile.evaluate("({scroll:document.documentElement.scrollWidth,viewport:window.innerWidth})")
+    assert overflow["scroll"]<=overflow["viewport"]+2,("Mobile horizontal overflow",overflow)
+    assert not mobile_errors,mobile_errors
+    print("PASS: mobile 390x844, early-vote cards, map, no horizontal overflow or JS errors")
+    mobile.close()
     browser.close()
 server.shutdown()
