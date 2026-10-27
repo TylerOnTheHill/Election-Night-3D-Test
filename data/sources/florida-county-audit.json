@@ -27,7 +27,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Baker",
@@ -39,7 +42,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Bay",
@@ -51,7 +57,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Bradford",
@@ -63,7 +72,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Brevard",
@@ -75,7 +87,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Broward",
@@ -87,7 +102,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Calhoun",
@@ -99,7 +117,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Charlotte",
@@ -111,7 +132,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Citrus",
@@ -123,7 +147,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Clay",
@@ -135,7 +162,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Collier",
@@ -147,7 +177,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Columbia",
@@ -159,7 +192,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "DeSoto",
@@ -171,7 +207,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Dixie",
@@ -183,7 +222,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Duval",
@@ -195,7 +237,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Escambia",
@@ -207,7 +252,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Flagler",
@@ -219,7 +267,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Franklin",
@@ -231,7 +282,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Gadsden",
@@ -243,7 +297,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Gilchrist",
@@ -255,7 +312,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Glades",
@@ -267,7 +327,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Gulf",
@@ -279,7 +342,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Hamilton",
@@ -291,7 +357,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Hardee",
@@ -303,7 +372,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Hendry",
@@ -315,7 +387,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Hernando",
@@ -327,7 +402,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Highlands",
@@ -339,7 +417,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Hillsborough",
@@ -351,7 +432,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Holmes",
@@ -363,7 +447,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Indian River",
@@ -375,7 +462,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Jackson",
@@ -387,7 +477,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Jefferson",
@@ -399,7 +492,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Lafayette",
@@ -411,7 +507,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Lake",
@@ -423,7 +522,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Lee",
@@ -435,7 +537,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Leon",
@@ -447,7 +552,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Levy",
@@ -459,7 +567,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Liberty",
@@ -471,7 +582,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Madison",
@@ -483,7 +597,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Manatee",
@@ -495,7 +612,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Marion",
@@ -507,7 +627,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Martin",
@@ -519,7 +642,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Miami-Dade",
@@ -531,7 +657,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Monroe",
@@ -543,7 +672,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Nassau",
@@ -555,7 +687,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Okaloosa",
@@ -567,7 +702,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Okeechobee",
@@ -579,7 +717,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Orange",
@@ -591,7 +732,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Osceola",
@@ -603,7 +747,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Palm Beach",
@@ -615,7 +762,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "initial_parallel_research",
-      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed"
+      "notes": "Initial research candidate; no 2026 machine-readable endpoint confirmed",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Pasco",
@@ -627,7 +777,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Pinellas",
@@ -639,7 +792,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Polk",
@@ -651,7 +807,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Putnam",
@@ -663,7 +822,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Santa Rosa",
@@ -675,7 +837,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Sarasota",
@@ -687,7 +852,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Seminole",
@@ -699,7 +867,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "St. Johns",
@@ -711,7 +882,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "St. Lucie",
@@ -723,7 +897,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Sumter",
@@ -735,7 +912,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Suwannee",
@@ -747,7 +927,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Taylor",
@@ -759,7 +942,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Union",
@@ -771,7 +957,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Volusia",
@@ -783,7 +972,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Wakulla",
@@ -795,7 +987,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Walton",
@@ -807,7 +1002,10 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     },
     {
       "county": "Washington",
@@ -819,7 +1017,12 @@
       "refresh_frequency": null,
       "county_feed_ingesting": false,
       "priority": "statewide_audit",
-      "notes": "Awaiting county-specific source audit"
+      "notes": "Awaiting county-specific source audit",
+      "official_supervisor_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+      "official_supervisor_directory_verified": true,
+      "county_specific_feed_verified": false
     }
-  ]
+  ],
+  "audit_directory_url": "https://dos.fl.gov/elections/contacts/supervisor-of-elections",
+  "audit_directory_verified_date": "2026-10-26"
 }
