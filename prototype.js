@@ -104,7 +104,7 @@ function choose(name,{focus=true}={}){
  refreshPanel();updateFloatingPanel();
  if(trackerMode==='early'&&view==='state'&&activeState==='Texas')window.dispatchEvent(new CustomEvent('electionhq:map-selection',{detail:{county:name||null}}));
 }
-window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail?.county);if(trackerMode!=='early')return;if(view==='state'&&activeState==='Texas'){if(meshes.some(m=>m.userData.name===name&&!m.userData.isBackdrop))choose(name,{focus:false});}else{enterState('Texas').then(()=>choose(name,{focus:false}));}});
+window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail?.county);if(trackerMode!=='early')return;if(view==='state'&&activeState==='Texas'){if(meshes.some(m=>m.userData.name===name&&!m.userData.isBackdrop)){if(selected!==name)choose(name,{focus:false});}}else{enterState('Texas').then(()=>choose(name,{focus:false}));}});
 let panelRace=null;
 const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content');
 function updateFloatingPanel(){
