@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+import {createElectionHQControls} from './electionhq-map-controls.js';
 const host=document.getElementById('battleground-map');
 const watch=new Set('AK AZ FL GA IA KS ME MI MN MS NE NV NH NC OH SC TX VA WI'.split(' '));
 const names={Alaska:'AK',Arizona:'AZ',Florida:'FL',Georgia:'GA',Iowa:'IA',Kansas:'KS',Maine:'ME',Michigan:'MI',Minnesota:'MN',Mississippi:'MS',Nebraska:'NE',Nevada:'NV','New Hampshire':'NH','North Carolina':'NC',Ohio:'OH','South Carolina':'SC',Texas:'TX',Virginia:'VA',Wisconsin:'WI'};
@@ -14,11 +14,7 @@ renderer.domElement.style.cssText='width:100%;height:100%;display:block;touch-ac
 host.style.height='430px';host.style.minHeight='320px';
 const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(38,1,.1,500);
 camera.up.set(0,0,1);camera.position.set(0,-28,55);
-const controls=new OrbitControls(camera,renderer.domElement);
-controls.enableDamping=true;controls.dampingFactor=.055;
-controls.mouseButtons={LEFT:THREE.MOUSE.PAN,MIDDLE:THREE.MOUSE.DOLLY,RIGHT:THREE.MOUSE.ROTATE};
-controls.rotateSpeed=.19;controls.zoomSpeed=.72;controls.panSpeed=.6;
-controls.minPolarAngle=.16;controls.maxPolarAngle=.94;controls.minDistance=.65;controls.maxDistance=120;
+const controls=createElectionHQControls(camera,renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xffffff,0x333333,2));
 const light=new THREE.DirectionalLight(0xffffff,2.2);light.position.set(-16,20,36);scene.add(light);
 const group=new THREE.Group();scene.add(group);
