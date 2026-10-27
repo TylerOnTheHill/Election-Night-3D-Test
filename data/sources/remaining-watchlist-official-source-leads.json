@@ -41,6 +41,16 @@
       "status": "secondary_county_dashboard_identified",
       "machine_readable_endpoint_verified": false,
       "county_ballot_values_verified": false
+    },
+    {
+      "state": "MI",
+      "source_name": "Michigan Department of State Voting Dashboard",
+      "source_url": "https://www.michigan.gov/sos/elections/election-results-and-data/voter-participation-dashboard",
+      "evidence_url": "https://www.michigan.gov/sos/resources/news/2026/10/20/more-than-780000-michigan-voters-have-cast-their-ballot-two-weeks-before-election-day",
+      "evidence": "Official state dashboard updates daily and explicitly offers 2026 county and municipal ballot request and return counts; aggregated privacy-suppressed totals <=10, so suppressed cells must remain unknown. Machine-readable aggregate endpoint still unverified.",
+      "status": "official_county_dashboard_identified",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
     }
   ]
 }
