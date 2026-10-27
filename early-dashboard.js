@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id),fmt=n=>Number(n).toLocaleString('en-US'),clean=s=>String(s||'').toUpperCase().replace(/[^A-Z]/g,'');
 let rows=[],statePct=0,stateBallots=0,stateRegistered=0,selected='',sortKey='cumulative_total',sortAsc=false;
-const title=s=>s.toLowerCase().replace(/\\b\\w/g,c=>c.toUpperCase());
+const title=s=>s.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase());
 function showDetail(name){
  const row=rows.find(r=>clean(r.county)===clean(name));
  selected=row?clean(row.county):'';
@@ -23,7 +23,7 @@ function render(){
  $('ev-county-body').innerHTML=match.length?match.map(r=>`<tr data-county="${r.county}" class="${clean(r.county)===selected?'ev-selected':''}"><td>${title(r.county)}</td><td>${fmt(r.registered_voters)}</td><td>${fmt(r.cumulative_total)}</td><td>${Number(r.cumulative_early_voting_pct).toFixed(2)}%</td><td>Official</td></tr>`).join(''):'<tr><td colspan="5">No matching counties</td></tr>';
 }
 fetch('./counties-2026-10-23.csv').then(r=>{if(!r.ok)throw Error('CSV unavailable');return r.text()}).then(t=>{
- const lines=t.trim().split(/\\r?\\n/),keys=lines.shift().split(',');
+ const lines=t.trim().split(/\r?\n/),keys=lines.shift().split(',');
  rows=lines.map(line=>Object.fromEntries(line.split(',').map((v,i)=>[keys[i],v])));
  stateBallots=rows.reduce((n,r)=>n+Number(r.cumulative_total),0);
  stateRegistered=rows.reduce((n,r)=>n+Number(r.registered_voters),0);
