@@ -25,7 +25,12 @@ function render(){
   for(const [v,numeric] of [[r.name,false],[r.fips,false],[fmt(r.total),true],[fmt(r.mail),true],[fmt(r.in_person),true],[r.file_as_of||"Unavailable",false]]){
    const td=document.createElement("td");td.textContent=v;if(numeric)td.className="num";tr.append(td);
   }
-  tr.title="Source: "+r.source_url+" · Credit: "+r.credit;body.append(tr);
+  tr.title="Source: "+r.source_url+" · Credit: "+r.credit;
+  tr.tabIndex=0;tr.setAttribute("aria-label","Select "+r.name+" county on the staging map");
+  const select=()=>window.dispatchEvent(new CustomEvent("electionhq:county-table-select",{detail:{fips:r.fips}}));
+  tr.addEventListener("click",select);
+  tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select();}});
+  body.append(tr);
  }
 }
 el("file").addEventListener("change",async e=>{
