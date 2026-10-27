@@ -13,6 +13,8 @@ def prepare(candidate, approval):
     if approval != "OWNER_APPROVED_TX_NC_COUNTY_PUBLICATION":
         raise ValueError("Explicit owner publication approval is required")
     validate(candidate)
+    if set(candidate["states"]) != {"TX", "NC"}:
+        raise ValueError("TX/NC approval cannot authorize other states; separate owner approval required")
     result = json.loads(json.dumps(candidate))
     result["publication_approved"] = True
     result.pop("review_required", None)
