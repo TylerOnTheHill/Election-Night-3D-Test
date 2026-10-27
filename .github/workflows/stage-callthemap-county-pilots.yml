@@ -6,6 +6,8 @@ on:
       - 'scripts/stage_callthemap_county_pilots.py'
       - 'tests/test_callthemap_county_pilots.py'
       - 'scripts/verify_tx_nc_fips.py'
+      - 'scripts/build_county_preview.py'
+      - 'tests/test_county_preview.py'
       - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
   workflow_dispatch:
@@ -27,6 +29,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_tx_nc_fips.py' -v
       - name: Verify complete Census FIPS geography and enrich staging records
         run: python scripts/verify_tx_nc_fips.py --input-dir staging-county-pilots --output-dir staging-county-pilots-fips
+      - name: Test preview publication guards
+        run: python -m unittest discover -s tests -p 'test_county_preview.py' -v
+      - name: Build non-publication county preview
+        run: python scripts/build_county_preview.py --input-dir staging-county-pilots-fips --output staging-county-preview.json
       - name: Upload staging-only county records
         if: always()
         uses: actions/upload-artifact@v4
@@ -35,5 +41,6 @@ jobs:
           path: |
             staging-county-pilots/
             staging-county-pilots-fips/
+            staging-county-preview.json
           if-no-files-found: ignore
           retention-days: 7
