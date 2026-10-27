@@ -1,0 +1,72 @@
+(()=>{'use strict';
+const $=id=>document.getElementById(id),fmt=n=>n.toLocaleString('en-US');
+let preview=null,selected='TX',atlas=null;
+function validate(p){
+ if(p?.schema!=='electionhq-county-preview-v1'||p.publication_approved!==false)throw Error('Expected a staging-only county preview.');
+ for(const [code,n,prefix] of [['TX',254,'48'],['NC',100,'37']]){
+  const s=p.states?.[code],seen=new Set();
+  if(!s||s.status!=='preview_only_not_approved_for_publication'||s.counties?.length!==n)throw Error('Incomplete '+code+' staging county coverage.');
+  let sum=0;
+  for(const r of s.counties){
+   if(typeof r.fips!=='string'||!new RegExp('^'+prefix+'[0-9]{3}$').test(r.fips)||seen.has(r.fips)||!Number.isSafeInteger(r.total)||r.total<0)throw Error('Invalid or duplicate '+code+' county observation.');
+   seen.add(r.fips);sum+=r.total;
+  }
+  if(sum!==s.total)throw Error(code+' county aggregate mismatch.');
+ }
+ return p;
+}
+async function getAtlas(){
+ if(atlas)return atlas;
+ const r=await fetch('https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json');
+ if(!r.ok)throw Error('County geography unavailable');
+ atlas=await r.json();return atlas;
+}
+async function render(){
+ const host=$('battleground-county-preview'),status=$('county-preview-status');
+ if(!preview)return;
+ if(!preview.states[selected]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
+ const s=preview.states[selected];host.hidden=false;
+ status.textContent='Local staging data loaded; nothing uploaded or published.';
+ $('county-preview-title').textContent=selected==='TX'?'Texas counties':'North Carolina counties';
+ $('county-preview-total').textContent='State total: '+fmt(s.total)+'*';
+ const body=$('county-preview-rows');body.replaceChildren();
+ for(const r of [...s.counties].sort((a,b)=>b.total-a.total)){
+  const tr=document.createElement('tr');tr.tabIndex=0;tr.dataset.fips=r.fips;
+  const name=document.createElement('td');name.textContent=r.name;
+  const value=document.createElement('td');value.className='num';value.textContent=fmt(r.total);
+  tr.append(name,value);body.append(tr);
+  tr.addEventListener('click',()=>highlight(r.fips));
+  tr.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();highlight(r.fips);}});
+ }
+ const map=$('county-preview-map'),legend=$('county-preview-legend');
+ map.textContent='Loading county boundaries…';
+ try{
+  const geo=await getAtlas();if(!window.d3||!window.topojson)throw Error('Map libraries unavailable');
+  const shapes=topojson.feature(geo,geo.objects.counties).features.filter(f=>String(f.id).padStart(5,'0').startsWith(selected==='TX'?'48':'37'));
+  const lookup=new Map(s.counties.map(r=>[r.fips,r]));
+  if(shapes.length!==s.counties.length||shapes.some(f=>!lookup.has(String(f.id).padStart(5,'0'))))throw Error('County boundary coverage mismatch; county table remains available.');
+  const w=850,h=510,collection={type:'FeatureCollection',features:shapes};
+  const projection=d3.geoMercator().fitExtent([[20,20],[w-20,h-20]],collection),path=d3.geoPath(projection),max=Math.max(1,...s.counties.map(r=>r.total));
+  map.replaceChildren();
+  const svg=d3.select(map).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('role','img').attr('aria-label',$('county-preview-title').textContent+' reported early-ballot map');
+  svg.selectAll('path').data(shapes).join('path').attr('d',path).attr('data-fips',f=>String(f.id).padStart(5,'0'))
+   .attr('tabindex',0).attr('role','button')
+   .attr('aria-label',f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return r.name+', '+fmt(r.total)+' early ballots'})
+   .attr('fill',f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return d3.interpolateRgb('#15345d','#268cff')(0.15+0.85*Math.sqrt(r.total/max));})
+   .on('click',(e,f)=>highlight(String(f.id).padStart(5,'0')))
+   .on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();highlight(String(f.id).padStart(5,'0'));}})
+   .append('title').text(f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return r.name+': '+fmt(r.total)+' ballots'});
+  legend.textContent=s.counties.length+' counties · Brighter blue means more reported ballots, not partisan preference.';
+ }catch(e){map.textContent=e.message;legend.textContent='County totals remain available in the table.';}
+}
+function highlight(fips){
+ document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
+ document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
+}
+$('county-preview-file').addEventListener('change',async e=>{
+ try{const file=e.target.files?.[0];if(!file)return;if(file.size>4000000)throw Error('Preview file too large');
+  preview=validate(JSON.parse(await file.text()));await render();
+ }catch(err){preview=null;$('battleground-county-preview').hidden=true;$('county-preview-status').textContent='Cannot load preview: '+err.message;}
+});
+window.addEventListener('electionhq:battleground-select',e=>{selected=e.detail.code;if(preview)render();});
+})();
