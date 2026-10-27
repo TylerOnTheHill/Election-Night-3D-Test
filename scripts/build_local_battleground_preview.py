@@ -46,16 +46,16 @@ def build(candidate_path: Path, output: Path):
     if "<body>" not in html:
         raise ValueError("Dashboard body insertion point missing")
     html_path.write_text(html.replace("<body>", "<body>" + banner, 1), encoding="utf-8")
-    links = "\\n".join(
+    links = "\n".join(
         f"{code}: http://127.0.0.1:8766/battleground.html?state={code}" for code in codes)
     (output / "README.txt").write_text(
-        "ElectionHQ v7.2 LOCAL INTERACTIVE STAGING PREVIEW\\n"
-        "County totals are UNAPPROVED staging observations, not a public release.\\n"
-        "This preview simulates the approved-feed interface ONLY inside the local package.\\n"
-        "Never upload or deploy this package as a public website.\\n\\n"
-        "From the extracted folder run: python -m http.server 8766 --bind 127.0.0.1\\n"
-        + links + "\\n"
-        "The browser needs internet access to load existing map libraries.\\n",
+        "ElectionHQ v7.2 LOCAL INTERACTIVE STAGING PREVIEW\n"
+        "County totals are UNAPPROVED staging observations, not a public release.\n"
+        "This preview simulates the approved-feed interface ONLY inside the local package.\n"
+        "Never upload or deploy this package as a public website.\n\n"
+        "From the extracted folder run: python -m http.server 8766 --bind 127.0.0.1\n"
+        + links + "\n"
+        "The browser needs internet access to load existing map libraries.\n",
         encoding="utf-8")
     print(f"Built LOCAL-ONLY staging preview: {output}")
 
