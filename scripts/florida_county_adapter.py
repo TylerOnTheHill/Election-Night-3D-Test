@@ -36,11 +36,14 @@ def normalize(payload):
         assert type(row["total"]) is int and row["total"] == sum(parts.values()), key
         output.append({"county": county, "category": kind, "total": row["total"],
                        "registration": parts, "reported_through": payload["reported_through"]})
+    counties = {r["county"].casefold() for r in output}
+    full_categories = all({r["category"] for r in output if r["county"].casefold() == county} == CATEGORIES for county in counties)
+    complete = len(counties) == COUNTIES_EXPECTED and full_categories
     return {"schema": "electionhq-county-early-vote-v1", "state_fips": "12",
             "source_url": payload["source_url"], "election_id": payload["election_id"],
             "reported_through": payload["reported_through"],
-            "coverage": {"county_category_rows": len(output),
-                         "complete_both_categories": len(output) == COUNTIES_EXPECTED * len(CATEGORIES)},
+            "coverage": {"county_category_rows": len(output), "counties_reported": len(counties),
+                         "complete_both_categories": complete},
             "records": sorted(output, key=lambda r: (r["county"], r["category"]))}
 
 if __name__ == "__main__":
