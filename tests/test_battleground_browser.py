@@ -182,6 +182,8 @@ try:
         assert automatic.locator("#ehq-national-screen").is_hidden()
         automatic.get_by_role("tab",name="County table").click()
         assert automatic.locator("#ehq-county-table-view").is_visible()
+        assert automatic.locator("#ehq-county-table-view #county-preview-rows tr").count()==100
+        assert automatic.locator("#ehq-county-table-view .scroll").is_visible()
         automatic.get_by_role("tab",name="County map").click()
         assert automatic.locator("#ehq-county-view").is_visible()
         assert automatic.locator("input[type=file]").count()==0
