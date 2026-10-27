@@ -11,10 +11,10 @@ def build(files):
         payload = json.loads((Path(files) / (code + ".json")).read_text())
         if payload.get("state") != code or payload.get("status") != "staging_only_fips_and_coverage_verified":
             raise ValueError("Unverified staging state: " + code)
-        if payload.get("fips_verified") is not True or payload.get("coverage_complete") is not True:
+        if payload.get("fips_verified") is not True:
             raise ValueError("Missing FIPS or geographic verification: " + code)
         rows = payload.get("counties")
-        if not isinstance(rows, list) or len(rows) != EXPECTED[code]:
+        if not isinstance(rows, list) or not 0 < len(rows) <= EXPECTED[code]:
             raise ValueError("Incomplete county rows: " + code)
         if any(not isinstance(r.get("fips"), str) or len(r["fips"]) != 5 or
                not r["fips"].isdigit() for r in rows):
@@ -34,8 +34,11 @@ def build(files):
             "census_geography_source": payload["census_geography_source"],
             "census_geography_url": payload["census_geography_url"],
             "county_count": len(rows),
+            "geographic_count": EXPECTED[code],
+            "coverage_complete": len(rows) == EXPECTED[code],
+            "reporting_label": "Fully reported" if len(rows) == EXPECTED[code] else "Partially reported",
             "total": county_total,
-            "total_basis": "sum_of_complete_county_reports",
+            "total_basis": "sum_of_reported_counties",
             "provider_statewide_total": reported_statewide,
             "county_vs_provider_statewide_difference": county_total - reported_statewide if isinstance(reported_statewide, int) else None,
             "counties": [{"fips": r["fips"], "name": r["county"], "total": r["total"],
