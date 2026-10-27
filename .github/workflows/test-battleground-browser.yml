@@ -27,5 +27,7 @@ jobs:
         if: always()
         with:
           name: electionhq-battleground-browser-screenshots
-          path: /tmp/electionhq-battleground-*.png
+          path: |
+            /tmp/electionhq-battleground-*.png
+            /tmp/electionhq-county-staging.png
           if-no-files-found: ignore
