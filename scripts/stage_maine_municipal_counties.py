@@ -41,7 +41,7 @@ def build(source,units,geo,official):
             for alias in r.get(key,"").split("|"):
                 if alias.strip() and county:lookup[norm(alias)].add(county)
     for r in official:
-        lookup[norm(r["municipality"])].add(r["county"])
+        lookup[norm(r["municipality"])].add(r["county"].removesuffix(" County"))
     fips={norm(f["properties"]["NAME"]):str(f["id"]).zfill(5) for f in geo["features"] if str(f["id"]).zfill(5).startswith("23")}
     totals=collections.defaultdict(lambda:{"mail":0,"in_person":0})
     unmatched=set();ambiguous={}
