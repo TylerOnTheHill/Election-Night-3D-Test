@@ -39,3 +39,56 @@ $('ev-county-body').addEventListener('click',e=>{const tr=e.target.closest('tr[d
 window.addEventListener('electionhq:map-selection',e=>showDetail(e.detail&&e.detail.county));
 document.querySelectorAll('.ev-mode').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.ev-mode').forEach(x=>x.classList.toggle('selected',x===b));const m=b.dataset.evMode;$('ev-legend-title').textContent=m==='participation'?'Official early-vote participation · % of registered voters':'Party share unavailable · showing overall participation';$('ev-legend-description').textContent=m==='participation'?'Continuous 0–100% scale · enhanced low-range contrast':'No validated party figures; green overall participation retained';}));
 })();
+
+/* Contextual, sourced summary cards. National feed has state aggregates only. */
+(()=>{
+'use strict';
+const stats=document.querySelector('.early-stats'),heading=document.querySelector('.early-heading strong');
+if(!stats)return;
+const cards=[...stats.querySelectorAll('.early-stat')];
+const fmt=n=>n===null||n===undefined||!Number.isFinite(Number(n))?'Unavailable':Number(n).toLocaleString('en-US');
+const set=(i,label,value,note)=>{const c=cards[i];c.querySelector('span').textContent=label;c.querySelector('b').textContent=value;c.querySelector('small').textContent=note;};
+let feed=null,view='national',activeState='Texas',selected=null;
+function render(){
+ if(!document.body.classList.contains('early'))return;
+ const name=view==='national'?selected:activeState;
+ const state=feed?.states?.find(s=>s.state_name===name);
+ const county=view==='state'&&activeState==='Texas'&&selected;
+ heading.textContent=county?selected+' County · EARLY VOTE':name?name.toUpperCase()+' · EARLY VOTE':'NATIONAL EARLY VOTE DASHBOARD';
+ if(county){
+  // Existing official Texas county snapshot is authoritative for county values.
+  const row=window.__electionhqCountyRows?.find(r=>r.county.toLowerCase()===selected.toLowerCase());
+  if(row){
+   set(0,'County early ballots',fmt(row.cumulative_total),'Texas official snapshot · October 23');
+   set(1,'Registered voters',fmt(row.registered_voters),'Texas county registration');
+   set(2,'County participation',Number(row.cumulative_early_voting_pct).toFixed(2)+'%','Ballots ÷ registered voters');
+   set(3,'Reporting date','Oct 23, 2026','Verified Texas county snapshot');
+   return;
+  }
+ }
+ if(state){
+  set(0,'Early ballots',fmt(state.total),'Reported through '+(state.counts_through||'date unavailable'));
+  set(1,'Mail ballots',fmt(state.mail),'Source: '+(state.source_name||'Call the Map'));
+  set(2,'In-person ballots',fmt(state.in_person),'Unavailable if not separately reported');
+  set(3,'Vs 2022 · same stage',state.vs_2022_change||'Unavailable','Historical comparison where available');
+  return;
+ }
+ if(name){
+  set(0,'Early ballots','Unavailable','No verified state aggregate in national feed');
+  set(1,'Mail ballots','Unavailable','No reported breakdown');
+  set(2,'In-person ballots','Unavailable','No reported breakdown');
+  set(3,'Vs 2022 · same stage','Unavailable','No validated comparison');
+  return;
+ }
+ const national=feed?.national;
+ set(0,'Nationwide early ballots',fmt(national?.total),'Sum of reporting states · dates vary');
+ set(1,'States reporting',fmt(feed?.states?.length),'Not all states report');
+ set(2,'Reporting date range',national?.counts_through?.first&&national?.counts_through?.last?national.counts_through.first+' – '+national.counts_through.last:'Unavailable','State reporting dates vary');
+ set(3,'Vs 2022 · matched states',national?.compared_with_2022?.change||'Unavailable','Only '+(national?.compared_with_2022?.states?.length||0)+' comparable states; not nationwide');
+}
+window.addEventListener('electionhq:geography-change',e=>{({view,activeState,selected}=e.detail);render();});
+window.addEventListener('electionhq:national-early-loaded',()=>load());
+document.getElementById('tab-early')?.addEventListener('click',()=>setTimeout(render,0));
+async function load(){try{const r=await fetch('./data/early-vote/US.json',{cache:'no-store'});if(!r.ok)throw Error('national feed unavailable');const j=await r.json();if(!Array.isArray(j.states)||!j.national)throw Error('invalid feed');feed=j;render();}catch(e){console.warn('Contextual early vote cards:',e);render();}}
+load();
+})();
