@@ -49,6 +49,39 @@ try:
             assert not errors,errors
             page.screenshot(path=f"/tmp/electionhq-battleground-{width}.png",full_page=True)
             page.close()
+        # Synthetic fixture: verify staging-only county geography and selection.
+        # Values below are test fixtures, not election observations.
+        reference=json.loads(Path("data/sources/tx-nc-county-fips-reference.json").read_text())
+        states={}
+        for code,items in reference["states"].items():
+            rows=[{"fips":item["fips"],"name":item["name"],"total":i+1,
+                   "mail":None,"in_person":None,"file_as_of":"TEST FIXTURE",
+                   "source_url":"https://example.org","credit":"Synthetic test"}
+                  for i,item in enumerate(items)]
+            states[code]={"status":"preview_only_not_approved_for_publication",
+                          "county_count":len(rows),"total":sum(r["total"] for r in rows),
+                          "provider":"Synthetic test","statewide_cutoff":"TEST FIXTURE",
+                          "census_geography_source":"FIPS reference","counties":rows}
+        fixture={"schema":"electionhq-county-preview-v1","publication_approved":False,"states":states}
+        page=browser.new_page(viewport={"width":1440,"height":900})
+        errors=[]
+        page.on("pageerror",lambda e:errors.append(str(e)))
+        page.goto("http://127.0.0.1:8766/county-review.html",wait_until="domcontentloaded")
+        page.locator("#file").set_input_files({"name":"staging-county-preview.json",
+            "mimeType":"application/json","buffer":json.dumps(fixture).encode()})
+        page.wait_for_function("document.querySelectorAll('#county-map svg path').length===254",timeout=30000)
+        assert "254 of 254" in page.locator("#county-map-legend").inner_text()
+        first=states["TX"]["counties"][0]
+        page.locator(f"#county-map path[data-fips='{first['fips']}']").focus()
+        page.keyboard.press("Enter")
+        assert page.locator("#rows tr").count()==1
+        assert first["name"] in page.locator("#rows tr").inner_text()
+        page.locator("#state").select_option("NC")
+        page.wait_for_function("document.querySelectorAll('#county-map svg path').length===100",timeout=30000)
+        assert "100 of 100" in page.locator("#county-map-legend").inner_text()
+        assert not errors,errors
+        page.screenshot(path="/tmp/electionhq-county-staging.png",full_page=True)
+        page.close()
         browser.close()
 finally:
     server.shutdown()
