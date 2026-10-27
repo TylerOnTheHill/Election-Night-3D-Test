@@ -16,6 +16,7 @@ class GeometryTests(unittest.TestCase):
   with self.assertRaisesRegex(ValueError,"Duplicate"):validate(d)
  def test_reject_projected_coordinates(self):
   d=copy.deepcopy(BASE);d["features"][0]["geometry"]["coordinates"][0][0]=[123456,456789]
+  d["features"][0]["geometry"]["coordinates"][0][-1]=[123456,456789]
   with self.assertRaisesRegex(ValueError,"Not WGS84"):validate(d)
  def test_reject_wrong_county(self):
   d=copy.deepcopy(BASE);d["features"][0]["properties"]["county_fips"]="48201"
