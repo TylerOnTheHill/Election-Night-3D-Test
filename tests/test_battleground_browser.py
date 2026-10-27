@@ -25,14 +25,13 @@ try:
             page.on("pageerror",lambda e:errors.append(str(e)))
             page.goto("http://127.0.0.1:8766/battleground.html",wait_until="domcontentloaded")
             page.wait_for_function("document.querySelector('#reported-count').textContent.includes('/ 19')",timeout=30000)
-            page.wait_for_function("document.querySelectorAll('#battleground-map svg path.watch').length===19",timeout=30000)
-            assert page.locator("#battleground-map svg path.watch").count()==19
-            colors=page.locator("#battleground-map svg path.watch").evaluate_all("(els)=>[...new Set(els.map(e=>e.getAttribute('fill')))]")
-            assert colors==["#268cff"],colors
-            assert page.locator("#battleground-map svg path.nonwatch").count()>=25
+            page.wait_for_function("document.querySelector('#battleground-map').dataset.renderReady==='true'",timeout=30000)
+            assert page.locator("#battleground-map canvas").count()==1
+            assert page.locator("#battleground-map").get_attribute("data-state-meshes")=="50"
+            assert page.locator("#map-zoom-in").count()==1
+            assert page.locator("#map-reset").count()==1
             assert page.locator("#state-count").inner_text()=="19"
-            page.locator("#battleground-map path[data-code='FL']").focus()
-            page.keyboard.press("Enter")
+            page.locator("#state-picker").select_option("FL")
             assert "Florida" in page.locator("#detail-name").inner_text()
             assert page.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=FL"
             assert "state=FL" in page.url
@@ -132,8 +131,7 @@ try:
         assert "North Carolina" in automatic.locator("#county-preview-title").inner_text()
         assert automatic.locator("#county-preview-total").inner_text()==f"State total: {approved['states']['NC']['total']:,}*"
         assert automatic.locator("input[type=file]").count()==0
-        automatic.locator("#battleground-map path[data-code='TX']").focus()
-        automatic.keyboard.press("Enter")
+        automatic.locator("#state-picker").select_option("TX")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         automatic.close()
         # Partial TX feed: all geographic shapes remain; missing counties stay gray.
