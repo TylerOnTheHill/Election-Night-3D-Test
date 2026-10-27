@@ -32,11 +32,11 @@ async function render(){
  if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level ballot totals have not yet been published for '+(COUNTY_STATES[code]?.name||'this state')+'.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
- status.textContent=(s.coverage_complete?'Fully reported':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
+ status.textContent=(s.reporting_label==='Partially reported'?'Partially reported':s.reporting_label==='Fully reported'?'Fully reported':s.coverage_complete?'County geography complete':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
  $('county-preview-title').textContent=COUNTY_STATES[code].name+' counties';
  $('county-preview-total').textContent='County ballots reported: '+fmt(s.total);
  // County observations are a geographic subset; never present their sum as a statewide total.
- $('county-preview-complete-note').hidden=!s.coverage_complete;
+ $('county-preview-complete-note').hidden=!(s.coverage_complete&&s.reporting_label==='Fully reported');
  const body=$('county-preview-rows');body.replaceChildren();
  for(const r of [...s.counties].sort((a,b)=>b.total-a.total)){
   const tr=document.createElement('tr');tr.tabIndex=0;tr.dataset.fips=r.fips;
