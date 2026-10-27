@@ -17,6 +17,7 @@ function validate(p){
 function render(){
  const code=el("state").value,s=data.states[code],q=el("search").value.trim().toLowerCase();
  el("summary").textContent=code+" · "+s.county_count+" counties · "+fmt(s.total)+" early ballots";
+ window.dispatchEvent(new CustomEvent("electionhq:county-preview",{detail:{code,rows:s.counties}}));
  el("provenance").textContent="Provider: "+s.provider+" · Statewide cutoff: "+(s.statewide_cutoff||"Unavailable")+" · Checked: "+(s.provider_checked_at||"Unavailable")+" · Geography: "+s.census_geography_source;
  const body=el("rows");body.replaceChildren();
  for(const r of s.counties.filter(x=>x.name.toLowerCase().includes(q)||x.fips.includes(q)).sort((a,b)=>b.total-a.total)){
