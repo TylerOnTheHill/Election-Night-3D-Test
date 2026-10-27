@@ -30,6 +30,7 @@ def build(files):
             raise ValueError("Inconsistent geographic county count: " + code)
         county_total = sum(r["total"] for r in rows)
         reported_statewide = payload.get("statewide_total")
+        statewide_reconciled = type(reported_statewide) is int and county_total == reported_statewide
         states[code] = {
             "status": "preview_only_not_approved_for_publication",
             "provider": payload["provider"],
@@ -41,7 +42,8 @@ def build(files):
             "county_count": len(rows),
             "geographic_count": EXPECTED[code],
             "coverage_complete": len(rows) == EXPECTED[code],
-            "reporting_label": "Fully reported" if len(rows) == EXPECTED[code] else "Partially reported",
+            "reporting_label": "Fully reported" if len(rows) == EXPECTED[code] and statewide_reconciled else "Partially reported",
+            "statewide_reconciled": statewide_reconciled,
             "total": county_total,
             "total_basis": "sum_of_reported_counties",
             "provider_statewide_total": reported_statewide,
