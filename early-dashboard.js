@@ -30,6 +30,7 @@ fetch('./counties-2026-10-23.csv').then(r=>{if(!r.ok)throw Error('CSV unavailabl
  if(rows.length!==254||stateBallots!==3724290||!stateRegistered)throw Error('County data did not reconcile');
  statePct=100*stateBallots/stateRegistered;
  window.__electionhqCountyRows=rows;
+ window.dispatchEvent(new Event('electionhq:texas-counties-ready'));
  $('ev-inperson').textContent=statePct.toFixed(2)+'%';
  $('ev-mail').textContent=fmt(stateRegistered);
  showDetail(null);render();
@@ -89,6 +90,7 @@ function render(){
 }
 window.addEventListener('electionhq:geography-change',e=>{({view,activeState,selected}=e.detail);render();});
 window.addEventListener('electionhq:national-early-loaded',()=>load());
+window.addEventListener('electionhq:texas-counties-ready',render);
 document.getElementById('tab-early')?.addEventListener('click',()=>setTimeout(render,0));
 async function load(){try{const r=await fetch('./data/early-vote/US.json',{cache:'no-store'});if(!r.ok)throw Error('national feed unavailable');const j=await r.json();if(!Array.isArray(j.states)||!j.national)throw Error('invalid feed');feed=j;render();}catch(e){console.warn('Contextual early vote cards:',e);render();}}
 load();
