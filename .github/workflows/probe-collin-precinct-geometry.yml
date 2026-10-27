@@ -22,10 +22,13 @@ jobs:
       - name: Verify downloader tests
         run: python -m unittest discover -s tests -p 'test_fetch_collin_precinct_geojson.py' -v
       - name: Download public county precinct polygons
+        id: download
+        continue-on-error: true
         run: |
           mkdir -p staging-collin-geometry
           python scripts/fetch_collin_precinct_geojson.py --output staging-collin-geometry/collin-precincts.geojson
       - name: Summarize staging geometry (no voter records)
+        if: steps.download.outcome == 'success'
         run: |
           python - <<'PY'
           import json
@@ -36,6 +39,15 @@ jobs:
           summary={'status':'staging_only_not_approved_for_publication','county_fips':'48085','source_url':'https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer/0','boundary_vintage_verified_for_2026_general':False,'precinct_count':len(ids),'unique_precinct_count':len(set(ids)),'sample_precinct_ids':sorted(ids)[:12]}
           Path('staging-collin-geometry/report.json').write_text(json.dumps(summary,indent=2)+'\n')
           print(json.dumps(summary,indent=2))
+          PY
+      - name: Record blocked source without pretending geometry was fetched
+        if: steps.download.outcome != 'success'
+        run: |
+          mkdir -p staging-collin-geometry
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          Path('staging-collin-geometry/report.json').write_text(json.dumps({'status':'source_fetch_failed_no_geography','publication_approved':False,'source_url':'https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer/0','geometry_fetched':False,'precinct_count':None,'note':'Inspect job logs; initial GitHub runner probe returned HTTP 403 Forbidden.'},indent=2)+'\\n')
           PY
       - uses: actions/upload-artifact@v4
         if: always()
