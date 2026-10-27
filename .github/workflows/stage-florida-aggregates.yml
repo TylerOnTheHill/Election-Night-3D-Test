@@ -9,6 +9,7 @@ on:
       - ".github/workflows/stage-florida-aggregates.yml"
       - "scripts/fetch_florida_aggregates.py"
       - "scripts/import_florida_tsv.py"
+      - "tests/test_watchlist_interactive_review_browser.py"
   schedule:
     - cron: '30 14 * * *'
 permissions:
@@ -36,6 +37,15 @@ jobs:
         run: python scripts/validate_county_publication_candidate.py --candidate florida-county-candidate-unapproved.json
       - name: Build local Florida interactive review
         run: python scripts/build_local_battleground_preview.py --candidate florida-county-candidate-unapproved.json --output florida-interactive-review
+      - name: Install browser for official Florida interactive review
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify Florida county map and real official county totals
+        env:
+          COUNTY_REVIEW_DIR: florida-interactive-review
+          COUNTY_CANDIDATE: florida-county-candidate-unapproved.json
+        run: python tests/test_watchlist_interactive_review_browser.py
       - name: Upload validated staging snapshot
         uses: actions/upload-artifact@v4
         with:
