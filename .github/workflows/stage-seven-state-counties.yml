@@ -7,6 +7,7 @@ on:
       - 'scripts/combine_county_candidates.py'
       - 'scripts/stage_georgia_counties.py'
       - 'scripts/build_watchlist_readiness.py'
+      - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
       - 'tests/test_combine_county_candidates.py'
       - 'tests/test_watchlist_interactive_review_browser.py'
@@ -28,6 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Validate consolidated 19-state readiness semantics
+        run: python -m unittest discover -s tests -p 'test_build_watchlist_readiness.py' -v
       - name: Verify duplicate-safe combination
         run: python -m unittest discover -s tests -p 'test_combine_county_candidates.py' -v
       - name: Test reconciliation classifications
