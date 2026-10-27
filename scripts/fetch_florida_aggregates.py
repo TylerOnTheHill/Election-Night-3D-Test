@@ -11,7 +11,10 @@ import urllib.request
 from pathlib import Path
 from urllib.parse import urlparse
 
-from import_florida_tsv import import_files
+try:
+    from scripts.import_florida_tsv import import_files
+except ModuleNotFoundError:
+    from import_florida_tsv import import_files
 
 ALLOWED_HOST = "countyfilesvbm-ev.floridados.gov"
 MAX_BYTES = 5_000_000
