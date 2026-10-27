@@ -51,6 +51,16 @@
       "status": "official_county_dashboard_identified",
       "machine_readable_endpoint_verified": false,
       "county_ballot_values_verified": false
+    },
+    {
+      "state": "MN",
+      "source_name": "Minnesota Secretary of State 2026 general election absentee counts by county",
+      "source_url": "https://sos.mn.gov/election-administration-campaigns/data-maps/absentee-data/",
+      "evidence_url": "https://sos.mn.gov/election-administration-campaigns/data-maps/absentee-data/",
+      "evidence": "Official Minnesota SOS page publishes 2026 General Election county rows for applications, accepted by mail, accepted in person, and statewide totals. Observed 2026-10-23 cutoff; official statewide accepted mail 177841 and accepted in-person 241348. These are ballots accepted, not requests. Direct ingestion adapter and county FIPS crosswalk not yet independently verified.",
+      "status": "official_county_dashboard_identified",
+      "machine_readable_endpoint_verified": false,
+      "county_ballot_values_verified": false
     }
   ]
 }
