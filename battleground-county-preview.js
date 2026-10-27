@@ -27,7 +27,7 @@ async function render(){
  const version=++renderVersion,code=selected;
  const host=$('battleground-county-preview'),status=$('county-preview-status');
  if(!preview)return;
- if(!preview.states[code]){window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level reporting is currently available for Texas and North Carolina. Select either state to explore.';return;}
+ if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level reporting is currently available for Texas and North Carolina. Select either state to explore.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
  status.textContent=(s.coverage_complete?'Fully reported':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
@@ -61,7 +61,8 @@ async function render(){
    .on('click',(e,f)=>highlight(String(f.id).padStart(5,'0')))
    .on('keydown',(e,f)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();highlight(String(f.id).padStart(5,'0'));}})
    .append('title').text(f=>{const r=lookup.get(String(f.id).padStart(5,'0'));return r?r.name+': '+fmt(r.total)+' ballots':'Not yet reported'});
-  window.dispatchEvent(new CustomEvent('electionhq:county-3d-data',{detail:{code,features:shapes,rows:s.counties}}));
+  window.electionhqCounty3dPayload={code,features:shapes,rows:s.counties};
+  window.dispatchEvent(new CustomEvent('electionhq:county-3d-data',{detail:window.electionhqCounty3dPayload}));
   legend.textContent=s.counties.length+' of '+s.geographic_count+' counties reporting · Gray means not reported · Brighter blue means more reported ballots, not partisan preference.';
  }catch(e){if(version!==renderVersion)return;map.textContent=e.message;legend.textContent='County totals remain available in the table.';}
 }
@@ -81,7 +82,7 @@ async function loadPublished(){
   if(!response.ok)throw Error('County feed unavailable');
   preview=validate(await response.json());await render();
  }catch(e){preview=null;renderVersion++;$('battleground-county-preview').hidden=true;
-  window.dispatchEvent(new Event('electionhq:county-3d-clear'));
+  window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
   $('county-preview-status').textContent='County map temporarily unavailable; statewide reporting remains accessible.';
   console.warn('Battleground county data:',e.message);
  }
