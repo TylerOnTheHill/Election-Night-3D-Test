@@ -3,7 +3,13 @@ const WATCH=[['AK','Alaska'],['AZ','Arizona'],['FL','Florida'],['GA','Georgia'],
 const EXTRA=new Set(['AZ','MN','MS']),$=id=>document.getElementById(id),fmt=n=>n==null?'—':Number(n).toLocaleString('en-US');
 let data=[],checked='—',selectedCode='TX',visibleRows=[];
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function selectState(code){selectedCode=code;const x=data.find(v=>v.code===code);if(!x)return;for(const [id,value] of Object.entries({'detail-name':x.name+' · '+x.code,'detail-total':fmt(x.total),'detail-date':x.date||'Unavailable','detail-mail':fmt(x.mail),'detail-inperson':x.code==='NH'?'Not offered':fmt(x.inPerson),'detail-credit':x.sourceName||(x.code==='NH'?'NH absentee voting · count not available':'No verified statewide count'),'detail-description':x.code==='NH'?'No regular in-person early voting. Excuse-required absentee voting is available; no verified statewide absentee ballot total is in this feed. Missing is not zero.':x.reported?'Reported early ballots; not candidate votes.':'Missing does not mean zero.'}))$(id).textContent=value;const sum=(x.mail||0)+(x.inPerson||0),valid=x.mail!=null&&x.inPerson!=null&&sum>0;$('method-person').style.width=valid?100*x.inPerson/sum+'%':'0';$('method-mail').style.width=valid?100*x.mail/sum+'%':'0';$('method-note').textContent=valid?'In-person '+(100*x.inPerson/sum).toFixed(1)+'% · mail '+(100*x.mail/sum).toFixed(1)+'%':'Complete breakdown unavailable';const link=$('detail-source-link');link.hidden=!x.sourceUrl;if(x.sourceUrl)link.href=x.sourceUrl;else link.removeAttribute('href');
+function stateFromUrl(){
+ const code=new URLSearchParams(window.location.search).get('state')?.toUpperCase();
+ return WATCH.some(item=>item[0]===code)?code:null;
+}
+function selectState(code,updateUrl=true){const x=data.find(v=>v.code===code);if(!x)return;selectedCode=code;
+ if(updateUrl){const url=new URL(window.location.href);url.searchParams.set('state',code);window.history.replaceState(null,'',url);}
+ $('detail-share-link').href='./battleground.html?state='+encodeURIComponent(code);for(const [id,value] of Object.entries({'detail-name':x.name+' · '+x.code,'detail-total':fmt(x.total),'detail-date':x.date||'Unavailable','detail-mail':fmt(x.mail),'detail-inperson':x.code==='NH'?'Not offered':fmt(x.inPerson),'detail-credit':x.sourceName||(x.code==='NH'?'NH absentee voting · count not available':'No verified statewide count'),'detail-description':x.code==='NH'?'No regular in-person early voting. Excuse-required absentee voting is available; no verified statewide absentee ballot total is in this feed. Missing is not zero.':x.reported?'Reported early ballots; not candidate votes.':'Missing does not mean zero.'}))$(id).textContent=value;const sum=(x.mail||0)+(x.inPerson||0),valid=x.mail!=null&&x.inPerson!=null&&sum>0;$('method-person').style.width=valid?100*x.inPerson/sum+'%':'0';$('method-mail').style.width=valid?100*x.mail/sum+'%':'0';$('method-note').textContent=valid?'In-person '+(100*x.inPerson/sum).toFixed(1)+'% · mail '+(100*x.mail/sum).toFixed(1)+'%':'Complete breakdown unavailable';const link=$('detail-source-link');link.hidden=!x.sourceUrl;if(x.sourceUrl)link.href=x.sourceUrl;else link.removeAttribute('href');
  $('detail-coverage-note').textContent=x.code==='NH'?'No regular in-person early voting; statewide absentee count unavailable.':!x.reported?'No verified statewide ballot count is available in this snapshot.':x.mail==null||x.inPerson==null?'Statewide total available; method breakdown incomplete.':'Statewide total and method breakdown supplied by the source; reporting cutoff may differ from other states.';
  document.querySelectorAll('#rows tr').forEach(tr=>{const active=tr.dataset.code===code;tr.classList.toggle('selected-row',active);if(active)tr.setAttribute('aria-selected','true');else tr.removeAttribute('aria-selected')});
  window.dispatchEvent(new CustomEvent('electionhq:battleground-select',{detail:{code}}));}
@@ -28,7 +34,7 @@ async function load(){
   $('ballot-total').textContent=fmt(data.reduce((sum,x)=>sum+(x.total||0),0));
   $('feed-date').textContent=checked.slice(0,16).replace('T',' ')+' UTC';
   window.dispatchEvent(new CustomEvent('electionhq:battleground-data',{detail:{states:data}}));
-  render();selectState(selectedCode);
+  render();selectState(stateFromUrl()||selectedCode,false);
  }catch(e){$('rows').innerHTML='<tr><td colspan="7">Early-vote snapshot unavailable. Please try again later.</td></tr>';$('status').textContent=e.message;console.warn('Battlegrounds:',e);}
 }
 function csvCell(value){
@@ -49,5 +55,6 @@ function exportVisible(){
 $('export-watchlist').addEventListener('click',exportVisible);
 ['search','sort','filter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));
 window.addEventListener('electionhq:battleground-map-click',e=>selectState(e.detail.code));
+window.addEventListener('popstate',()=>{const code=stateFromUrl();if(code&&data.length)selectState(code,false)});
 load();
 })();
