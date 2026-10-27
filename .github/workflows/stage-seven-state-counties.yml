@@ -155,6 +155,7 @@ jobs:
             --candidate florida-unapproved.json \
             --candidate georgia-unapproved.json \
             --candidate minnesota-unapproved.json \
+            --candidate michigan-ohio-county-candidates.json \
             --output eight-states-unapproved.json
           python scripts/validate_county_publication_candidate.py --candidate eight-states-unapproved.json
       - name: Test combined restricted nineteen-state county merge
