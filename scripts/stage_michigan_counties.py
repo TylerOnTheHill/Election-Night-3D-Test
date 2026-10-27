@@ -19,7 +19,7 @@ def parse(raw,geo):
         if len(found)!=1:raise ValueError("Ambiguous Michigan CSV field "+repr(needles)+": "+repr(found)+"; actual columns="+repr(headers))
         return found[0]
     county_key=field(["county"])
-    total_key=field(["ballots recorded","ballots cast","total ballots","total early"])
+    total_key=field(["recorded participation"])
     mail_key=field(["absentee returned","absentee ballots returned"])
     early_key=field(["early in person","early in-person"])
     counties=[];seen=set()
