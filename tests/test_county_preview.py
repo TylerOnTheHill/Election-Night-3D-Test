@@ -51,7 +51,20 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(result["total"], 100)
         self.assertEqual(result["provider_statewide_total"], 90)
         self.assertEqual(result["county_vs_provider_statewide_difference"], 10)
-        self.assertEqual(result["total_basis"], "sum_of_complete_county_reports")
+        self.assertEqual(result["total_basis"], "sum_of_reported_counties")
+    def test_partial_counties_are_accepted_and_labeled(self):
+        p = Path(self.temp.name, "TX.json")
+        d = json.loads(p.read_text())
+        d["counties"] = d["counties"][:150]
+        d["coverage_complete"] = False
+        p.write_text(json.dumps(d))
+        result = build(self.temp.name)["states"]["TX"]
+        self.assertEqual(result["county_count"], 150)
+        self.assertEqual(result["geographic_count"], 254)
+        self.assertFalse(result["coverage_complete"])
+        self.assertEqual(result["reporting_label"], "Partially reported")
+        self.assertEqual(result["total"], 150)
+
     def test_reject_invalid_county_total(self):
         p = Path(self.temp.name, "NC.json")
         d = json.loads(p.read_text())

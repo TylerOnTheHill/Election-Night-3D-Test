@@ -120,7 +120,9 @@ try:
         approved["publication_approved"]=True
         for state in approved["states"].values():
             state["status"]="published"
-            state["total_basis"]="sum_of_complete_county_reports"
+            state["total_basis"]="sum_of_reported_counties"
+            state["geographic_count"]=254 if len(state["counties"])==254 else 100
+            state["coverage_complete"]=True
             state["credit"]="Synthetic test"
         automatic=browser.new_page()
         automatic.route("**/data/early-vote/battleground-counties.json",
@@ -134,6 +136,23 @@ try:
         automatic.keyboard.press("Enter")
         automatic.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         automatic.close()
+        # Partial TX feed: all geographic shapes remain; missing counties stay gray.
+        partial=json.loads(json.dumps(approved))
+        tx=partial["states"]["TX"]
+        tx["counties"]=tx["counties"][:150]
+        tx["county_count"]=150
+        tx["coverage_complete"]=False
+        tx["total"]=sum(row["total"] for row in tx["counties"])
+        partial_page=browser.new_page()
+        partial_page.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(partial)))
+        partial_page.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
+        partial_page.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
+        assert "Partially reported" in partial_page.locator("#county-preview-status").inner_text()
+        assert "150 of 254" in partial_page.locator("#county-preview-status").inner_text()
+        assert "Partially reported:" in partial_page.locator("#county-preview-total").inner_text()
+        assert partial_page.locator("#county-preview-map path[fill='#30343b']").count()==104
+        partial_page.close()
         browser.close()
 finally:
     server.shutdown()
