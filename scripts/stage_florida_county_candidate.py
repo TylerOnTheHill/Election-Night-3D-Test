@@ -9,6 +9,7 @@ Missing counties remain absent, not zero. No public feed is written.
 import argparse
 import json
 import re
+import urllib.request
 from collections import defaultdict
 from pathlib import Path
 
@@ -104,7 +105,7 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--normalized",help="Normalized Florida county/category records")
     parser.add_argument("--official-tsv-snapshot",help="Output from existing official Florida TSV ingestion")
-    parser.add_argument("--census",required=True,help="Verified Census NAME/state/county JSON")
+    parser.add_argument("--census",help="Verified Census NAME/state/county JSON; otherwise fetch directly from Census API")
     parser.add_argument("--output",required=True)
     args=parser.parse_args()
     if Path(args.output).as_posix().lstrip("./").startswith("data/early-vote/"):
@@ -113,7 +114,13 @@ def main():
         parser.error("Provide exactly one Florida input format")
     source=json.loads(Path(args.normalized or args.official_tsv_snapshot).read_text())
     normalized=source if args.normalized else from_official_tsv_snapshot(source)
-    candidate=stage(normalized,json.loads(Path(args.census).read_text()))
+    if args.census:
+        census=json.loads(Path(args.census).read_text())
+    else:
+        url="https://api.census.gov/data/2020/dec/pl?get=NAME&for=county:*&in=state:12"
+        with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-county-geography/1.0"}),timeout=30) as response:
+            census=json.load(response)
+    candidate=stage(normalized,census)
     Path(args.output).write_text(json.dumps(candidate,indent=2)+"\\n")
     print("FL staged, not published:",candidate["states"]["FL"]["county_count"],"counties")
 
