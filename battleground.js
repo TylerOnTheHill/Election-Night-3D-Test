@@ -27,5 +27,6 @@ async function load(){
  }catch(e){$('rows').innerHTML='<tr><td colspan="7">Early-vote snapshot unavailable. Please try again later.</td></tr>';$('status').textContent=e.message;console.warn('Battlegrounds:',e);}
 }
 ['search','sort','filter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',render));
+window.addEventListener('electionhq:battleground-map-click',e=>selectState(e.detail.code));
 load();
 })();
