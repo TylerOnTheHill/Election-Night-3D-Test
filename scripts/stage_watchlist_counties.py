@@ -75,7 +75,7 @@ def stage(code,payload,census):
         if row.get("state")!=code or not isinstance(row.get("county"),str):
             raise ValueError("Invalid county row")
         key=canonical(row["county"])
-        if code=="VA" and "city" in row["county"].lower():
+        if code=="VA" and "city" in row["county"].lower() and not key.endswith("city"):
             key += "city"
         if key in seen_provider_names:
             raise ValueError("Duplicate provider county name")
