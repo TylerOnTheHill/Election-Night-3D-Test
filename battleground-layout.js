@@ -35,7 +35,7 @@ for(const [b,id] of [[mapTab,'ehq-county-view'],[overviewTab,'ehq-state-summary'
 const countyTable=county.querySelector('.scroll'),placeholder=document.createComment('county-table-anchor');countyTable?.before(placeholder);
 const countyTableEmpty=node('p','ehq-county-table-empty','County ballot totals have not been published for this state. The county map shows geography only.');
 tableStage.append(countyTableEmpty);
-function syncCountyTable(){const rows=county.querySelector('#county-preview-rows');const hasData=!!rows?.children.length;const available=!!document.querySelector('#battleground-county-preview:not([hidden])');if(countyTable)countyTable.hidden=!hasData;countyTableEmpty.hidden=hasData;countyTableEmpty.textContent=available?'County ballot totals have not been published for this state. The county map shows geography only.':'County-level reporting is not yet available for this state.';}
+function syncCountyTable(){const rows=countyTable?.querySelector('#county-preview-rows');const hasData=!!rows?.children.length;const available=!!document.querySelector('#battleground-county-preview:not([hidden])');if(countyTable)countyTable.hidden=!hasData;countyTableEmpty.hidden=hasData;countyTableEmpty.textContent=available?'County ballot totals have not been published for this state. The county map shows geography only.':'County-level reporting is not yet available for this state.';}
 function showTab(which){const isMap=which==='map',isSummary=which==='summary',isTable=which==='table';
 countyStage.hidden=!isMap;summaryStage.hidden=!isSummary;tableStage.hidden=!isTable;
 if(isMap)countySide.append(detail);else if(isSummary)summaryStage.append(detail);else tableStage.append(detail);
