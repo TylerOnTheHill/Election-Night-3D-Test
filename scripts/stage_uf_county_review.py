@@ -84,6 +84,10 @@ def to_internal_candidate(review, geojson):
         observations = []
         for row in source["observations"]:
             key = canonical(row["county"])
+            # UF abbreviates Jefferson Davis County as "Jeff Davis".
+            # Match the official full county name, not a guessed GEOID.
+            if code == "MS" and key == "jeffdavis":
+                key = canonical("Jefferson Davis")
             if key not in names:
                 gaps[code] = "Unmatched county name: " + row["county"]
                 observations = []
