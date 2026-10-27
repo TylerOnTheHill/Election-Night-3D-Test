@@ -10,6 +10,24 @@ import urllib.request
 from pathlib import Path
 from stage_callthemap_county_pilots import BASE
 from verify_tx_nc_fips import canonical, fetch_census, fetch_gazetteer
+
+GEOJSON_MIRROR = 'https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json'
+
+def fetch_mirror(state):
+    request=urllib.request.Request(GEOJSON_MIRROR,headers={'User-Agent':'ElectionHQ-county-crosswalk/1.0'})
+    with urllib.request.urlopen(request,timeout=35) as response:
+        raw=response.read(15_000_001)
+    if len(raw)>15_000_000:
+        raise ValueError('County GeoJSON mirror too large')
+    geojson=json.loads(raw)
+    rows=[['NAME','state','county']]
+    for feature in geojson['features']:
+        geoid=str(feature.get('id',''))
+        name=feature.get('properties',{}).get('NAME')
+        if len(geoid)==5 and geoid.isdigit() and geoid.startswith(state) and isinstance(name,str):
+            rows.append([name,state,geoid[2:]])
+    return rows
+
 from validate_county_publication_candidate import validate
 
 STATES={"VA":("51",133),"IA":("19",99),"WI":("55",72),"SC":("45",46)}
@@ -78,8 +96,8 @@ def stage(code,payload,census):
         "provider":"Call the Map","credit":payload["credit"],
         "provider_checked_at":payload.get("checked_at"),
         "statewide_cutoff":summary.get("file_as_of"),
-        "census_geography_source":"2020 Census county GEOIDs",
-        "census_geography_url":"https://api.census.gov/data/2020/dec/pl",
+        "census_geography_source":"Census-derived GEOIDs (historical mirror; 2020 vintage not independently verified)",
+        "census_geography_url":GEOJSON_MIRROR,
         "county_count":count,"geographic_count":expected,
         "coverage_complete":count==expected,
         "reporting_label":"Fully reported" if count==expected else "Partially reported",
@@ -130,7 +148,11 @@ def main():
                 census[code]=fetch_census(prefix)
             except (OSError,ValueError) as exc:
                 print(f"{code}: Census API unavailable ({exc}); trying official Census Gazetteer")
-                census[code]=fetch_gazetteer(prefix)
+                try:
+                    census[code]=fetch_gazetteer(prefix)
+                except (OSError,ValueError) as gazetteer_error:
+                    print(f"{code}: Census Gazetteer unavailable ({gazetteer_error}); using labeled historical GEOID mirror")
+                    census[code]=fetch_mirror(prefix)
     candidate=build(payloads,census)
     Path(args.output).write_text(json.dumps(candidate,indent=2)+"\n")
     print("Staged (unapproved):",", ".join(candidate["states"]) or "no county observations",
