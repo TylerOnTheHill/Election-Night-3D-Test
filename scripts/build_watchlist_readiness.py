@@ -43,6 +43,10 @@ def build(national, candidates=(), leads=None):
             "county_reporting_label":staged["reporting_label"] if staged else "Not available",
             "county_cutoff":staged.get("statewide_cutoff") if staged else None,
             "county_reconciled_to_own_provider":staged.get("statewide_reconciled") if staged else None,
+            "county_geography_complete":staged.get("coverage_complete") if staged else None,
+            "county_vs_statewide_cutoff":("unknown" if not staged else
+                "matching" if staged.get("statewide_cutoff") and all(r.get("file_as_of")==staged["statewide_cutoff"] for r in staged["counties"]) else "mixed_or_unknown"),
+            "county_source_provider":staged.get("provider") if staged else None,
             "county_publication_approved":False,
             "source_leads":source_leads.get(code,[])})
     return {"schema":"electionhq-watchlist-readiness-v1",
