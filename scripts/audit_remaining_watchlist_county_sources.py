@@ -54,10 +54,11 @@ def inspect(code,payload):
             "status":"source_discovery_only"}
 
 def discover(payloads):
+    states={code:inspect(code,payloads[code]) for code in STATES}
     return {"schema":"electionhq-remaining-watchlist-source-discovery-v1",
             "publication_approved":False,
-            "states":{code:inspect(code,payloads[code]) for code in STATES},
-            "states_with_county_observations":[code for code in STATES if inspect(code,payloads[code])["ready_for_fips_crosswalk"]]}
+            "states":states,
+            "states_with_county_observations":[code for code in STATES if states[code]["ready_for_fips_crosswalk"]]}
 
 def main():
     p=argparse.ArgumentParser()
