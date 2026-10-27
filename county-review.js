@@ -21,7 +21,9 @@ function render(){
  const comparison=Number.isSafeInteger(s.provider_statewide_total)?" · Separate statewide headline: "+fmt(s.provider_statewide_total)+" (county difference: "+(s.total-s.provider_statewide_total>0?"+":"")+fmt(s.total-s.provider_statewide_total)+")":"";
  el("provenance").textContent="Displayed total: sum of "+s.county_count+" county reports · Provider: "+s.provider+" · Source cutoff: "+(s.statewide_cutoff||"Unavailable")+" · Checked: "+(s.provider_checked_at||"Unavailable")+" · Geography: "+s.census_geography_source+comparison;
  const body=el("rows");body.replaceChildren();
- for(const r of s.counties.filter(x=>x.name.toLowerCase().includes(q)||x.fips.includes(q)).sort((a,b)=>b.total-a.total)){
+ const filtered=s.counties.filter(x=>x.name.toLowerCase().includes(q)||x.fips.includes(q)).sort((a,b)=>b.total-a.total);
+ el("county-filter-status").textContent="Showing "+filtered.length+" of "+s.county_count+" counties · "+fmt(filtered.reduce((n,r)=>n+r.total,0))+" ballots in visible rows"+(q?" (filtered subset, not statewide total)":"");
+ for(const r of filtered){
   const tr=document.createElement("tr");
   for(const [v,numeric] of [[r.name,false],[r.fips,false],[fmt(r.total),true],[fmt(r.mail),true],[fmt(r.in_person),true],[r.file_as_of||"Unavailable",false]]){
    const td=document.createElement("td");td.textContent=v;if(numeric)td.className="num";tr.append(td);
