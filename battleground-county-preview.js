@@ -27,6 +27,7 @@ async function render(){
  if(!preview)return;
  if(!preview.states[code]){host.hidden=true;status.textContent='County preview available for Texas and North Carolina. Select either state to explore.';return;}
  const s=preview.states[code];host.hidden=false;
+ $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
  status.textContent='Local staging data loaded; nothing uploaded or published.';
  $('county-preview-title').textContent=code==='TX'?'Texas counties':'North Carolina counties';
  $('county-preview-total').textContent='State total: '+fmt(s.total)+'*';
@@ -61,6 +62,9 @@ async function render(){
  }catch(e){if(version!==renderVersion)return;map.textContent=e.message;legend.textContent='County totals remain available in the table.';}
 }
 function highlight(fips){
+ const row=preview?.states?.[selected]?.counties?.find(r=>r.fips===fips);
+ if(!row)return;
+ $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots';
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
