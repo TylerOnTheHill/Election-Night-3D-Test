@@ -7,6 +7,9 @@ on:
       - 'scripts/audit_remaining_watchlist_county_sources.py'
       - 'tests/test_audit_remaining_watchlist_county_sources.py'
       - '.github/workflows/audit-remaining-watchlist-counties.yml'
+      - 'data/sources/remaining-watchlist-official-source-leads.json'
+      - 'scripts/validate_official_county_source_leads.py'
+      - 'tests/test_validate_official_county_source_leads.py'
 concurrency:
   group: remaining-watchlist-discovery-${{ github.ref }}
   cancel-in-progress: true
@@ -24,6 +27,10 @@ jobs:
           python-version: '3.12'
       - name: Verify missing and duplicate county handling
         run: python -m unittest discover -s tests -p test_audit_remaining_watchlist_county_sources.py -v
+      - name: Validate independently researched source leads
+        run: |
+          python -m unittest discover -s tests -p test_validate_official_county_source_leads.py -v
+          python scripts/validate_official_county_source_leads.py
       - name: Inspect live county sources in remaining 12 states
         run: python scripts/audit_remaining_watchlist_county_sources.py --output remaining-watchlist-county-discovery-unapproved.json
       - name: Upload discovery audit only
