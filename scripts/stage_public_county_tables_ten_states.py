@@ -16,7 +16,7 @@ def retrieve(code,method):
     req=urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-2026-aggregate-review/1.0"})
     with urllib.request.urlopen(req,timeout=35) as r:raw=r.read(900000).decode("utf-8","replace")
     parser=Text();parser.feed(raw)
-    lines=[re.sub(r"\\s+"," ",x).strip() for x in parser.parts]
+    lines=[re.sub(r"\s+"," ",x).strip() for x in parser.parts]
     lines=[x for x in lines if x]
     try:start=lines.index("By county")
     except ValueError:return {"state":code,"method":method,"url":url,"status":"county_table_absent"}
@@ -25,7 +25,7 @@ def retrieve(code,method):
     for i,v in enumerate(section):
         if v in ("By day","Why the numbers move after polls close","Share","County","Ballots"):continue
         if v.startswith("See ") or v.startswith("How ") or v.startswith("Why "):break
-        if re.fullmatch(r"[\\d,]+",v) and i>0:
+        if re.fullmatch(r"[\d,]+",v) and i>0:
             name=section[i-1]
             if not re.fullmatch(r"[A-Za-z .'-]{2,45}",name) or name in seen:continue
             seen.add(name);pairs.append({"name":name,"total":int(v.replace(",",""))})
