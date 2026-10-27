@@ -13,6 +13,8 @@ on:
       - 'tests/test_tx_precinct_geometry.py'
       - 'scripts/normalize_collin_precinct_geojson.py'
       - 'tests/test_collin_precinct_geojson.py'
+      - 'scripts/fetch_collin_precinct_geojson.py'
+      - 'tests/test_fetch_collin_precinct_geojson.py'
       - 'tests/test_county_preview.py'
       - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
@@ -43,6 +45,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_tx_precinct_geometry.py' -v
       - name: Test Collin precinct GeoJSON normalization
         run: python -m unittest discover -s tests -p 'test_collin_precinct_geojson.py' -v
+      - name: Test official Collin GIS pagination
+        run: python -m unittest discover -s tests -p 'test_fetch_collin_precinct_geojson.py' -v
       - name: Build non-publication county preview
         run: python scripts/build_county_preview.py --input-dir staging-county-pilots-fips --output staging-county-preview.json
       - name: Upload staging-only county records
