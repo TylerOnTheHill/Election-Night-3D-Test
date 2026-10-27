@@ -47,7 +47,7 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          Path('staging-collin-geometry/report.json').write_text(json.dumps({'status':'source_fetch_failed_no_geography','publication_approved':False,'source_url':'https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer/0','geometry_fetched':False,'precinct_count':None,'note':'Inspect job logs; initial GitHub runner probe returned HTTP 403 Forbidden.'},indent=2)+'\\n')
+          Path('staging-collin-geometry/report.json').write_text(json.dumps({'status':'source_fetch_failed_no_geography','publication_approved':False,'source_url':'https://maps.collincountytx.gov/server/rest/services/InteractiveMap/Election_Department/MapServer/0','geometry_fetched':False,'precinct_count':None,'note':'Inspect job logs; initial GitHub runner probe returned HTTP 403 Forbidden.'},indent=2)+'\n')
           PY
       - uses: actions/upload-artifact@v4
         if: always()
