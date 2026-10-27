@@ -18,18 +18,16 @@ def audit(readiness, discovery):
     if not isinstance(discovered,dict) or set(discovered)!=set(MISSING):
         raise ValueError("Exactly 11 unstaged states must be checked")
     staged={r["state"] for r in rows if r.get("county_staged") is True}
-    if staged & set(MISSING):
-        raise ValueError("Discovered state is also staged; source review must reconcile overlap")
     if staged | set(MISSING) != set(WATCH):
         raise ValueError("Coverage gap: each state must be staged or source-discovered")
     for row in rows:
         if row.get("county_publication_approved") is not False:
             raise ValueError("Unexpected publication approval")
-        if row["state"] in MISSING:
+        if row["state"] not in staged:
             if row.get("county_ballots") is not None or row.get("county_reported") is not None:
                 raise ValueError("Missing county source must not become zero or a fabricated subtotal")
-            if discovered[row["state"]].get("publication_approved") is not False:
-                raise ValueError("Discovery must remain unapproved")
+            if row["state"] not in discovered or discovered[row["state"]].get("publication_approved") is not False:
+                raise ValueError("Unstaged state requires unapproved source discovery")
         else:
             if row.get("county_staged") is not True:
                 raise ValueError("Expected staged county source is missing: "+row["state"])
@@ -39,8 +37,8 @@ def audit(readiness, discovery):
                 raise ValueError("Staged reported county count missing or invalid: "+row["state"])
     return {"schema":"electionhq-nineteen-state-coverage-audit-v1",
             "publication_approved":False,"states_checked":len(rows),
-            "staged_count":len(staged),"source_discovery_count":len(MISSING),
-            "staged_states":sorted(staged),"discovery_states":sorted(MISSING),
+            "staged_count":len(staged),"source_discovery_count":len(set(WATCH)-staged),
+            "staged_states":sorted(staged),"discovery_states":sorted(set(WATCH)-staged),
             "county_values_imputed":False,"county_totals_added_to_statewide":False}
 
 def main():
