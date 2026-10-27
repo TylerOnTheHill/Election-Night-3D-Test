@@ -13,6 +13,8 @@ on:
       - 'scripts/stage_remaining_eleven_counties.py'
       - 'scripts/stage_uf_county_review.py'
       - 'scripts/stage_alaska_official_statewide.py'
+      - 'scripts/stage_maine_aggregated_counties.py'
+      - 'tests/test_stage_maine_aggregated_counties.py'
       - 'tests/test_stage_alaska_official_statewide.py'
       - 'tests/test_stage_uf_county_review.py'
       - 'scripts/merge_restricted_nineteen_state_review.py'
@@ -76,6 +78,10 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_stage_alaska_official_statewide.py' -v
           python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
+      - name: Ingest Maine CC BY absentee county aggregates
+        run: |
+          python -m unittest discover -s tests -p 'test_stage_maine_aggregated_counties.py' -v
+          python scripts/stage_maine_aggregated_counties.py --output maine-county-review.json
       - name: Stage current Texas and North Carolina county observations
         run: python scripts/run_tx_nc_county_pipeline.py --output tx-nc-unapproved.json
       - name: Stage current Virginia Iowa Wisconsin South Carolina observations
@@ -131,6 +137,7 @@ jobs:
             remaining-eleven-gaps.json
             uf-eleven-county-source-review.json
             alaska-official-statewide-review.json
+            maine-county-review.json
             uf-eleven-fips-candidate-restricted.json
             nineteen-state-observed-coverage-internal.json
             nineteen-state-coverage-audit.json
