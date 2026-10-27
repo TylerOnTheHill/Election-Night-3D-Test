@@ -38,7 +38,7 @@ def stage(doc):
     seen=set()
     for row in rows:
         fips=row.get("county_fips")
-        if not isinstance(fips,str) or not re.fullmatch(r"13\\d{3}",fips) or fips in seen:
+        if not isinstance(fips,str) or not re.fullmatch(r"13\d{3}",fips) or fips in seen:
             raise ValueError("Invalid/duplicate Georgia county FIPS")
         seen.add(fips)
         name=row.get("county")
