@@ -56,7 +56,8 @@ function render(){
  const name=view==='national'?selected:activeState;
  const state=feed?.states?.find(s=>s.state_name===name);
  const county=view==='state'&&activeState==='Texas'&&selected;
- heading.textContent=county?selected+' County · EARLY VOTE':name?name.toUpperCase()+' · EARLY VOTE':'NATIONAL EARLY VOTE DASHBOARD';
+ const countyLabel=county?(window.__electionhqCountyRows?.find(r=>r.county.toLowerCase()===selected.toLowerCase())?.county||selected.toLowerCase().replace(/\b\w/g,c=>c.toUpperCase())):null;
+ heading.textContent=county?countyLabel+' County · EARLY VOTE':name?name.toUpperCase()+' · EARLY VOTE':'NATIONAL EARLY VOTE DASHBOARD';
  if(county){
   // Existing official Texas county snapshot is authoritative for county values.
   const row=window.__electionhqCountyRows?.find(r=>r.county.toLowerCase()===selected.toLowerCase());
