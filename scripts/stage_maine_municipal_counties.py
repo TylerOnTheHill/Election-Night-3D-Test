@@ -12,7 +12,7 @@ SOURCE="https://election-watch.50501vets.com/map/ME?cat=returned"
 OFFICIAL="https://gis.maine.gov/mapservices/rest/services/escb/escbContributorFeature/FeatureServer/23/query"
 def get(url):
     with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"ElectionHQ/1.0"}),timeout=45) as r:return r.read().decode("utf-8-sig")
-def norm(s):return re.sub(r"[^a-z0-9]","",s.casefold().replace("town of ","").replace("city of ",""))
+def norm(s):return re.sub(r"[^a-z0-9]","",s.casefold().replace("town of ","").replace("city of ","").removesuffix(" county"))
 def official_municipalities():
     query=urllib.parse.urlencode({"where":"1=1","outFields":"MUNICIPALITY,COUNTY",
         "returnGeometry":"false","f":"json","resultRecordCount":2000})
