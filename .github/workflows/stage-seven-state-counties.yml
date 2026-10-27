@@ -12,6 +12,7 @@ on:
       - 'scripts/stage_minnesota_counties.py'
       - 'scripts/stage_remaining_eleven_counties.py'
       - 'scripts/stage_uf_county_review.py'
+      - 'scripts/merge_restricted_nineteen_state_review.py'
       - 'tests/test_stage_remaining_eleven_counties.py'
       - 'tests/test_stage_minnesota_counties.py'
       - 'scripts/audit_nineteen_state_pipeline.py'
@@ -84,6 +85,8 @@ jobs:
             --candidate georgia-unapproved.json \
             --output eight-states-unapproved.json
           python scripts/validate_county_publication_candidate.py --candidate eight-states-unapproved.json
+      - name: Merge observed counties into restricted nineteen-state coverage view
+        run: python scripts/merge_restricted_nineteen_state_review.py --standard eight-states-unapproved.json --restricted uf-eleven-fips-candidate-restricted.json --output nineteen-state-observed-coverage-internal.json
       - name: Audit eight-state reporting cutoffs and reconciliation
         run: |
           python scripts/review_county_source_freshness.py --candidate eight-states-unapproved.json --output eight-state-freshness-audit.json
@@ -116,6 +119,7 @@ jobs:
             remaining-eleven-gaps.json
             uf-eleven-county-source-review.json
             uf-eleven-fips-candidate-restricted.json
+            nineteen-state-observed-coverage-internal.json
             nineteen-state-coverage-audit.json
             eight-states-unapproved.json
             eight-state-freshness-audit.json
