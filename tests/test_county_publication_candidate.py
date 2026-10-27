@@ -57,9 +57,14 @@ class CandidateGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate(c)
 
-    def test_rejects_missing_statewide_cutoff(self):
+    def test_accepts_missing_statewide_cutoff(self):
         c = candidate()
         c["states"]["TX"]["statewide_cutoff"] = None
+        self.assertEqual(validate(c)["TX"]["reported_counties"], 254)
+
+    def test_rejects_blank_provided_cutoff(self):
+        c = candidate()
+        c["states"]["TX"]["statewide_cutoff"] = ""
         with self.assertRaises(ValueError):
             validate(c)
 
