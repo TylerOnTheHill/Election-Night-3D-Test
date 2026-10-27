@@ -30,9 +30,6 @@ on:
       - 'tests/test_tx_nc_fips.py'
       - '.github/workflows/stage-callthemap-county-pilots.yml'
   workflow_dispatch:
-  schedule:
-    # Refresh staging observations every six hours; never publish automatically.
-    - cron: '17 */6 * * *'
 concurrency:
   group: county-pilot-staging-${{ github.ref }}
   cancel-in-progress: true
