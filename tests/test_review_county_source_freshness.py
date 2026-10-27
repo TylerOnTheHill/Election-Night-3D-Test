@@ -31,6 +31,29 @@ class CountySourceReviewTests(unittest.TestCase):
         self.assertEqual(result["county_minus_provider_statewide"], -292)
         self.assertEqual(result["county_total_basis"], "sum_of_reported_counties")
 
+    def test_older_county_cutoff_explains_possible_not_proven_difference(self):
+        doc = candidate()
+        tx = doc["states"]["TX"]
+        tx["statewide_cutoff"] = "2026-10-27"
+        tx["provider_statewide_total"] = 800
+        for county in tx["counties"]:
+            county["file_as_of"] = "2026-10-25"
+        result = review(doc, NOW)["states"]["TX"]
+        self.assertEqual(result["county_vs_statewide_cutoff"], "county_older")
+        self.assertEqual(result["reconciliation_status"], "different_cutoffs")
+        self.assertFalse(result["freshness_verified"])
+
+    def test_same_cutoff_mismatch_remains_unreconciled(self):
+        doc = candidate()
+        tx = doc["states"]["TX"]
+        tx["statewide_cutoff"] = "2026-10-27"
+        tx["provider_statewide_total"] = 800
+        for county in tx["counties"]:
+            county["file_as_of"] = "2026-10-27"
+        result = review(doc, NOW)["states"]["TX"]
+        self.assertEqual(result["county_vs_statewide_cutoff"], "matching")
+        self.assertEqual(result["reconciliation_status"], "same_cutoff_unreconciled")
+
     def test_future_county_cutoff_is_rejected(self):
         doc = candidate()
         doc["states"]["TX"]["counties"][0]["file_as_of"] = "2026-10-29"
