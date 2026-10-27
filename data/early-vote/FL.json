@@ -1,0 +1,2531 @@
+{
+  "schema": "electionhq-florida-county-aggregate-v1",
+  "election_id": "49894",
+  "state_fips": "12",
+  "source_url": "https://countyfilesvbm-ev.floridados.gov/VoteByMailEarlyVotingReports/PublicStats",
+  "compiled_at_local": "2026-10-26T08:06:00",
+  "mail_return_rate_definition": "voted_mail / (voted_mail + mail_outstanding)",
+  "statewide": {
+    "voted_early": {
+      "total": 1381545,
+      "registration": {
+        "republican": 600295,
+        "democrat": 505545,
+        "other": 33872,
+        "no_party_affiliation": 241833
+      }
+    },
+    "voted_mail": {
+      "total": 1403569,
+      "registration": {
+        "republican": 500492,
+        "democrat": 604134,
+        "other": 33851,
+        "no_party_affiliation": 265092
+      }
+    },
+    "mail_outstanding": {
+      "total": 1074453,
+      "registration": {
+        "republican": 353559,
+        "democrat": 441862,
+        "other": 30123,
+        "no_party_affiliation": 248909
+      }
+    },
+    "mail_return_rate": 0.566407,
+    "mail_return_rate_by_registration": {
+      "republican": 0.586021,
+      "democrat": 0.577568,
+      "other": 0.529137,
+      "no_party_affiliation": 0.515742
+    }
+  },
+  "coverage": {
+    "counties_reported": 67,
+    "complete": true
+  },
+  "counties": [
+    {
+      "county": "Alachua",
+      "voted_early": {
+        "total": 19752,
+        "registration": {
+          "republican": 5379,
+          "democrat": 10915,
+          "other": 420,
+          "no_party_affiliation": 3038
+        }
+      },
+      "voted_mail": {
+        "total": 14788,
+        "registration": {
+          "republican": 3183,
+          "democrat": 9057,
+          "other": 307,
+          "no_party_affiliation": 2241
+        }
+      },
+      "mail_outstanding": {
+        "total": 13165,
+        "registration": {
+          "republican": 2776,
+          "democrat": 7460,
+          "other": 359,
+          "no_party_affiliation": 2570
+        }
+      },
+      "mail_return_rate": 0.529031,
+      "mail_return_rate_by_registration": {
+        "republican": 0.53415,
+        "democrat": 0.548344,
+        "other": 0.460961,
+        "no_party_affiliation": 0.465808
+      }
+    },
+    {
+      "county": "Baker",
+      "voted_early": {
+        "total": 816,
+        "registration": {
+          "republican": 622,
+          "democrat": 130,
+          "other": 13,
+          "no_party_affiliation": 51
+        }
+      },
+      "voted_mail": {
+        "total": 675,
+        "registration": {
+          "republican": 461,
+          "democrat": 162,
+          "other": 6,
+          "no_party_affiliation": 46
+        }
+      },
+      "mail_outstanding": {
+        "total": 615,
+        "registration": {
+          "republican": 404,
+          "democrat": 147,
+          "other": 16,
+          "no_party_affiliation": 48
+        }
+      },
+      "mail_return_rate": 0.523256,
+      "mail_return_rate_by_registration": {
+        "republican": 0.532948,
+        "democrat": 0.524272,
+        "other": 0.272727,
+        "no_party_affiliation": 0.489362
+      }
+    },
+    {
+      "county": "Bay",
+      "voted_early": {
+        "total": 15347,
+        "registration": {
+          "republican": 10012,
+          "democrat": 3240,
+          "other": 374,
+          "no_party_affiliation": 1721
+        }
+      },
+      "voted_mail": {
+        "total": 7378,
+        "registration": {
+          "republican": 3839,
+          "democrat": 2319,
+          "other": 173,
+          "no_party_affiliation": 1047
+        }
+      },
+      "mail_outstanding": {
+        "total": 6669,
+        "registration": {
+          "republican": 3344,
+          "democrat": 1953,
+          "other": 212,
+          "no_party_affiliation": 1160
+        }
+      },
+      "mail_return_rate": 0.525237,
+      "mail_return_rate_by_registration": {
+        "republican": 0.534456,
+        "democrat": 0.542837,
+        "other": 0.449351,
+        "no_party_affiliation": 0.4744
+      }
+    },
+    {
+      "county": "Bradford",
+      "voted_early": {
+        "total": 1571,
+        "registration": {
+          "republican": 1074,
+          "democrat": 364,
+          "other": 32,
+          "no_party_affiliation": 101
+        }
+      },
+      "voted_mail": {
+        "total": 705,
+        "registration": {
+          "republican": 379,
+          "democrat": 257,
+          "other": 12,
+          "no_party_affiliation": 57
+        }
+      },
+      "mail_outstanding": {
+        "total": 546,
+        "registration": {
+          "republican": 280,
+          "democrat": 216,
+          "other": 6,
+          "no_party_affiliation": 44
+        }
+      },
+      "mail_return_rate": 0.563549,
+      "mail_return_rate_by_registration": {
+        "republican": 0.575114,
+        "democrat": 0.54334,
+        "other": 0.666667,
+        "no_party_affiliation": 0.564356
+      }
+    },
+    {
+      "county": "Brevard",
+      "voted_early": {
+        "total": 56024,
+        "registration": {
+          "republican": 28319,
+          "democrat": 16474,
+          "other": 1560,
+          "no_party_affiliation": 9671
+        }
+      },
+      "voted_mail": {
+        "total": 46338,
+        "registration": {
+          "republican": 18320,
+          "democrat": 18192,
+          "other": 1314,
+          "no_party_affiliation": 8512
+        }
+      },
+      "mail_outstanding": {
+        "total": 30731,
+        "registration": {
+          "republican": 11078,
+          "democrat": 12110,
+          "other": 959,
+          "no_party_affiliation": 6584
+        }
+      },
+      "mail_return_rate": 0.601253,
+      "mail_return_rate_by_registration": {
+        "republican": 0.623172,
+        "democrat": 0.600356,
+        "other": 0.578091,
+        "no_party_affiliation": 0.563858
+      }
+    },
+    {
+      "county": "Broward",
+      "voted_early": {
+        "total": 121566,
+        "registration": {
+          "republican": 28596,
+          "democrat": 65580,
+          "other": 2562,
+          "no_party_affiliation": 24828
+        }
+      },
+      "voted_mail": {
+        "total": 90269,
+        "registration": {
+          "republican": 17309,
+          "democrat": 54189,
+          "other": 1695,
+          "no_party_affiliation": 17076
+        }
+      },
+      "mail_outstanding": {
+        "total": 95685,
+        "registration": {
+          "republican": 17928,
+          "democrat": 50941,
+          "other": 2250,
+          "no_party_affiliation": 24566
+        }
+      },
+      "mail_return_rate": 0.485437,
+      "mail_return_rate_by_registration": {
+        "republican": 0.491217,
+        "democrat": 0.515448,
+        "other": 0.429658,
+        "no_party_affiliation": 0.410067
+      }
+    },
+    {
+      "county": "Calhoun",
+      "voted_early": {
+        "total": 643,
+        "registration": {
+          "republican": 478,
+          "democrat": 136,
+          "other": 1,
+          "no_party_affiliation": 28
+        }
+      },
+      "voted_mail": {
+        "total": 400,
+        "registration": {
+          "republican": 255,
+          "democrat": 129,
+          "other": 1,
+          "no_party_affiliation": 15
+        }
+      },
+      "mail_outstanding": {
+        "total": 315,
+        "registration": {
+          "republican": 183,
+          "democrat": 109,
+          "other": 5,
+          "no_party_affiliation": 18
+        }
+      },
+      "mail_return_rate": 0.559441,
+      "mail_return_rate_by_registration": {
+        "republican": 0.582192,
+        "democrat": 0.542017,
+        "other": 0.166667,
+        "no_party_affiliation": 0.454545
+      }
+    },
+    {
+      "county": "Charlotte",
+      "voted_early": {
+        "total": 19329,
+        "registration": {
+          "republican": 11949,
+          "democrat": 3640,
+          "other": 612,
+          "no_party_affiliation": 3128
+        }
+      },
+      "voted_mail": {
+        "total": 23524,
+        "registration": {
+          "republican": 10450,
+          "democrat": 7808,
+          "other": 829,
+          "no_party_affiliation": 4437
+        }
+      },
+      "mail_outstanding": {
+        "total": 11239,
+        "registration": {
+          "republican": 5092,
+          "democrat": 3156,
+          "other": 458,
+          "no_party_affiliation": 2533
+        }
+      },
+      "mail_return_rate": 0.676696,
+      "mail_return_rate_by_registration": {
+        "republican": 0.672372,
+        "democrat": 0.712149,
+        "other": 0.644134,
+        "no_party_affiliation": 0.636585
+      }
+    },
+    {
+      "county": "Citrus",
+      "voted_early": {
+        "total": 11256,
+        "registration": {
+          "republican": 7372,
+          "democrat": 2157,
+          "other": 330,
+          "no_party_affiliation": 1397
+        }
+      },
+      "voted_mail": {
+        "total": 14853,
+        "registration": {
+          "republican": 7222,
+          "democrat": 4615,
+          "other": 442,
+          "no_party_affiliation": 2574
+        }
+      },
+      "mail_outstanding": {
+        "total": 7376,
+        "registration": {
+          "republican": 3554,
+          "democrat": 2137,
+          "other": 255,
+          "no_party_affiliation": 1430
+        }
+      },
+      "mail_return_rate": 0.668181,
+      "mail_return_rate_by_registration": {
+        "republican": 0.670193,
+        "democrat": 0.683501,
+        "other": 0.634146,
+        "no_party_affiliation": 0.642857
+      }
+    },
+    {
+      "county": "Clay",
+      "voted_early": {
+        "total": 12927,
+        "registration": {
+          "republican": 7756,
+          "democrat": 3345,
+          "other": 304,
+          "no_party_affiliation": 1522
+        }
+      },
+      "voted_mail": {
+        "total": 9827,
+        "registration": {
+          "republican": 4809,
+          "democrat": 3145,
+          "other": 254,
+          "no_party_affiliation": 1619
+        }
+      },
+      "mail_outstanding": {
+        "total": 7785,
+        "registration": {
+          "republican": 3430,
+          "democrat": 2571,
+          "other": 240,
+          "no_party_affiliation": 1544
+        }
+      },
+      "mail_return_rate": 0.557972,
+      "mail_return_rate_by_registration": {
+        "republican": 0.583687,
+        "democrat": 0.55021,
+        "other": 0.51417,
+        "no_party_affiliation": 0.511856
+      }
+    },
+    {
+      "county": "Collier",
+      "voted_early": {
+        "total": 22919,
+        "registration": {
+          "republican": 13758,
+          "democrat": 5074,
+          "other": 506,
+          "no_party_affiliation": 3581
+        }
+      },
+      "voted_mail": {
+        "total": 34682,
+        "registration": {
+          "republican": 18184,
+          "democrat": 9316,
+          "other": 842,
+          "no_party_affiliation": 6340
+        }
+      },
+      "mail_outstanding": {
+        "total": 26620,
+        "registration": {
+          "republican": 13640,
+          "democrat": 6678,
+          "other": 691,
+          "no_party_affiliation": 5611
+        }
+      },
+      "mail_return_rate": 0.565756,
+      "mail_return_rate_by_registration": {
+        "republican": 0.571393,
+        "democrat": 0.582468,
+        "other": 0.54925,
+        "no_party_affiliation": 0.5305
+      }
+    },
+    {
+      "county": "Columbia",
+      "voted_early": {
+        "total": 2122,
+        "registration": {
+          "republican": 1394,
+          "democrat": 530,
+          "other": 21,
+          "no_party_affiliation": 177
+        }
+      },
+      "voted_mail": {
+        "total": 2572,
+        "registration": {
+          "republican": 1327,
+          "democrat": 901,
+          "other": 48,
+          "no_party_affiliation": 296
+        }
+      },
+      "mail_outstanding": {
+        "total": 1859,
+        "registration": {
+          "republican": 878,
+          "democrat": 657,
+          "other": 43,
+          "no_party_affiliation": 281
+        }
+      },
+      "mail_return_rate": 0.580456,
+      "mail_return_rate_by_registration": {
+        "republican": 0.601814,
+        "democrat": 0.578306,
+        "other": 0.527473,
+        "no_party_affiliation": 0.512998
+      }
+    },
+    {
+      "county": "DeSoto",
+      "voted_early": {
+        "total": 1423,
+        "registration": {
+          "republican": 815,
+          "democrat": 435,
+          "other": 16,
+          "no_party_affiliation": 157
+        }
+      },
+      "voted_mail": {
+        "total": 925,
+        "registration": {
+          "republican": 423,
+          "democrat": 334,
+          "other": 16,
+          "no_party_affiliation": 152
+        }
+      },
+      "mail_outstanding": {
+        "total": 548,
+        "registration": {
+          "republican": 253,
+          "democrat": 175,
+          "other": 13,
+          "no_party_affiliation": 107
+        }
+      },
+      "mail_return_rate": 0.62797,
+      "mail_return_rate_by_registration": {
+        "republican": 0.62574,
+        "democrat": 0.656189,
+        "other": 0.551724,
+        "no_party_affiliation": 0.586873
+      }
+    },
+    {
+      "county": "Dixie",
+      "voted_early": {
+        "total": 831,
+        "registration": {
+          "republican": 628,
+          "democrat": 111,
+          "other": 14,
+          "no_party_affiliation": 78
+        }
+      },
+      "voted_mail": {
+        "total": 714,
+        "registration": {
+          "republican": 469,
+          "democrat": 161,
+          "other": 12,
+          "no_party_affiliation": 72
+        }
+      },
+      "mail_outstanding": {
+        "total": 590,
+        "registration": {
+          "republican": 398,
+          "democrat": 129,
+          "other": 10,
+          "no_party_affiliation": 53
+        }
+      },
+      "mail_return_rate": 0.547546,
+      "mail_return_rate_by_registration": {
+        "republican": 0.540946,
+        "democrat": 0.555172,
+        "other": 0.545455,
+        "no_party_affiliation": 0.576
+      }
+    },
+    {
+      "county": "Duval",
+      "voted_early": {
+        "total": 80643,
+        "registration": {
+          "republican": 28906,
+          "democrat": 39392,
+          "other": 1844,
+          "no_party_affiliation": 10501
+        }
+      },
+      "voted_mail": {
+        "total": 26765,
+        "registration": {
+          "republican": 9268,
+          "democrat": 13012,
+          "other": 582,
+          "no_party_affiliation": 3903
+        }
+      },
+      "mail_outstanding": {
+        "total": 22566,
+        "registration": {
+          "republican": 6752,
+          "democrat": 10893,
+          "other": 640,
+          "no_party_affiliation": 4281
+        }
+      },
+      "mail_return_rate": 0.542559,
+      "mail_return_rate_by_registration": {
+        "republican": 0.578527,
+        "democrat": 0.544321,
+        "other": 0.476268,
+        "no_party_affiliation": 0.476906
+      }
+    },
+    {
+      "county": "Escambia",
+      "voted_early": {
+        "total": 20338,
+        "registration": {
+          "republican": 10651,
+          "democrat": 6817,
+          "other": 416,
+          "no_party_affiliation": 2454
+        }
+      },
+      "voted_mail": {
+        "total": 14242,
+        "registration": {
+          "republican": 6178,
+          "democrat": 5842,
+          "other": 295,
+          "no_party_affiliation": 1927
+        }
+      },
+      "mail_outstanding": {
+        "total": 12953,
+        "registration": {
+          "republican": 5153,
+          "democrat": 5217,
+          "other": 340,
+          "no_party_affiliation": 2243
+        }
+      },
+      "mail_return_rate": 0.523699,
+      "mail_return_rate_by_registration": {
+        "republican": 0.54523,
+        "democrat": 0.528258,
+        "other": 0.464567,
+        "no_party_affiliation": 0.46211
+      }
+    },
+    {
+      "county": "Flagler",
+      "voted_early": {
+        "total": 15038,
+        "registration": {
+          "republican": 8866,
+          "democrat": 3549,
+          "other": 372,
+          "no_party_affiliation": 2251
+        }
+      },
+      "voted_mail": {
+        "total": 12226,
+        "registration": {
+          "republican": 4784,
+          "democrat": 5074,
+          "other": 292,
+          "no_party_affiliation": 2076
+        }
+      },
+      "mail_outstanding": {
+        "total": 6468,
+        "registration": {
+          "republican": 2569,
+          "democrat": 2405,
+          "other": 195,
+          "no_party_affiliation": 1299
+        }
+      },
+      "mail_return_rate": 0.654007,
+      "mail_return_rate_by_registration": {
+        "republican": 0.650619,
+        "democrat": 0.678433,
+        "other": 0.599589,
+        "no_party_affiliation": 0.615111
+      }
+    },
+    {
+      "county": "Franklin",
+      "voted_early": {
+        "total": 421,
+        "registration": {
+          "republican": 198,
+          "democrat": 165,
+          "other": 15,
+          "no_party_affiliation": 43
+        }
+      },
+      "voted_mail": {
+        "total": 559,
+        "registration": {
+          "republican": 245,
+          "democrat": 220,
+          "other": 25,
+          "no_party_affiliation": 69
+        }
+      },
+      "mail_outstanding": {
+        "total": 488,
+        "registration": {
+          "republican": 192,
+          "democrat": 210,
+          "other": 11,
+          "no_party_affiliation": 75
+        }
+      },
+      "mail_return_rate": 0.533906,
+      "mail_return_rate_by_registration": {
+        "republican": 0.560641,
+        "democrat": 0.511628,
+        "other": 0.694444,
+        "no_party_affiliation": 0.479167
+      }
+    },
+    {
+      "county": "Gadsden",
+      "voted_early": {
+        "total": 2952,
+        "registration": {
+          "republican": 696,
+          "democrat": 2017,
+          "other": 36,
+          "no_party_affiliation": 203
+        }
+      },
+      "voted_mail": {
+        "total": 1766,
+        "registration": {
+          "republican": 284,
+          "democrat": 1362,
+          "other": 14,
+          "no_party_affiliation": 106
+        }
+      },
+      "mail_outstanding": {
+        "total": 1508,
+        "registration": {
+          "republican": 200,
+          "democrat": 1189,
+          "other": 15,
+          "no_party_affiliation": 104
+        }
+      },
+      "mail_return_rate": 0.539401,
+      "mail_return_rate_by_registration": {
+        "republican": 0.586777,
+        "democrat": 0.533908,
+        "other": 0.482759,
+        "no_party_affiliation": 0.504762
+      }
+    },
+    {
+      "county": "Gilchrist",
+      "voted_early": {
+        "total": 536,
+        "registration": {
+          "republican": 383,
+          "democrat": 94,
+          "other": 13,
+          "no_party_affiliation": 46
+        }
+      },
+      "voted_mail": {
+        "total": 726,
+        "registration": {
+          "republican": 453,
+          "democrat": 197,
+          "other": 14,
+          "no_party_affiliation": 62
+        }
+      },
+      "mail_outstanding": {
+        "total": 630,
+        "registration": {
+          "republican": 398,
+          "democrat": 143,
+          "other": 13,
+          "no_party_affiliation": 76
+        }
+      },
+      "mail_return_rate": 0.535398,
+      "mail_return_rate_by_registration": {
+        "republican": 0.532315,
+        "democrat": 0.579412,
+        "other": 0.518519,
+        "no_party_affiliation": 0.449275
+      }
+    },
+    {
+      "county": "Glades",
+      "voted_early": {
+        "total": 221,
+        "registration": {
+          "republican": 153,
+          "democrat": 41,
+          "other": 2,
+          "no_party_affiliation": 25
+        }
+      },
+      "voted_mail": {
+        "total": 504,
+        "registration": {
+          "republican": 279,
+          "democrat": 153,
+          "other": 10,
+          "no_party_affiliation": 62
+        }
+      },
+      "mail_outstanding": {
+        "total": 363,
+        "registration": {
+          "republican": 192,
+          "democrat": 113,
+          "other": 12,
+          "no_party_affiliation": 46
+        }
+      },
+      "mail_return_rate": 0.581315,
+      "mail_return_rate_by_registration": {
+        "republican": 0.592357,
+        "democrat": 0.575188,
+        "other": 0.454545,
+        "no_party_affiliation": 0.574074
+      }
+    },
+    {
+      "county": "Gulf",
+      "voted_early": {
+        "total": 741,
+        "registration": {
+          "republican": 526,
+          "democrat": 157,
+          "other": 14,
+          "no_party_affiliation": 44
+        }
+      },
+      "voted_mail": {
+        "total": 654,
+        "registration": {
+          "republican": 382,
+          "democrat": 185,
+          "other": 24,
+          "no_party_affiliation": 63
+        }
+      },
+      "mail_outstanding": {
+        "total": 544,
+        "registration": {
+          "republican": 293,
+          "democrat": 167,
+          "other": 13,
+          "no_party_affiliation": 71
+        }
+      },
+      "mail_return_rate": 0.54591,
+      "mail_return_rate_by_registration": {
+        "republican": 0.565926,
+        "democrat": 0.525568,
+        "other": 0.648649,
+        "no_party_affiliation": 0.470149
+      }
+    },
+    {
+      "county": "Hamilton",
+      "voted_early": {
+        "total": 274,
+        "registration": {
+          "republican": 179,
+          "democrat": 71,
+          "other": 6,
+          "no_party_affiliation": 18
+        }
+      },
+      "voted_mail": {
+        "total": 430,
+        "registration": {
+          "republican": 226,
+          "democrat": 169,
+          "other": 7,
+          "no_party_affiliation": 28
+        }
+      },
+      "mail_outstanding": {
+        "total": 351,
+        "registration": {
+          "republican": 172,
+          "democrat": 149,
+          "other": 4,
+          "no_party_affiliation": 26
+        }
+      },
+      "mail_return_rate": 0.550576,
+      "mail_return_rate_by_registration": {
+        "republican": 0.567839,
+        "democrat": 0.531447,
+        "other": 0.636364,
+        "no_party_affiliation": 0.518519
+      }
+    },
+    {
+      "county": "Hardee",
+      "voted_early": {
+        "total": 882,
+        "registration": {
+          "republican": 613,
+          "democrat": 199,
+          "other": 12,
+          "no_party_affiliation": 58
+        }
+      },
+      "voted_mail": {
+        "total": 349,
+        "registration": {
+          "republican": 187,
+          "democrat": 126,
+          "other": 3,
+          "no_party_affiliation": 33
+        }
+      },
+      "mail_outstanding": {
+        "total": 299,
+        "registration": {
+          "republican": 153,
+          "democrat": 90,
+          "other": 6,
+          "no_party_affiliation": 50
+        }
+      },
+      "mail_return_rate": 0.53858,
+      "mail_return_rate_by_registration": {
+        "republican": 0.55,
+        "democrat": 0.583333,
+        "other": 0.333333,
+        "no_party_affiliation": 0.39759
+      }
+    },
+    {
+      "county": "Hendry",
+      "voted_early": {
+        "total": 1908,
+        "registration": {
+          "republican": 993,
+          "democrat": 678,
+          "other": 39,
+          "no_party_affiliation": 198
+        }
+      },
+      "voted_mail": {
+        "total": 820,
+        "registration": {
+          "republican": 390,
+          "democrat": 334,
+          "other": 20,
+          "no_party_affiliation": 76
+        }
+      },
+      "mail_outstanding": {
+        "total": 696,
+        "registration": {
+          "republican": 335,
+          "democrat": 237,
+          "other": 22,
+          "no_party_affiliation": 102
+        }
+      },
+      "mail_return_rate": 0.540897,
+      "mail_return_rate_by_registration": {
+        "republican": 0.537931,
+        "democrat": 0.584939,
+        "other": 0.47619,
+        "no_party_affiliation": 0.426966
+      }
+    },
+    {
+      "county": "Hernando",
+      "voted_early": {
+        "total": 9406,
+        "registration": {
+          "republican": 5326,
+          "democrat": 2457,
+          "other": 258,
+          "no_party_affiliation": 1365
+        }
+      },
+      "voted_mail": {
+        "total": 14825,
+        "registration": {
+          "republican": 6052,
+          "democrat": 5807,
+          "other": 344,
+          "no_party_affiliation": 2622
+        }
+      },
+      "mail_outstanding": {
+        "total": 9285,
+        "registration": {
+          "republican": 3786,
+          "democrat": 3266,
+          "other": 285,
+          "no_party_affiliation": 1948
+        }
+      },
+      "mail_return_rate": 0.61489,
+      "mail_return_rate_by_registration": {
+        "republican": 0.615166,
+        "democrat": 0.640031,
+        "other": 0.5469,
+        "no_party_affiliation": 0.573742
+      }
+    },
+    {
+      "county": "Highlands",
+      "voted_early": {
+        "total": 6054,
+        "registration": {
+          "republican": 3836,
+          "democrat": 1272,
+          "other": 153,
+          "no_party_affiliation": 793
+        }
+      },
+      "voted_mail": {
+        "total": 5218,
+        "registration": {
+          "republican": 2193,
+          "democrat": 2049,
+          "other": 159,
+          "no_party_affiliation": 817
+        }
+      },
+      "mail_outstanding": {
+        "total": 2890,
+        "registration": {
+          "republican": 1274,
+          "democrat": 1005,
+          "other": 94,
+          "no_party_affiliation": 517
+        }
+      },
+      "mail_return_rate": 0.643562,
+      "mail_return_rate_by_registration": {
+        "republican": 0.632535,
+        "democrat": 0.670923,
+        "other": 0.628458,
+        "no_party_affiliation": 0.612444
+      }
+    },
+    {
+      "county": "Hillsborough",
+      "voted_early": {
+        "total": 84440,
+        "registration": {
+          "republican": 32260,
+          "democrat": 34542,
+          "other": 2013,
+          "no_party_affiliation": 15625
+        }
+      },
+      "voted_mail": {
+        "total": 98095,
+        "registration": {
+          "republican": 32852,
+          "democrat": 43792,
+          "other": 2314,
+          "no_party_affiliation": 19137
+        }
+      },
+      "mail_outstanding": {
+        "total": 72958,
+        "registration": {
+          "republican": 22502,
+          "democrat": 31261,
+          "other": 2000,
+          "no_party_affiliation": 17195
+        }
+      },
+      "mail_return_rate": 0.573477,
+      "mail_return_rate_by_registration": {
+        "republican": 0.593489,
+        "democrat": 0.583481,
+        "other": 0.536393,
+        "no_party_affiliation": 0.526726
+      }
+    },
+    {
+      "county": "Holmes",
+      "voted_early": {
+        "total": 377,
+        "registration": {
+          "republican": 318,
+          "democrat": 37,
+          "other": 4,
+          "no_party_affiliation": 18
+        }
+      },
+      "voted_mail": {
+        "total": 473,
+        "registration": {
+          "republican": 324,
+          "democrat": 112,
+          "other": 5,
+          "no_party_affiliation": 32
+        }
+      },
+      "mail_outstanding": {
+        "total": 410,
+        "registration": {
+          "republican": 288,
+          "democrat": 86,
+          "other": 2,
+          "no_party_affiliation": 34
+        }
+      },
+      "mail_return_rate": 0.535674,
+      "mail_return_rate_by_registration": {
+        "republican": 0.529412,
+        "democrat": 0.565657,
+        "other": 0.714286,
+        "no_party_affiliation": 0.484848
+      }
+    },
+    {
+      "county": "Indian River",
+      "voted_early": {
+        "total": 15300,
+        "registration": {
+          "republican": 9119,
+          "democrat": 3489,
+          "other": 465,
+          "no_party_affiliation": 2227
+        }
+      },
+      "voted_mail": {
+        "total": 16948,
+        "registration": {
+          "republican": 7364,
+          "democrat": 6111,
+          "other": 563,
+          "no_party_affiliation": 2910
+        }
+      },
+      "mail_outstanding": {
+        "total": 9047,
+        "registration": {
+          "republican": 4136,
+          "democrat": 2890,
+          "other": 299,
+          "no_party_affiliation": 1722
+        }
+      },
+      "mail_return_rate": 0.651972,
+      "mail_return_rate_by_registration": {
+        "republican": 0.640348,
+        "democrat": 0.678925,
+        "other": 0.653132,
+        "no_party_affiliation": 0.628238
+      }
+    },
+    {
+      "county": "Jackson",
+      "voted_early": {
+        "total": 2011,
+        "registration": {
+          "republican": 1277,
+          "democrat": 614,
+          "other": 13,
+          "no_party_affiliation": 107
+        }
+      },
+      "voted_mail": {
+        "total": 1572,
+        "registration": {
+          "republican": 762,
+          "democrat": 712,
+          "other": 16,
+          "no_party_affiliation": 82
+        }
+      },
+      "mail_outstanding": {
+        "total": 1297,
+        "registration": {
+          "republican": 652,
+          "democrat": 545,
+          "other": 23,
+          "no_party_affiliation": 77
+        }
+      },
+      "mail_return_rate": 0.547926,
+      "mail_return_rate_by_registration": {
+        "republican": 0.538897,
+        "democrat": 0.566428,
+        "other": 0.410256,
+        "no_party_affiliation": 0.515723
+      }
+    },
+    {
+      "county": "Jefferson",
+      "voted_early": {
+        "total": 1321,
+        "registration": {
+          "republican": 720,
+          "democrat": 459,
+          "other": 19,
+          "no_party_affiliation": 123
+        }
+      },
+      "voted_mail": {
+        "total": 575,
+        "registration": {
+          "republican": 172,
+          "democrat": 342,
+          "other": 12,
+          "no_party_affiliation": 49
+        }
+      },
+      "mail_outstanding": {
+        "total": 481,
+        "registration": {
+          "republican": 142,
+          "democrat": 278,
+          "other": 10,
+          "no_party_affiliation": 51
+        }
+      },
+      "mail_return_rate": 0.544508,
+      "mail_return_rate_by_registration": {
+        "republican": 0.547771,
+        "democrat": 0.551613,
+        "other": 0.545455,
+        "no_party_affiliation": 0.49
+      }
+    },
+    {
+      "county": "Lafayette",
+      "voted_early": {
+        "total": 155,
+        "registration": {
+          "republican": 132,
+          "democrat": 17,
+          "other": 1,
+          "no_party_affiliation": 5
+        }
+      },
+      "voted_mail": {
+        "total": 161,
+        "registration": {
+          "republican": 120,
+          "democrat": 35,
+          "other": 3,
+          "no_party_affiliation": 3
+        }
+      },
+      "mail_outstanding": {
+        "total": 130,
+        "registration": {
+          "republican": 96,
+          "democrat": 29,
+          "other": 0,
+          "no_party_affiliation": 5
+        }
+      },
+      "mail_return_rate": 0.553265,
+      "mail_return_rate_by_registration": {
+        "republican": 0.555556,
+        "democrat": 0.546875,
+        "other": 1,
+        "no_party_affiliation": 0.375
+      }
+    },
+    {
+      "county": "Lake",
+      "voted_early": {
+        "total": 32800,
+        "registration": {
+          "republican": 16007,
+          "democrat": 10223,
+          "other": 831,
+          "no_party_affiliation": 5739
+        }
+      },
+      "voted_mail": {
+        "total": 23316,
+        "registration": {
+          "republican": 9014,
+          "democrat": 9272,
+          "other": 503,
+          "no_party_affiliation": 4527
+        }
+      },
+      "mail_outstanding": {
+        "total": 12298,
+        "registration": {
+          "republican": 4514,
+          "democrat": 4622,
+          "other": 366,
+          "no_party_affiliation": 2796
+        }
+      },
+      "mail_return_rate": 0.654686,
+      "mail_return_rate_by_registration": {
+        "republican": 0.666322,
+        "democrat": 0.667338,
+        "other": 0.578826,
+        "no_party_affiliation": 0.618189
+      }
+    },
+    {
+      "county": "Lee",
+      "voted_early": {
+        "total": 47465,
+        "registration": {
+          "republican": 26054,
+          "democrat": 11416,
+          "other": 1203,
+          "no_party_affiliation": 8792
+        }
+      },
+      "voted_mail": {
+        "total": 88221,
+        "registration": {
+          "republican": 41655,
+          "democrat": 26603,
+          "other": 2271,
+          "no_party_affiliation": 17692
+        }
+      },
+      "mail_outstanding": {
+        "total": 56093,
+        "registration": {
+          "republican": 25494,
+          "democrat": 15431,
+          "other": 1660,
+          "no_party_affiliation": 13508
+        }
+      },
+      "mail_return_rate": 0.611313,
+      "mail_return_rate_by_registration": {
+        "republican": 0.620337,
+        "democrat": 0.632892,
+        "other": 0.577716,
+        "no_party_affiliation": 0.567051
+      }
+    },
+    {
+      "county": "Leon",
+      "voted_early": {
+        "total": 18407,
+        "registration": {
+          "republican": 5355,
+          "democrat": 10135,
+          "other": 398,
+          "no_party_affiliation": 2519
+        }
+      },
+      "voted_mail": {
+        "total": 19138,
+        "registration": {
+          "republican": 4822,
+          "democrat": 11462,
+          "other": 321,
+          "no_party_affiliation": 2533
+        }
+      },
+      "mail_outstanding": {
+        "total": 15610,
+        "registration": {
+          "republican": 3716,
+          "democrat": 9013,
+          "other": 318,
+          "no_party_affiliation": 2563
+        }
+      },
+      "mail_return_rate": 0.550766,
+      "mail_return_rate_by_registration": {
+        "republican": 0.564769,
+        "democrat": 0.559805,
+        "other": 0.502347,
+        "no_party_affiliation": 0.497057
+      }
+    },
+    {
+      "county": "Levy",
+      "voted_early": {
+        "total": 1759,
+        "registration": {
+          "republican": 1207,
+          "democrat": 353,
+          "other": 38,
+          "no_party_affiliation": 161
+        }
+      },
+      "voted_mail": {
+        "total": 2679,
+        "registration": {
+          "republican": 1494,
+          "democrat": 846,
+          "other": 76,
+          "no_party_affiliation": 263
+        }
+      },
+      "mail_outstanding": {
+        "total": 1951,
+        "registration": {
+          "republican": 1059,
+          "democrat": 646,
+          "other": 52,
+          "no_party_affiliation": 194
+        }
+      },
+      "mail_return_rate": 0.578618,
+      "mail_return_rate_by_registration": {
+        "republican": 0.585194,
+        "democrat": 0.567024,
+        "other": 0.59375,
+        "no_party_affiliation": 0.575492
+      }
+    },
+    {
+      "county": "Liberty",
+      "voted_early": {
+        "total": 202,
+        "registration": {
+          "republican": 150,
+          "democrat": 44,
+          "other": 1,
+          "no_party_affiliation": 7
+        }
+      },
+      "voted_mail": {
+        "total": 143,
+        "registration": {
+          "republican": 81,
+          "democrat": 60,
+          "other": 0,
+          "no_party_affiliation": 2
+        }
+      },
+      "mail_outstanding": {
+        "total": 155,
+        "registration": {
+          "republican": 100,
+          "democrat": 45,
+          "other": 1,
+          "no_party_affiliation": 9
+        }
+      },
+      "mail_return_rate": 0.479866,
+      "mail_return_rate_by_registration": {
+        "republican": 0.447514,
+        "democrat": 0.571429,
+        "other": 0,
+        "no_party_affiliation": 0.181818
+      }
+    },
+    {
+      "county": "Madison",
+      "voted_early": {
+        "total": 779,
+        "registration": {
+          "republican": 402,
+          "democrat": 322,
+          "other": 5,
+          "no_party_affiliation": 50
+        }
+      },
+      "voted_mail": {
+        "total": 488,
+        "registration": {
+          "republican": 192,
+          "democrat": 246,
+          "other": 5,
+          "no_party_affiliation": 45
+        }
+      },
+      "mail_outstanding": {
+        "total": 419,
+        "registration": {
+          "republican": 157,
+          "democrat": 217,
+          "other": 4,
+          "no_party_affiliation": 41
+        }
+      },
+      "mail_return_rate": 0.538037,
+      "mail_return_rate_by_registration": {
+        "republican": 0.550143,
+        "democrat": 0.531317,
+        "other": 0.555556,
+        "no_party_affiliation": 0.523256
+      }
+    },
+    {
+      "county": "Manatee",
+      "voted_early": {
+        "total": 28822,
+        "registration": {
+          "republican": 15671,
+          "democrat": 7576,
+          "other": 755,
+          "no_party_affiliation": 4820
+        }
+      },
+      "voted_mail": {
+        "total": 33302,
+        "registration": {
+          "republican": 13791,
+          "democrat": 12774,
+          "other": 758,
+          "no_party_affiliation": 5979
+        }
+      },
+      "mail_outstanding": {
+        "total": 26583,
+        "registration": {
+          "republican": 10798,
+          "democrat": 9114,
+          "other": 746,
+          "no_party_affiliation": 5925
+        }
+      },
+      "mail_return_rate": 0.556099,
+      "mail_return_rate_by_registration": {
+        "republican": 0.560861,
+        "democrat": 0.583607,
+        "other": 0.503989,
+        "no_party_affiliation": 0.502268
+      }
+    },
+    {
+      "county": "Marion",
+      "voted_early": {
+        "total": 22134,
+        "registration": {
+          "republican": 12197,
+          "democrat": 6344,
+          "other": 620,
+          "no_party_affiliation": 2973
+        }
+      },
+      "voted_mail": {
+        "total": 22652,
+        "registration": {
+          "republican": 8998,
+          "democrat": 9664,
+          "other": 617,
+          "no_party_affiliation": 3373
+        }
+      },
+      "mail_outstanding": {
+        "total": 12434,
+        "registration": {
+          "republican": 4942,
+          "democrat": 4971,
+          "other": 391,
+          "no_party_affiliation": 2130
+        }
+      },
+      "mail_return_rate": 0.645614,
+      "mail_return_rate_by_registration": {
+        "republican": 0.645481,
+        "democrat": 0.660335,
+        "other": 0.612103,
+        "no_party_affiliation": 0.612938
+      }
+    },
+    {
+      "county": "Martin",
+      "voted_early": {
+        "total": 13762,
+        "registration": {
+          "republican": 8182,
+          "democrat": 3132,
+          "other": 440,
+          "no_party_affiliation": 2008
+        }
+      },
+      "voted_mail": {
+        "total": 13508,
+        "registration": {
+          "republican": 6031,
+          "democrat": 4954,
+          "other": 432,
+          "no_party_affiliation": 2091
+        }
+      },
+      "mail_outstanding": {
+        "total": 7849,
+        "registration": {
+          "republican": 3412,
+          "democrat": 2709,
+          "other": 276,
+          "no_party_affiliation": 1452
+        }
+      },
+      "mail_return_rate": 0.632486,
+      "mail_return_rate_by_registration": {
+        "republican": 0.638674,
+        "democrat": 0.646483,
+        "other": 0.610169,
+        "no_party_affiliation": 0.590178
+      }
+    },
+    {
+      "county": "Miami-Dade",
+      "voted_early": {
+        "total": 139422,
+        "registration": {
+          "republican": 54553,
+          "democrat": 50381,
+          "other": 2662,
+          "no_party_affiliation": 31826
+        }
+      },
+      "voted_mail": {
+        "total": 123594,
+        "registration": {
+          "republican": 38402,
+          "democrat": 52170,
+          "other": 2310,
+          "no_party_affiliation": 30712
+        }
+      },
+      "mail_outstanding": {
+        "total": 129724,
+        "registration": {
+          "republican": 35986,
+          "democrat": 54073,
+          "other": 2757,
+          "no_party_affiliation": 36908
+        }
+      },
+      "mail_return_rate": 0.487901,
+      "mail_return_rate_by_registration": {
+        "republican": 0.516239,
+        "democrat": 0.491044,
+        "other": 0.455891,
+        "no_party_affiliation": 0.454185
+      }
+    },
+    {
+      "county": "Monroe",
+      "voted_early": {
+        "total": 4938,
+        "registration": {
+          "republican": 2449,
+          "democrat": 1565,
+          "other": 117,
+          "no_party_affiliation": 807
+        }
+      },
+      "voted_mail": {
+        "total": 6767,
+        "registration": {
+          "republican": 2897,
+          "democrat": 2756,
+          "other": 146,
+          "no_party_affiliation": 968
+        }
+      },
+      "mail_outstanding": {
+        "total": 5784,
+        "registration": {
+          "republican": 2491,
+          "democrat": 1988,
+          "other": 170,
+          "no_party_affiliation": 1135
+        }
+      },
+      "mail_return_rate": 0.53916,
+      "mail_return_rate_by_registration": {
+        "republican": 0.537676,
+        "democrat": 0.580944,
+        "other": 0.462025,
+        "no_party_affiliation": 0.460295
+      }
+    },
+    {
+      "county": "Nassau",
+      "voted_early": {
+        "total": 9401,
+        "registration": {
+          "republican": 5958,
+          "democrat": 1941,
+          "other": 285,
+          "no_party_affiliation": 1217
+        }
+      },
+      "voted_mail": {
+        "total": 6009,
+        "registration": {
+          "republican": 2849,
+          "democrat": 1960,
+          "other": 191,
+          "no_party_affiliation": 1009
+        }
+      },
+      "mail_outstanding": {
+        "total": 4678,
+        "registration": {
+          "republican": 2180,
+          "democrat": 1390,
+          "other": 175,
+          "no_party_affiliation": 933
+        }
+      },
+      "mail_return_rate": 0.562272,
+      "mail_return_rate_by_registration": {
+        "republican": 0.566514,
+        "democrat": 0.585075,
+        "other": 0.521858,
+        "no_party_affiliation": 0.519567
+      }
+    },
+    {
+      "county": "Okaloosa",
+      "voted_early": {
+        "total": 16148,
+        "registration": {
+          "republican": 10640,
+          "democrat": 3200,
+          "other": 337,
+          "no_party_affiliation": 1971
+        }
+      },
+      "voted_mail": {
+        "total": 5833,
+        "registration": {
+          "republican": 2819,
+          "democrat": 1928,
+          "other": 130,
+          "no_party_affiliation": 956
+        }
+      },
+      "mail_outstanding": {
+        "total": 8602,
+        "registration": {
+          "republican": 3974,
+          "democrat": 2596,
+          "other": 241,
+          "no_party_affiliation": 1791
+        }
+      },
+      "mail_return_rate": 0.404087,
+      "mail_return_rate_by_registration": {
+        "republican": 0.414986,
+        "democrat": 0.426172,
+        "other": 0.350404,
+        "no_party_affiliation": 0.348016
+      }
+    },
+    {
+      "county": "Okeechobee",
+      "voted_early": {
+        "total": 810,
+        "registration": {
+          "republican": 548,
+          "democrat": 183,
+          "other": 13,
+          "no_party_affiliation": 66
+        }
+      },
+      "voted_mail": {
+        "total": 1157,
+        "registration": {
+          "republican": 602,
+          "democrat": 418,
+          "other": 28,
+          "no_party_affiliation": 109
+        }
+      },
+      "mail_outstanding": {
+        "total": 799,
+        "registration": {
+          "republican": 371,
+          "democrat": 289,
+          "other": 23,
+          "no_party_affiliation": 116
+        }
+      },
+      "mail_return_rate": 0.591513,
+      "mail_return_rate_by_registration": {
+        "republican": 0.618705,
+        "democrat": 0.591231,
+        "other": 0.54902,
+        "no_party_affiliation": 0.484444
+      }
+    },
+    {
+      "county": "Orange",
+      "voted_early": {
+        "total": 88743,
+        "registration": {
+          "republican": 23969,
+          "democrat": 44794,
+          "other": 2113,
+          "no_party_affiliation": 17867
+        }
+      },
+      "voted_mail": {
+        "total": 70515,
+        "registration": {
+          "republican": 19057,
+          "democrat": 35139,
+          "other": 1621,
+          "no_party_affiliation": 14698
+        }
+      },
+      "mail_outstanding": {
+        "total": 57818,
+        "registration": {
+          "republican": 13870,
+          "democrat": 27372,
+          "other": 1753,
+          "no_party_affiliation": 14823
+        }
+      },
+      "mail_return_rate": 0.549469,
+      "mail_return_rate_by_registration": {
+        "republican": 0.578765,
+        "democrat": 0.562125,
+        "other": 0.480439,
+        "no_party_affiliation": 0.497883
+      }
+    },
+    {
+      "county": "Osceola",
+      "voted_early": {
+        "total": 21391,
+        "registration": {
+          "republican": 6728,
+          "democrat": 9569,
+          "other": 474,
+          "no_party_affiliation": 4620
+        }
+      },
+      "voted_mail": {
+        "total": 20645,
+        "registration": {
+          "republican": 5496,
+          "democrat": 9880,
+          "other": 492,
+          "no_party_affiliation": 4777
+        }
+      },
+      "mail_outstanding": {
+        "total": 18016,
+        "registration": {
+          "republican": 4395,
+          "democrat": 8075,
+          "other": 531,
+          "no_party_affiliation": 5015
+        }
+      },
+      "mail_return_rate": 0.534001,
+      "mail_return_rate_by_registration": {
+        "republican": 0.555657,
+        "democrat": 0.550265,
+        "other": 0.480938,
+        "no_party_affiliation": 0.487847
+      }
+    },
+    {
+      "county": "Palm Beach",
+      "voted_early": {
+        "total": 88057,
+        "registration": {
+          "republican": 30757,
+          "democrat": 36891,
+          "other": 2650,
+          "no_party_affiliation": 17759
+        }
+      },
+      "voted_mail": {
+        "total": 112164,
+        "registration": {
+          "republican": 27949,
+          "democrat": 60288,
+          "other": 2960,
+          "no_party_affiliation": 20967
+        }
+      },
+      "mail_outstanding": {
+        "total": 83566,
+        "registration": {
+          "republican": 22207,
+          "democrat": 38968,
+          "other": 2685,
+          "no_party_affiliation": 19706
+        }
+      },
+      "mail_return_rate": 0.573055,
+      "mail_return_rate_by_registration": {
+        "republican": 0.557241,
+        "democrat": 0.607399,
+        "other": 0.524358,
+        "no_party_affiliation": 0.515502
+      }
+    },
+    {
+      "county": "Pasco",
+      "voted_early": {
+        "total": 39466,
+        "registration": {
+          "republican": 19160,
+          "democrat": 11736,
+          "other": 1194,
+          "no_party_affiliation": 7376
+        }
+      },
+      "voted_mail": {
+        "total": 37359,
+        "registration": {
+          "republican": 13270,
+          "democrat": 15401,
+          "other": 1076,
+          "no_party_affiliation": 7612
+        }
+      },
+      "mail_outstanding": {
+        "total": 24106,
+        "registration": {
+          "republican": 7935,
+          "democrat": 9306,
+          "other": 855,
+          "no_party_affiliation": 6010
+        }
+      },
+      "mail_return_rate": 0.607809,
+      "mail_return_rate_by_registration": {
+        "republican": 0.625796,
+        "democrat": 0.623346,
+        "other": 0.557224,
+        "no_party_affiliation": 0.558802
+      }
+    },
+    {
+      "county": "Pinellas",
+      "voted_early": {
+        "total": 32060,
+        "registration": {
+          "republican": 13587,
+          "democrat": 11366,
+          "other": 925,
+          "no_party_affiliation": 6182
+        }
+      },
+      "voted_mail": {
+        "total": 122485,
+        "registration": {
+          "republican": 45294,
+          "democrat": 50009,
+          "other": 2884,
+          "no_party_affiliation": 24298
+        }
+      },
+      "mail_outstanding": {
+        "total": 93639,
+        "registration": {
+          "republican": 31646,
+          "democrat": 37822,
+          "other": 2627,
+          "no_party_affiliation": 21544
+        }
+      },
+      "mail_return_rate": 0.566735,
+      "mail_return_rate_by_registration": {
+        "republican": 0.588692,
+        "democrat": 0.569378,
+        "other": 0.523317,
+        "no_party_affiliation": 0.530038
+      }
+    },
+    {
+      "county": "Polk",
+      "voted_early": {
+        "total": 35992,
+        "registration": {
+          "republican": 15043,
+          "democrat": 14042,
+          "other": 902,
+          "no_party_affiliation": 6005
+        }
+      },
+      "voted_mail": {
+        "total": 39894,
+        "registration": {
+          "republican": 16019,
+          "democrat": 16541,
+          "other": 919,
+          "no_party_affiliation": 6415
+        }
+      },
+      "mail_outstanding": {
+        "total": 27542,
+        "registration": {
+          "republican": 9381,
+          "democrat": 11471,
+          "other": 758,
+          "no_party_affiliation": 5932
+        }
+      },
+      "mail_return_rate": 0.591583,
+      "mail_return_rate_by_registration": {
+        "republican": 0.630669,
+        "democrat": 0.590497,
+        "other": 0.548002,
+        "no_party_affiliation": 0.519559
+      }
+    },
+    {
+      "county": "Putnam",
+      "voted_early": {
+        "total": 5397,
+        "registration": {
+          "republican": 3371,
+          "democrat": 1480,
+          "other": 86,
+          "no_party_affiliation": 460
+        }
+      },
+      "voted_mail": {
+        "total": 2342,
+        "registration": {
+          "republican": 1118,
+          "democrat": 919,
+          "other": 44,
+          "no_party_affiliation": 261
+        }
+      },
+      "mail_outstanding": {
+        "total": 1794,
+        "registration": {
+          "republican": 812,
+          "democrat": 726,
+          "other": 43,
+          "no_party_affiliation": 213
+        }
+      },
+      "mail_return_rate": 0.566248,
+      "mail_return_rate_by_registration": {
+        "republican": 0.579275,
+        "democrat": 0.558663,
+        "other": 0.505747,
+        "no_party_affiliation": 0.550633
+      }
+    },
+    {
+      "county": "Santa Rosa",
+      "voted_early": {
+        "total": 12919,
+        "registration": {
+          "republican": 8574,
+          "democrat": 2583,
+          "other": 296,
+          "no_party_affiliation": 1466
+        }
+      },
+      "voted_mail": {
+        "total": 4523,
+        "registration": {
+          "republican": 2276,
+          "democrat": 1497,
+          "other": 115,
+          "no_party_affiliation": 635
+        }
+      },
+      "mail_outstanding": {
+        "total": 5853,
+        "registration": {
+          "republican": 2847,
+          "democrat": 1806,
+          "other": 164,
+          "no_party_affiliation": 1036
+        }
+      },
+      "mail_return_rate": 0.43591,
+      "mail_return_rate_by_registration": {
+        "republican": 0.444271,
+        "democrat": 0.453224,
+        "other": 0.412186,
+        "no_party_affiliation": 0.380012
+      }
+    },
+    {
+      "county": "Sarasota",
+      "voted_early": {
+        "total": 34098,
+        "registration": {
+          "republican": 18685,
+          "democrat": 8555,
+          "other": 927,
+          "no_party_affiliation": 5931
+        }
+      },
+      "voted_mail": {
+        "total": 59141,
+        "registration": {
+          "republican": 21834,
+          "democrat": 25353,
+          "other": 1489,
+          "no_party_affiliation": 10465
+        }
+      },
+      "mail_outstanding": {
+        "total": 30973,
+        "registration": {
+          "republican": 11605,
+          "democrat": 11829,
+          "other": 898,
+          "no_party_affiliation": 6641
+        }
+      },
+      "mail_return_rate": 0.656291,
+      "mail_return_rate_by_registration": {
+        "republican": 0.65295,
+        "democrat": 0.681862,
+        "other": 0.623796,
+        "no_party_affiliation": 0.611774
+      }
+    },
+    {
+      "county": "Seminole",
+      "voted_early": {
+        "total": 37212,
+        "registration": {
+          "republican": 14370,
+          "democrat": 14417,
+          "other": 976,
+          "no_party_affiliation": 7449
+        }
+      },
+      "voted_mail": {
+        "total": 28780,
+        "registration": {
+          "republican": 9639,
+          "democrat": 12706,
+          "other": 708,
+          "no_party_affiliation": 5727
+        }
+      },
+      "mail_outstanding": {
+        "total": 22109,
+        "registration": {
+          "republican": 6643,
+          "democrat": 9421,
+          "other": 642,
+          "no_party_affiliation": 5403
+        }
+      },
+      "mail_return_rate": 0.565545,
+      "mail_return_rate_by_registration": {
+        "republican": 0.592003,
+        "democrat": 0.574231,
+        "other": 0.524444,
+        "no_party_affiliation": 0.514555
+      }
+    },
+    {
+      "county": "St. Johns",
+      "voted_early": {
+        "total": 30095,
+        "registration": {
+          "republican": 17205,
+          "democrat": 7758,
+          "other": 630,
+          "no_party_affiliation": 4502
+        }
+      },
+      "voted_mail": {
+        "total": 15423,
+        "registration": {
+          "republican": 6137,
+          "democrat": 6294,
+          "other": 352,
+          "no_party_affiliation": 2640
+        }
+      },
+      "mail_outstanding": {
+        "total": 12533,
+        "registration": {
+          "republican": 4733,
+          "democrat": 4833,
+          "other": 328,
+          "no_party_affiliation": 2639
+        }
+      },
+      "mail_return_rate": 0.551688,
+      "mail_return_rate_by_registration": {
+        "republican": 0.564581,
+        "democrat": 0.565651,
+        "other": 0.517647,
+        "no_party_affiliation": 0.500095
+      }
+    },
+    {
+      "county": "St. Lucie",
+      "voted_early": {
+        "total": 29848,
+        "registration": {
+          "republican": 12612,
+          "democrat": 11437,
+          "other": 906,
+          "no_party_affiliation": 4893
+        }
+      },
+      "voted_mail": {
+        "total": 24546,
+        "registration": {
+          "republican": 8105,
+          "democrat": 11215,
+          "other": 705,
+          "no_party_affiliation": 4521
+        }
+      },
+      "mail_outstanding": {
+        "total": 16069,
+        "registration": {
+          "republican": 4708,
+          "democrat": 7269,
+          "other": 552,
+          "no_party_affiliation": 3540
+        }
+      },
+      "mail_return_rate": 0.604358,
+      "mail_return_rate_by_registration": {
+        "republican": 0.632561,
+        "democrat": 0.606741,
+        "other": 0.560859,
+        "no_party_affiliation": 0.560849
+      }
+    },
+    {
+      "county": "Sumter",
+      "voted_early": {
+        "total": 10187,
+        "registration": {
+          "republican": 7065,
+          "democrat": 1630,
+          "other": 233,
+          "no_party_affiliation": 1259
+        }
+      },
+      "voted_mail": {
+        "total": 21485,
+        "registration": {
+          "republican": 10146,
+          "democrat": 7084,
+          "other": 532,
+          "no_party_affiliation": 3723
+        }
+      },
+      "mail_outstanding": {
+        "total": 13253,
+        "registration": {
+          "republican": 6428,
+          "democrat": 3834,
+          "other": 375,
+          "no_party_affiliation": 2616
+        }
+      },
+      "mail_return_rate": 0.618487,
+      "mail_return_rate_by_registration": {
+        "republican": 0.612164,
+        "democrat": 0.648837,
+        "other": 0.586549,
+        "no_party_affiliation": 0.587317
+      }
+    },
+    {
+      "county": "Suwannee",
+      "voted_early": {
+        "total": 1625,
+        "registration": {
+          "republican": 1152,
+          "democrat": 328,
+          "other": 24,
+          "no_party_affiliation": 121
+        }
+      },
+      "voted_mail": {
+        "total": 1478,
+        "registration": {
+          "republican": 871,
+          "democrat": 451,
+          "other": 34,
+          "no_party_affiliation": 122
+        }
+      },
+      "mail_outstanding": {
+        "total": 1395,
+        "registration": {
+          "republican": 796,
+          "democrat": 409,
+          "other": 48,
+          "no_party_affiliation": 142
+        }
+      },
+      "mail_return_rate": 0.514445,
+      "mail_return_rate_by_registration": {
+        "republican": 0.522496,
+        "democrat": 0.524419,
+        "other": 0.414634,
+        "no_party_affiliation": 0.462121
+      }
+    },
+    {
+      "county": "Taylor",
+      "voted_early": {
+        "total": 436,
+        "registration": {
+          "republican": 299,
+          "democrat": 108,
+          "other": 7,
+          "no_party_affiliation": 22
+        }
+      },
+      "voted_mail": {
+        "total": 572,
+        "registration": {
+          "republican": 321,
+          "democrat": 206,
+          "other": 7,
+          "no_party_affiliation": 38
+        }
+      },
+      "mail_outstanding": {
+        "total": 534,
+        "registration": {
+          "republican": 313,
+          "democrat": 185,
+          "other": 10,
+          "no_party_affiliation": 26
+        }
+      },
+      "mail_return_rate": 0.517179,
+      "mail_return_rate_by_registration": {
+        "republican": 0.506309,
+        "democrat": 0.526854,
+        "other": 0.411765,
+        "no_party_affiliation": 0.59375
+      }
+    },
+    {
+      "county": "Union",
+      "voted_early": {
+        "total": 424,
+        "registration": {
+          "republican": 344,
+          "democrat": 62,
+          "other": 3,
+          "no_party_affiliation": 15
+        }
+      },
+      "voted_mail": {
+        "total": 185,
+        "registration": {
+          "republican": 108,
+          "democrat": 65,
+          "other": 3,
+          "no_party_affiliation": 9
+        }
+      },
+      "mail_outstanding": {
+        "total": 217,
+        "registration": {
+          "republican": 130,
+          "democrat": 65,
+          "other": 7,
+          "no_party_affiliation": 15
+        }
+      },
+      "mail_return_rate": 0.460199,
+      "mail_return_rate_by_registration": {
+        "republican": 0.453782,
+        "democrat": 0.5,
+        "other": 0.3,
+        "no_party_affiliation": 0.375
+      }
+    },
+    {
+      "county": "Volusia",
+      "voted_early": {
+        "total": 38527,
+        "registration": {
+          "republican": 18556,
+          "democrat": 12275,
+          "other": 1189,
+          "no_party_affiliation": 6507
+        }
+      },
+      "voted_mail": {
+        "total": 46093,
+        "registration": {
+          "republican": 17534,
+          "democrat": 18319,
+          "other": 1358,
+          "no_party_affiliation": 8882
+        }
+      },
+      "mail_outstanding": {
+        "total": 30353,
+        "registration": {
+          "republican": 10880,
+          "democrat": 11417,
+          "other": 1044,
+          "no_party_affiliation": 7012
+        }
+      },
+      "mail_return_rate": 0.602948,
+      "mail_return_rate_by_registration": {
+        "republican": 0.61709,
+        "democrat": 0.616055,
+        "other": 0.565362,
+        "no_party_affiliation": 0.558827
+      }
+    },
+    {
+      "county": "Wakulla",
+      "voted_early": {
+        "total": 1294,
+        "registration": {
+          "republican": 733,
+          "democrat": 401,
+          "other": 27,
+          "no_party_affiliation": 133
+        }
+      },
+      "voted_mail": {
+        "total": 1203,
+        "registration": {
+          "republican": 570,
+          "democrat": 481,
+          "other": 21,
+          "no_party_affiliation": 131
+        }
+      },
+      "mail_outstanding": {
+        "total": 1069,
+        "registration": {
+          "republican": 496,
+          "democrat": 413,
+          "other": 32,
+          "no_party_affiliation": 128
+        }
+      },
+      "mail_return_rate": 0.529489,
+      "mail_return_rate_by_registration": {
+        "republican": 0.534709,
+        "democrat": 0.538031,
+        "other": 0.396226,
+        "no_party_affiliation": 0.505792
+      }
+    },
+    {
+      "county": "Walton",
+      "voted_early": {
+        "total": 6733,
+        "registration": {
+          "republican": 4960,
+          "democrat": 957,
+          "other": 138,
+          "no_party_affiliation": 678
+        }
+      },
+      "voted_mail": {
+        "total": 2721,
+        "registration": {
+          "republican": 1541,
+          "democrat": 771,
+          "other": 72,
+          "no_party_affiliation": 337
+        }
+      },
+      "mail_outstanding": {
+        "total": 2950,
+        "registration": {
+          "republican": 1662,
+          "democrat": 748,
+          "other": 86,
+          "no_party_affiliation": 454
+        }
+      },
+      "mail_return_rate": 0.47981,
+      "mail_return_rate_by_registration": {
+        "republican": 0.481111,
+        "democrat": 0.507571,
+        "other": 0.455696,
+        "no_party_affiliation": 0.426043
+      }
+    },
+    {
+      "county": "Washington",
+      "voted_early": {
+        "total": 648,
+        "registration": {
+          "republican": 448,
+          "democrat": 143,
+          "other": 7,
+          "no_party_affiliation": 50
+        }
+      },
+      "voted_mail": {
+        "total": 650,
+        "registration": {
+          "republican": 415,
+          "democrat": 183,
+          "other": 18,
+          "no_party_affiliation": 34
+        }
+      },
+      "mail_outstanding": {
+        "total": 578,
+        "registration": {
+          "republican": 355,
+          "democrat": 177,
+          "other": 4,
+          "no_party_affiliation": 42
+        }
+      },
+      "mail_return_rate": 0.529316,
+      "mail_return_rate_by_registration": {
+        "republican": 0.538961,
+        "democrat": 0.508333,
+        "other": 0.818182,
+        "no_party_affiliation": 0.447368
+      }
+    }
+  ],
+  "caveat": "Party breakdown reflects registration, not votes for candidates. Returned is not necessarily accepted.",
+  "snapshot_type": "user-supplied official download; fixed 2026-10-26 snapshot, not a live feed"
+}
