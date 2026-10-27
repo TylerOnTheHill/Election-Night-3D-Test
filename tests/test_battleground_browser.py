@@ -150,9 +150,20 @@ try:
         partial_page.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
         assert "Partially reported" in partial_page.locator("#county-preview-status").inner_text()
         assert "150 of 254" in partial_page.locator("#county-preview-status").inner_text()
-        assert "Partially reported:" in partial_page.locator("#county-preview-total").inner_text()
+        assert "Reported county ballots:" in partial_page.locator("#county-preview-total").inner_text()
         assert partial_page.locator("#county-preview-map path[fill='#30343b']").count()==104
         partial_page.close()
+        # Approved county data remains visible when statewide reporting cutoff is unavailable.
+        unknown_cutoff=json.loads(json.dumps(partial))
+        unknown_cutoff["states"]["TX"]["statewide_cutoff"]=None
+        no_cutoff=browser.new_page()
+        no_cutoff.route("**/data/early-vote/battleground-counties.json",
+            lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(unknown_cutoff)))
+        no_cutoff.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
+        no_cutoff.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
+        assert "Reporting cutoff unavailable" in no_cutoff.locator("#county-preview-status").inner_text()
+        assert "Reported county ballots:" in no_cutoff.locator("#county-preview-total").inner_text()
+        no_cutoff.close()
         browser.close()
 finally:
     server.shutdown()
