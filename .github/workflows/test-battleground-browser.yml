@@ -2,7 +2,18 @@ name: Test v7.2 battleground browser
 on:
   push:
     branches: [feature/v7-2-national-county-data]
+    paths:
+      - 'battleground*'
+      - 'county-review*'
+      - 'states-*.geojson'
+      - 'data/early-vote/**'
+      - 'data/sources/tx-nc-county-fips-reference.json'
+      - 'tests/test_battleground_browser.py'
+      - '.github/workflows/test-battleground-browser.yml'
   workflow_dispatch:
+concurrency:
+  group: battleground-browser-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -20,6 +31,8 @@ jobs:
         run: |
           node --check battleground.js
           node --check battleground-map.js
+          node --check battleground-map-3d.js
+          node --check battleground-county-3d.js
           node --check battleground-county-preview.js
           node --check county-review.js
           node --check county-review-map.js
