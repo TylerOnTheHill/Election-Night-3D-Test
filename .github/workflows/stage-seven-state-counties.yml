@@ -12,6 +12,7 @@ on:
       - 'scripts/stage_minnesota_counties.py'
       - 'scripts/stage_remaining_eleven_counties.py'
       - 'scripts/stage_uf_county_review.py'
+      - 'tests/test_stage_uf_county_review.py'
       - 'scripts/merge_restricted_nineteen_state_review.py'
       - 'tests/test_merge_restricted_nineteen_state_review.py'
       - 'tests/test_stage_remaining_eleven_counties.py'
@@ -65,6 +66,8 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_stage_remaining_eleven_counties.py' -v
           python scripts/stage_remaining_eleven_counties.py --output remaining-eleven-unapproved.json --gaps-output remaining-eleven-gaps.json
+      - name: Test UF source review CLI output
+        run: python -m unittest discover -s tests -p 'test_stage_uf_county_review.py' -v
       - name: Review alternative UF county data for eleven states
         run: python scripts/stage_uf_county_review.py --output uf-eleven-county-source-review.json --candidate-output uf-eleven-fips-candidate-restricted.json
       - name: Stage current Texas and North Carolina county observations
