@@ -1,0 +1,50 @@
+/* ElectionHQ v7.2 approved editorial composition — isolated layout layer.
+   Existing data IDs and 3D map controls are intentionally preserved. */
+:root{--studio:#0b0e13;--studio-card:#171b21;--studio-edge:#303841;--studio-ink:#e9edf3;--studio-blue:#2589ef}
+body{background:var(--studio)!important;color:var(--studio-ink)}
+main{max-width:1600px!important;padding:14px 24px 32px!important}
+main>.eyebrow{letter-spacing:.14em;font-size:10px}
+main>h2{font-size:21px!important;margin:2px 0 4px!important}
+main>.muted{max-width:100%!important;font-size:11px!important;line-height:1.45!important;margin:0 0 10px!important}
+.ehq-view-nav{border-bottom:1px solid var(--studio-edge);margin:8px 0 12px!important}
+.ehq-view-nav button{font-size:12px!important;padding:8px 13px!important}
+#ehq-national-screen>.cards{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:9px!important;margin:0 0 12px!important}
+#ehq-national-screen>.cards .card{background:var(--studio-card)!important;border:1px solid var(--studio-edge)!important;padding:10px 13px!important;min-width:0}
+#ehq-national-screen>.cards .value{font-size:clamp(18px,2vw,27px)!important;line-height:1.1;overflow-wrap:anywhere}
+#ehq-national-screen>.overview{display:grid!important;grid-template-columns:minmax(0,1.9fr) minmax(320px,.8fr)!important;gap:12px!important;align-items:start}
+#ehq-national-screen .map-panel{min-width:0;padding:14px!important;background:var(--studio-card)!important;border:1px solid var(--studio-edge)!important}
+#ehq-national-screen .map-stage{height:min(57vh,570px)!important;min-height:390px!important;background:#0c0f13!important;border-color:#292f37!important}
+#ehq-national-screen .map-panel .section-title{font-size:17px!important}
+#ehq-national-screen .map-controls,#ehq-national-screen .map-camera-controls{margin:5px 0!important}
+#ehq-national-screen .map-key{margin-top:7px!important}
+#ehq-national-screen .map-panel>.note{font-size:11px}
+#ehq-state-table{min-width:0;background:var(--studio-card);border:1px solid var(--studio-edge);border-radius:9px;padding:10px!important}
+#ehq-state-table:before{content:"WATCHLIST · LIVE REPORTED TOTALS";display:block;font-size:11px;font-weight:700;letter-spacing:.08em;margin:2px 4px 11px}
+#ehq-state-table .controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:0 0 8px!important}
+#ehq-state-table .controls #search{grid-column:1 / -1}
+#ehq-state-table .controls #export-watchlist{grid-column:1 / -1}
+#ehq-state-table .controls>*{min-width:0;max-width:100%;font-size:11px}
+#ehq-state-table>.panel{padding:0!important;border:0!important;background:transparent!important}
+#ehq-state-table .scroll{max-height:min(62vh,620px);overflow:auto}
+#ehq-state-table table{font-size:11px}
+#ehq-state-table td,#ehq-state-table th{padding:7px 6px!important}
+#ehq-state-table table th:nth-child(2),#ehq-state-table table td:nth-child(2),
+#ehq-state-table table th:nth-child(4),#ehq-state-table table td:nth-child(4),
+#ehq-state-table table th:nth-child(5),#ehq-state-table table td:nth-child(5),
+#ehq-state-table table th:nth-child(7),#ehq-state-table table td:nth-child(7){display:none}
+#ehq-state-screen>.explorer-picker{display:flex!important;margin:5px 0 9px!important;padding:9px 12px!important}
+#ehq-state-screen .ehq-state-tabs{margin:0 0 12px!important}
+#ehq-state-screen .ehq-tab-content:not([hidden]){min-width:0}
+#ehq-county-view:not([hidden]),#ehq-county-table-view:not([hidden]){display:grid!important;grid-template-columns:minmax(0,1.75fr) minmax(300px,.75fr)!important;gap:12px!important;align-items:start}
+#ehq-county-view>.county-panel{grid-column:1!important;grid-row:1!important;min-width:0;background:var(--studio-card)!important;border:1px solid var(--studio-edge)!important;padding:13px!important}
+#ehq-county-view>.panel[aria-label="Selected state detail"],#ehq-county-table-view>.panel[aria-label="Selected state detail"]{grid-column:2!important;grid-row:1!important;min-width:0;background:var(--studio-card)!important;border:1px solid var(--studio-edge)!important;padding:14px!important}
+#ehq-county-view #county-preview-map{min-height:420px!important}
+#ehq-county-view .detail-stats,#ehq-county-table-view .detail-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+#ehq-county-view .detail-stats .card,#ehq-county-table-view .detail-stats .card{min-width:0;padding:9px!important}
+#ehq-county-view .detail-stats .value,#ehq-county-table-view .detail-stats .value{font-size:clamp(15px,1.6vw,21px)!important;overflow-wrap:anywhere}
+#ehq-county-view #battleground-county-preview:not([hidden]){display:grid;grid-template-columns:minmax(0,1.45fr) minmax(180px,.55fr);gap:8px}
+#ehq-county-view #battleground-county-preview .scroll{max-height:450px}
+#ehq-county-table-view>.scroll{grid-column:1;grid-row:1;max-height:600px;overflow:auto}
+#ehq-state-summary>.panel{max-width:900px}
+@media(max-width:1100px){#ehq-national-screen>.overview{grid-template-columns:1fr!important}#ehq-state-table .scroll{max-height:300px}#ehq-county-view:not([hidden]),#ehq-county-table-view:not([hidden]){grid-template-columns:1fr!important}#ehq-county-view>.county-panel,#ehq-county-view>.panel[aria-label="Selected state detail"],#ehq-county-table-view>.panel[aria-label="Selected state detail"]{grid-column:1!important;grid-row:auto!important}}
+@media(max-width:600px){main{padding:10px!important}#ehq-national-screen>.cards{grid-template-columns:repeat(2,minmax(0,1fr))!important}#ehq-national-screen .map-stage{min-height:280px!important;height:330px!important}#ehq-state-screen .explorer-picker{display:block!important}#ehq-state-screen .explorer-picker select{width:100%}#ehq-county-view #battleground-county-preview:not([hidden]){display:block}#ehq-county-view #battleground-county-preview .scroll{max-height:250px}}
