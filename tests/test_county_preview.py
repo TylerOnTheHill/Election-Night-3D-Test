@@ -28,6 +28,7 @@ class PreviewTests(unittest.TestCase):
         self.assertIs(preview["publication_approved"], False)
         self.assertEqual(len(preview["states"]["TX"]["counties"]), 254)
         self.assertEqual(len(preview["states"]["NC"]["counties"]), 100)
+        self.assertEqual(preview["states"]["NC"]["reporting_label"], "Fully reported")
         self.assertIn("registration", preview["party_counts_mean"])
     def test_candidate_requires_separate_publication_approval(self):
         candidate = build_publication_candidate(self.temp.name)
@@ -52,6 +53,8 @@ class PreviewTests(unittest.TestCase):
         self.assertEqual(result["provider_statewide_total"], 90)
         self.assertEqual(result["county_vs_provider_statewide_difference"], 10)
         self.assertEqual(result["total_basis"], "sum_of_reported_counties")
+        self.assertEqual(result["reporting_label"], "Partially reported")
+        self.assertFalse(result["statewide_reconciled"])
     def test_partial_counties_are_accepted_and_labeled(self):
         p = Path(self.temp.name, "TX.json")
         d = json.loads(p.read_text())
