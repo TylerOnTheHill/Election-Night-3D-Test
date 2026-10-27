@@ -6,6 +6,8 @@ on:
       - 'scripts/stage_callthemap_county_pilots.py'
       - 'scripts/run_tx_nc_county_pipeline.py'
       - 'scripts/compare_county_candidates.py'
+      - 'scripts/review_county_source_freshness.py'
+      - 'tests/test_review_county_source_freshness.py'
       - 'tests/test_compare_county_candidates.py'
       - 'tests/test_run_tx_nc_county_pipeline.py'
       - 'tests/preview_real_county_candidate_browser.py'
@@ -81,6 +83,10 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_prepare_approved_county_feed.py' -v
       - name: Validate candidate without publishing
         run: python scripts/validate_county_publication_candidate.py --candidate staging-county-publication-candidate.json
+      - name: Test county source freshness and reconciliation audit
+        run: python -m unittest discover -s tests -p 'test_review_county_source_freshness.py' -v
+      - name: Generate non-publication county freshness review
+        run: python scripts/review_county_source_freshness.py --candidate staging-county-publication-candidate.json --output staging-county-source-review.json
       - name: Test incremental county snapshot replacement and regression safeguards
         run: python -m unittest discover -s tests -p 'test_compare_county_candidates.py' -v
       - name: Test end-to-end county pipeline with partial reports
@@ -110,6 +116,7 @@ jobs:
             staging-county-pilots-fips/
             staging-county-preview.json
             staging-county-publication-candidate.json
+            staging-county-source-review.json
             staging-county-browser-preview/
           if-no-files-found: ignore
           retention-days: 7
