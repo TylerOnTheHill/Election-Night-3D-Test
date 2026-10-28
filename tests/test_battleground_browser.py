@@ -8,8 +8,8 @@ from playwright.sync_api import sync_playwright
 
 snapshot=json.loads(Path("data/early-vote/US.json").read_text())
 by_code={s["state"]:s for s in snapshot["states"]}
-watch="AK AZ FL GA IA KS ME MI MN MS NE NV NH NC OH SC TX VA WI".split()
-assert len(watch)==19
+watch="AK AZ FL GA IA KS ME MI MN MS NE NV NC OH SC TX VA WI".split()
+assert len(watch)==18
 class Handler(http.server.SimpleHTTPRequestHandler):
     def log_message(self,*args): pass
 class Server(socketserver.ThreadingTCPServer):
@@ -24,13 +24,13 @@ try:
             errors=[]
             page.on("pageerror",lambda e:errors.append(str(e)))
             page.goto("http://127.0.0.1:8766/battleground.html",wait_until="domcontentloaded")
-            page.wait_for_function("document.querySelector('#reported-count').textContent.includes('/ 19')",timeout=30000)
+            page.wait_for_function("document.querySelector('#reported-count').textContent.includes('/ 18')",timeout=30000)
             page.wait_for_function("document.querySelector('#battleground-map').dataset.renderReady==='true'",timeout=30000)
             assert page.locator("#battleground-map canvas").count()==1
             assert page.locator("#battleground-map").get_attribute("data-state-meshes")=="50"
             assert page.locator("#map-zoom-in").count()==1
             assert page.locator("#map-reset").count()==1
-            assert page.locator("#state-count").inner_text()=="19"
+            assert page.locator("#state-count").inner_text()=="18"
             assert page.locator("#ehq-national-screen .overview > #ehq-state-table").count()==1
             assert page.locator("#ehq-national-screen .overview > .map-panel").count()==1
             # Verify the approved charcoal theme is actually rendered, not merely declared in CSS.
@@ -83,7 +83,7 @@ try:
             assert download.suggested_filename=="electionhq-battleground-watchlist-2026.csv"
             content=Path(download.path()).read_text(encoding="utf-8-sig")
             assert "Texas" in content and "New Hampshire" not in content
-            assert "Reporting cutoff" in content and "Source URL" in content
+            assert "Updated" in content and "Source URL" in content
             assert not errors,errors
             page.locator("#search").fill("")
             page.locator("#sort").select_option("total")
