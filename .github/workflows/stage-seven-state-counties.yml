@@ -294,3 +294,39 @@ jobs:
             eight-state-interactive-review/
           if-no-files-found: ignore
           retention-days: 7
+
+      - name: Record county review outcome for independent verification
+        if: always()
+        continue-on-error: true
+        env:
+          REVIEW_STATUS: ${{ job.status }}
+          REVIEW_RUN_ID: ${{ github.run_id }}
+          REVIEW_SHA: ${{ github.sha }}
+          REVIEW_ATTEMPT: ${{ github.run_attempt }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          files = ["nineteen-state-readiness-unapproved.json", "eighteen-state-release-gate-unapproved.json", "nineteen-state-coverage-audit.json"]
+          record = {
+              "schema": "electionhq-county-review-verification-v1",
+              "run_id": int(os.environ["REVIEW_RUN_ID"]),
+              "run_attempt": int(os.environ["REVIEW_ATTEMPT"]),
+              "head_sha": os.environ["REVIEW_SHA"],
+              "job_steps_status": os.environ["REVIEW_STATUS"],
+              "required_artifacts": {p: Path(p).is_file() for p in files},
+              "publication_approved": False
+          }
+          out = Path("data/ci-diagnostics/latest-county-review-verification.json")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          out.write_text(json.dumps(record, indent=2) + "\n")
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ci-diagnostics/latest-county-review-verification.json
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: record county review verification [skip ci]"
+            git pull --rebase origin feature/v7-2-national-county-data
+            git push origin HEAD:feature/v7-2-national-county-data
+          fi
