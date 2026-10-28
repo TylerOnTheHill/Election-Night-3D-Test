@@ -6,6 +6,9 @@ on:
       - feature/v7-2-national-county-data
     paths:
       - prototype.js
+      - early-dashboard.js
+      - unified-ui.js
+      - county-dashboard-bridge.js
       - scripts/validate_place_labels.py
       - scripts/smoke_test_place_labels.mjs
       - data/geography/**
@@ -23,7 +26,11 @@ jobs:
       - name: Check nationwide geographic datasets
         run: python scripts/validate_place_labels.py
       - name: Check JavaScript module syntax
-        run: node --check prototype.js
+        run: |
+          node --check prototype.js
+          node --check early-dashboard.js
+          node --check unified-ui.js
+          node --check county-dashboard-bridge.js
       - name: Install headless browser
         run: |
           npm install --no-save playwright@1.58.2
