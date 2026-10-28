@@ -17,6 +17,10 @@ try{
  result.diagnostics=await page.evaluate(()=>({ready:!!window.__mapWebGLReady,loading:document.getElementById('loading')?.textContent,mode:document.getElementById('mode')?.value,nationalHidden:document.getElementById('national')?.hidden,scripts:[...document.scripts].map(s=>({src:s.src,type:s.type}))}));
  result.checks.push({name:'stage exists',ok:await page.locator('#stage').count()===1});
  result.checks.push({name:'canvas exists',ok:await page.locator('#stage canvas').count()>=1});
+ const layout=await page.evaluate(()=>{const stage=document.querySelector('.stage'),summary=document.querySelector('.summary-strip'),main=document.querySelector('.main-area');const bg=getComputedStyle(document.body).backgroundColor;return {background:bg,mapAboveSummary:stage.getBoundingClientRect().top<summary.getBoundingClientRect().top,mainDisplay:getComputedStyle(main).display,stagingPanel:document.body.innerText.includes('County data · staging review')}});
+ result.checks.push({name:'black primary background',ok:layout.background==='rgb(0, 0, 0)',actual:layout.background});
+ result.checks.push({name:'map appears before seat summary',ok:layout.mapAboveSummary});
+ result.checks.push({name:'development staging panel absent from primary dashboard',ok:!layout.stagingPanel});
  result.checks.push({name:'bounded label pool',ok:(await page.locator('.ehq-place-label').count())<=120});
  await page.screenshot({path:out+'/initial-texas.png',fullPage:true});
  // Enter Texas using the real state-map navigation instead of testing labels on the national map.
