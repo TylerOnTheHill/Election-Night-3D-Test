@@ -19,6 +19,24 @@ class MinnesotaTests(unittest.TestCase):
         self.assertEqual(state["reporting_label"],"Partially reported")
         self.assertIsNone(state["provider_statewide_total"])
         self.assertEqual(validate(candidate)["MN"]["reported_counties"],2)
+    def test_full_geography_keeps_county_total_when_statewide_unavailable(self):
+        census={"features":[{"id":f"27{i:03}","properties":{"NAME":f"County {i}"}}
+                            for i in range(1,88)]}
+        rows="".join(f"<tr><td>County {i}</td><td>3</td><td>1</td><td>2</td></tr>"
+                     for i in range(1,88))
+        html=("<p>Absentee Counts by County as of October 23, 2026</p>"
+              "<table><tr><th>County</th><th>Applications</th>"
+              "<th>Accepted ballots - by mail</th>"
+              "<th>Accepted ballots - in person</th></tr>"+rows+"</table>")
+        candidate=parse(html,census)
+        state=candidate["states"]["MN"]
+        self.assertEqual(state["county_count"],87)
+        self.assertEqual(state["total"],261)
+        self.assertTrue(state["coverage_complete"])
+        self.assertFalse(state["statewide_reconciled"])
+        self.assertEqual(state["reporting_label"],"Fully reported")
+        self.assertEqual(validate(candidate)["MN"]["reported_ballots"],261)
+
     def test_duplicate_county_rejected(self):
         census={"features":[{"id":f"27{i:03}","properties":{"NAME":f"County {i}"}} for i in range(1,88)]}
         html="""Absentee Counts by County as of October 23, 2026
