@@ -69,6 +69,19 @@ try{
  result.checks.push({name:'Early Vote filters do not obstruct national map',ok:!filtersVisible||earlyLayout.filtersBeforeMap,filtersVisible});
  result.checks.push({name:'Early Vote metric cards use black surface',ok:earlyLayout.cardBackground==='rgb(9, 9, 9)',actual:earlyLayout.cardBackground});
  await page.screenshot({path:out+'/early-vote-national.png',fullPage:true});
+ // Check the second reporting mode at a narrower desktop viewport as well.
+ await page.setViewportSize({width:1024,height:768});
+ await page.waitForTimeout(900);
+ const narrow=await page.evaluate(()=>{
+  const stage=document.querySelector('#stage').getBoundingClientRect();
+  const stats=document.querySelector('.early-stats').getBoundingClientRect();
+  const doc=document.documentElement;
+  return {width:innerWidth,documentWidth:doc.scrollWidth,mapWidth:stage.width,mapHeight:stage.height,mapAboveStats:stage.top<stats.top};
+ });
+ result.diagnostics.earlyNarrow=narrow;
+ result.checks.push({name:'Early Vote map stays usable at 1024px',ok:narrow.mapWidth>=500&&narrow.mapHeight>=300&&narrow.mapAboveStats,actual:narrow});
+ await page.screenshot({path:out+'/early-vote-1024px.png',fullPage:true});
+ await page.setViewportSize({width:1440,height:900});
   result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
  await fs.writeFile(out+'/results.json',JSON.stringify(result,null,2));
  if(result.checks.some(x=>!x.ok)){console.error(JSON.stringify(result,null,2));process.exitCode=1}else console.log(JSON.stringify(result,null,2));
