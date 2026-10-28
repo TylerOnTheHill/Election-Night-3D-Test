@@ -9,7 +9,14 @@ from pathlib import Path
 from audit_national_early_vote import WATCH, audit
 from validate_county_publication_candidate import validate
 
-def build(national, candidates=(), leads=None):
+def build(national, candidates=(), leads=None, alaska_district_review=None):
+    if alaska_district_review is not None:
+        ak=alaska_district_review
+        if (ak.get('schema') != 'electionhq-ak-house-district-review-v1' or ak.get('state') != 'AK'
+            or ak.get('geography') != 'state_house_district' or ak.get('publication_approved') is not False
+            or ak.get('reported_districts') != 40 or ak.get('geographic_count') != 40
+            or len(ak.get('districts', [])) != 41 or not ak.get('source_cutoff')):
+            raise ValueError('Invalid Alaska official district review')
     national_audit=audit(national)
     national_rows={row["state"]:row for row in national_audit["watchlist_states"]}
     county={}
@@ -37,6 +44,12 @@ def build(national, candidates=(), leads=None):
             "statewide_cutoff":statewide["cutoff"],
             "statewide_source_url":statewide["source_url"],
             "county_staged":staged is not None,
+            "district_review_staged":code=="AK" and alaska_district_review is not None,
+            "district_review_geography":alaska_district_review["geography"] if code=="AK" and alaska_district_review else None,
+            "district_review_reported":alaska_district_review["reported_districts"] if code=="AK" and alaska_district_review else None,
+            "district_review_expected":alaska_district_review["geographic_count"] if code=="AK" and alaska_district_review else None,
+            "district_review_ballots":alaska_district_review["total_received_ballots"] if code=="AK" and alaska_district_review else None,
+            "district_review_cutoff":alaska_district_review["source_cutoff"] if code=="AK" and alaska_district_review else None,
             "county_reported":staged["county_count"] if staged else None,
             "county_expected":staged["geographic_count"] if staged else None,
             "county_ballots":staged["total"] if staged else None,
@@ -61,6 +74,7 @@ def main():
     p=argparse.ArgumentParser()
     p.add_argument("--national",default="data/early-vote/US.json")
     p.add_argument("--candidate",action="append",default=[])
+    p.add_argument("--alaska-district-review",default=None)
     p.add_argument("--leads",default="data/sources/remaining-watchlist-official-source-leads.json")
     p.add_argument("--output",required=True)
     a=p.parse_args()
@@ -69,7 +83,8 @@ def main():
         raise ValueError("Readiness reports are staging artifacts, not public vote feeds")
     result=build(json.loads(Path(a.national).read_text()),
         [json.loads(Path(f).read_text()) for f in a.candidate],
-        json.loads(Path(a.leads).read_text()))
+        json.loads(Path(a.leads).read_text()),
+        json.loads(Path(a.alaska_district_review).read_text()) if a.alaska_district_review else None)
     target.write_text(json.dumps(result,indent=2)+"\n")
     print(f'{result["statewide_reporting_count"]}/19 statewide; {result["county_staging_count"]}/19 county staged; publication unchanged')
 
