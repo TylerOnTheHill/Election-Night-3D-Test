@@ -13,6 +13,10 @@ class CaptureCiFailureTests(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result[0]["failed_steps"][0]["name"], "validate")
 
+    def test_running_job_without_failure_is_not_misreported(self):
+        self.assertEqual(summarize([{"name": "review", "conclusion": None,
+                                     "steps": [{"name": "staging", "conclusion": None}]}]), [])
+
     def test_ignores_successful_jobs(self):
         self.assertEqual(summarize([{"name": "passed", "conclusion": "success",
                                      "steps": [{"name": "ok", "conclusion": "success"}]}]), [])
