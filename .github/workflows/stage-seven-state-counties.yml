@@ -31,6 +31,7 @@ on:
       - 'tests/test_stage_michigan_counties.py'
       - 'scripts/reconcile_remaining_ten_counties.py'
       - 'scripts/stage_public_county_tables_ten_states.py'
+      - 'tests/test_stage_public_county_tables_ten_states.py'
       - 'scripts/stage_michigan_ohio_verified_counties.py'
       - 'scripts/stage_five_more_counties.py'
       - 'scripts/stage_maine_municipal_counties.py'
@@ -165,6 +166,8 @@ jobs:
           assert d["OH"]["total"]==d["OH"]["returned_total"]+d["OH"]["in_person_total"]
           print("Michigan and Ohio: 171 unique county FIPS and reconciled subtotals")
           PY
+      - name: Test county source retrieval timestamp evidence
+        run: python -m unittest discover -s tests -p 'test_stage_public_county_tables_ten_states.py' -v
       - name: Retrieve real county tables for ten states concurrently
         run: python scripts/stage_public_county_tables_ten_states.py --output ten-state-provider-county-tables.json
       - name: Stage Arizona Kansas Mississippi Nebraska Nevada county candidates
