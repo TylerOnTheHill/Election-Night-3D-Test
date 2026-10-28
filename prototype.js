@@ -257,7 +257,14 @@ const placeVector=new THREE.Vector3();let placeLabels=[],placeNodes=[];
 const statePlaceCache=new Map();let placeLoadToken=0;
 async function readPlaceFile(path){const r=await fetch(path);if(!r.ok)throw Error('Place data '+r.status);const d=await r.json();if(d.schema!=='electionhq-place-points-v1'||!Array.isArray(d.places))throw Error('Unexpected place dataset');return d.places.filter(p=>p.length===5&&typeof p[0]==='string'&&typeof p[1]==='string'&&p.slice(2).every(Number.isFinite)&&Math.abs(p[3])<=90&&Math.abs(p[4])<=180)}
 let nationalPlacePromise=readPlaceFile('./data/geography/us-cities-top-1000.json').catch(e=>{console.warn('City labels unavailable:',e.message);return []});
-function installPlaceLabels(rows){placeLayer.replaceChildren();placeLabels=rows.sort((a,b)=>b[2]-a[2]);placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;el.hidden=true;placeLayer.append(el);return el});lastPlaceCamera='';}
+// Reuse a bounded DOM pool instead of creating thousands of nodes per state.
+const MAX_PLACE_NODES=120;
+function installPlaceLabels(rows){
+ placeLabels=rows.sort((a,b)=>b[2]-a[2]);
+ if(!placeNodes.length){const fragment=document.createDocumentFragment();for(let i=0;i<MAX_PLACE_NODES;i++){const el=document.createElement('span');el.className='ehq-place-label';el.hidden=true;fragment.append(el);placeNodes.push(el)}placeLayer.append(fragment)}
+ for(const el of placeNodes)el.hidden=true;
+ lastPlaceCamera='';lastPlaceUpdate=0;
+}
 async function loadPlacesForCurrentView(){
  const token=++placeLoadToken,base=await nationalPlacePromise;if(token!==placeLoadToken)return;
  if(view!=='state'||!activeState){installPlaceLabels(base);return}
@@ -281,20 +288,23 @@ function updatePlaceLabels(zoomPct){
  // Density adjusts with zoom, and a screen-space grid reserves room for labels.
  const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0; // Unknown-population communities are eligible only at close zoom.
  const cellSize=100,grid=new Set();let shown=0;
- for(let i=0;i<placeLabels.length;i++){
-  const [name,state,pop,lat,lon]=placeLabels[i],el=placeNodes[i];
-  if(state!==activeState||pop<minimumPopulation){el.hidden=true;continue}
+ const cap=Math.min(MAX_PLACE_NODES,Math.max(8,Math.floor(width*height/6000)));
+ // High-population places first; unknown-population communities only appear at close zoom.
+ for(const [name,state,pop,lat,lon] of placeLabels){
+  if(shown>=cap)break;
+  if(state!==activeState||pop<minimumPopulation)continue;
   placeVector.set((lon-projection.lon)*projection.sx,(lat-projection.lat)*projection.sy,.35).project(camera);
-  if(placeVector.z< -1||placeVector.z>1){el.hidden=true;continue}
+  if(placeVector.z< -1||placeVector.z>1)continue;
   const x=(placeVector.x+1)*width/2,y=(1-placeVector.y)*height/2;
   const w=Math.max(40,name.length*7+12),h=19;
-  if(x<w/2+8||x>width-w/2-8||y<h||y>height-h){el.hidden=true;continue}
+  if(x<w/2+8||x>width-w/2-8||y<h||y>height-h)continue;
   const minX=Math.floor((x-w/2-7)/cellSize),maxX=Math.floor((x+w/2+7)/cellSize),minY=Math.floor((y-h/2-5)/cellSize),maxY=Math.floor((y+h/2+5)/cellSize);
   let blocked=false;for(let gx=minX;gx<=maxX&&!blocked;gx++)for(let gy=minY;gy<=maxY;gy++)if(grid.has(gx+':'+gy)){blocked=true;break}
-  if(blocked||shown>=Math.min(100,Math.max(8,Math.floor(width*height/6000)))){el.hidden=true;continue}
+  if(blocked)continue;
   for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++)grid.add(gx+':'+gy);
-  shown++;el.hidden=false;el.style.left=x+'px';el.style.top=y+'px';
+  const el=placeNodes[shown++];el.textContent=name;el.hidden=false;el.style.left=x+'px';el.style.top=y+'px';
  }
+ for(let i=shown;i<placeNodes.length;i++)placeNodes[i].hidden=true;
 }
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(stage);resize();function tick(){requestAnimationFrame(tick);if(focusTween){controls.enabled=false;const t=Math.min(1,(performance.now()-focusTween.start)/focusTween.duration);const k=t*t*(3-2*t);camera.position.lerpVectors(focusTween.fromCamera,focusTween.toCamera,k);controls.target.lerpVectors(focusTween.fromTarget,focusTween.toTarget,k);if(t===1){focusTween=null;controls.enabled=true;}}for(const mesh of meshes){const t=mesh.userData.target;mesh.userData.level+=(t-mesh.userData.level)*ease();mesh.position.z=mesh.userData.level;if(!mesh.userData.selected&&mesh.userData.level<.012)mesh.userData.cavity.visible=false;}controls.update();const d=camera.position.distanceTo(controls.target);const z=Math.round(THREE.MathUtils.clamp((zoomFar-d)/(zoomFar-zoomNear)*100,0,100));syncZoom(z);updatePlaceLabels(z);zoomLabel.textContent='%';for(const mesh of meshes){if(mesh.userData.sheen)mesh.userData.sheen.material.uniforms.uTime.value=performance.now()/1000;}renderer.render(scene,camera);if(meshes.length && !window.__mapWebGLReady){window.__mapWebGLReady=true;document.getElementById('fallback-map')?.classList.add('webgl-ready');}}tick();
 $('zoom-number').addEventListener('change',e=>{const n=Number(e.target.value);if(Number.isFinite(n))setZoom(Math.max(0,Math.min(100,Math.round(n))))});
