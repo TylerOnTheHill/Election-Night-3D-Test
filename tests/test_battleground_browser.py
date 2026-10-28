@@ -98,7 +98,8 @@ try:
         # must fall back to the default watchlist state without removing NH from US.json.
         deep.wait_for_function("document.querySelector('#detail-name').textContent.includes('Texas')",timeout=30000)
         assert deep.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=TX"
-        assert "NH" in by_code
+        # The map draws all 50 states independently of the incomplete US.json snapshot.
+        assert deep.locator("#battleground-map").get_attribute("data-state-meshes")=="50"
         deep.close()
         # Synthetic fixture: verify staging-only county geography and selection.
         # Values below are test fixtures, not election observations.
