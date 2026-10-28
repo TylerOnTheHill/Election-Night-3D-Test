@@ -113,10 +113,13 @@ def stage(code,payload,census):
     total=sum(r["total"] for r in counties)
     count=len(counties)
     reconciled=statewide is not None and total==statewide
+    observed_cutoffs={r.get("file_as_of") for r in counties}
+    county_cutoff=next(iter(observed_cutoffs)) if len(observed_cutoffs)==1 and None not in observed_cutoffs else None
     return {"status":"candidate_pending_publication_approval",
         "provider":"Call the Map","credit":payload["credit"],
         "provider_checked_at":payload.get("checked_at"),
-        "statewide_cutoff":summary.get("file_as_of"),
+        "statewide_cutoff":county_cutoff,
+        "provider_summary_cutoff":summary.get("file_as_of"),
         "census_geography_source":"Census-derived GEOIDs (historical mirror; 2020 vintage not independently verified)",
         "census_geography_url":GEOJSON_MIRROR,
         "county_count":count,"geographic_count":expected,
