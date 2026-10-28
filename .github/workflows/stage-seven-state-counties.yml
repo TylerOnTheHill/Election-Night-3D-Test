@@ -8,6 +8,8 @@ on:
     paths:
       - 'scripts/combine_county_candidates.py'
       - 'scripts/stage_georgia_counties.py'
+      - 'scripts/stage_watchlist_counties.py'
+      - 'tests/test_stage_watchlist_counties.py'
       - 'battleground-county-preview.js'
       - 'scripts/import_florida_tsv.py'
       - 'tests/test_florida_blank_compile_date.py'
