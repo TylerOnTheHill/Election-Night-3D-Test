@@ -65,7 +65,7 @@ try:
             page.locator("#search").fill("New Hampshire")
             assert page.locator("#rows tr[data-code=NH]").count()==0
             assert "No matching states" in page.locator("#rows").inner_text()
-            # NH remains in the national snapshot, but not the battleground watchlist.
+            # NH is not a battleground selection; the national map retains its geography.
             page.locator("#search").fill("Texas")
             assert page.locator("#rows tr").count()==1
             page.locator("#rows tr").click()
@@ -95,7 +95,7 @@ try:
         deep=browser.new_page()
         deep.goto("http://127.0.0.1:8766/battleground.html?state=NH",wait_until="domcontentloaded")
         # NH is intentionally outside the battleground explorer; an NH deep link
-        # must fall back to the default watchlist state without removing NH from US.json.
+        # must fall back to the default watchlist state.
         deep.wait_for_function("document.querySelector('#detail-name').textContent.includes('Texas')",timeout=30000)
         assert deep.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=TX"
         # The map draws all 50 states independently of the incomplete US.json snapshot.
@@ -218,7 +218,7 @@ try:
             lambda route:route.fulfill(status=200,content_type="application/json",body=json.dumps(unknown_cutoff)))
         no_cutoff.goto("http://127.0.0.1:8766/battleground.html?state=TX",wait_until="domcontentloaded")
         no_cutoff.wait_for_function("document.querySelectorAll('#county-preview-map path').length===254",timeout=30000)
-        assert "Reporting cutoff unavailable" in no_cutoff.locator("#county-preview-status").inner_text()
+        assert "Update time unavailable" in no_cutoff.locator("#county-preview-status").inner_text()
         assert "County ballots reported:" in no_cutoff.locator("#county-preview-total").inner_text()
         no_cutoff.close()
         # Roadmap expansion: Florida renders real geography without invented ballots.
