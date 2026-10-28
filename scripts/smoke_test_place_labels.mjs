@@ -53,7 +53,16 @@ try{
  const nationalLabels=await page.locator('.ehq-place-label:visible').count();
  result.checks.push({name:'national metro labels visible',ok:nationalLabels>0,visibleLabels:nationalLabels});
  result.checks.push({name:'visible labels clear of zoom controls',ok:await page.evaluate(()=>{const controls=document.querySelector('#stage .zoom-controls')||document.querySelector('.zoom-controls');if(!controls)return true;const r=controls.getBoundingClientRect();return [...document.querySelectorAll('.ehq-place-label')].filter(e=>!e.hidden).every(e=>{const b=e.getBoundingClientRect();return b.right<r.left||b.left>r.right||b.bottom<r.top||b.top>r.bottom})})});
- result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
+ // Exercise the Early Vote view independently; never infer its health from Election Night.
+ await page.locator('#tab-early').click();
+ await page.waitForTimeout(2500);
+ const early=await page.evaluate(()=>({mode:document.body.classList.contains('early'),heading:document.querySelector('.early-heading')?.getBoundingClientRect().height||0,stats:[...document.querySelectorAll('.early-stat')].filter(el=>getComputedStyle(el).display!=='none').length,green:!!document.querySelector('#ev-total'),canvas:!!document.querySelector('#stage canvas')}));
+ result.diagnostics.earlyVote=early;
+ result.checks.push({name:'Early Vote mode activates',ok:early.mode});
+ result.checks.push({name:'Early Vote reporting statistics render',ok:early.heading>0&&early.stats>=2&&early.green});
+ result.checks.push({name:'Early Vote map canvas remains available',ok:early.canvas});
+ await page.screenshot({path:out+'/early-vote-national.png',fullPage:true});
+  result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
  await fs.writeFile(out+'/results.json',JSON.stringify(result,null,2));
  if(result.checks.some(x=>!x.ok)){console.error(JSON.stringify(result,null,2));process.exitCode=1}else console.log(JSON.stringify(result,null,2));
 }catch(e){errors.push(String(e));await fs.writeFile(out+'/results.json',JSON.stringify(result,null,2));throw e}
