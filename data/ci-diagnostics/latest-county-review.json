@@ -1,17 +1,17 @@
 {
   "schema": "electionhq-ci-failure-summary-v1",
-  "run_id": 40619367569,
-  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40619367569",
-  "head_sha": "bb586bcbff8e438270d5b6c317ec3d099795a1e5",
+  "run_id": 40622616854,
+  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40622616854",
+  "head_sha": "17becff103f98e39f558880d94fbd14c7b68f80c",
   "jobs": [
     {
       "job": "nineteen-state-review",
       "conclusion": null,
       "failed_steps": [
         {
-          "name": "Combine all nine official and standard county candidates without additive double counting",
+          "name": "Validate consolidated 19-state readiness semantics",
           "conclusion": "failure",
-          "number": 38
+          "number": 5
         }
       ]
     }
