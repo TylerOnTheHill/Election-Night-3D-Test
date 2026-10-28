@@ -64,7 +64,9 @@ try{
  const earlyLayout=await page.evaluate(()=>{const stage=document.querySelector('.stage').getBoundingClientRect(),stats=document.querySelector('.early-stats').getBoundingClientRect(),filters=document.querySelector('.ev-controls').getBoundingClientRect(),card=document.querySelector('.early-stat');return {mapBeforeStats:stage.top<stats.top,filtersBeforeMap:filters.top<stage.top,cardBackground:getComputedStyle(card).backgroundColor}});
  result.diagnostics.earlyLayout=earlyLayout;
  result.checks.push({name:'Early Vote map above reporting metrics',ok:earlyLayout.mapBeforeStats});
- result.checks.push({name:'Early Vote filters above map',ok:earlyLayout.filtersBeforeMap});
+ // National view intentionally hides Texas-only participation filters; assert order only when filters are shown.
+ const filtersVisible=await page.locator('.ev-controls').isVisible();
+ result.checks.push({name:'Early Vote filters do not obstruct national map',ok:!filtersVisible||earlyLayout.filtersBeforeMap,filtersVisible});
  result.checks.push({name:'Early Vote metric cards use black surface',ok:earlyLayout.cardBackground==='rgb(9, 9, 9)',actual:earlyLayout.cardBackground});
  await page.screenshot({path:out+'/early-vote-national.png',fullPage:true});
   result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
