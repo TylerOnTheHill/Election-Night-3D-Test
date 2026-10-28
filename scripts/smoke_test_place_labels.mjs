@@ -81,7 +81,18 @@ try{
  result.diagnostics.earlyNarrow=narrow;
  result.checks.push({name:'Early Vote map stays usable at 1024px',ok:narrow.mapWidth>=500&&narrow.mapHeight>=300&&narrow.mapAboveStats,actual:narrow});
  await page.screenshot({path:out+'/early-vote-1024px.png',fullPage:true});
- await page.setViewportSize({width:1440,height:900});
+ await page.setViewportSize({width:390,height:844});
+ await page.waitForTimeout(950);
+ const mobile=await page.evaluate(()=>{
+  const map=document.querySelector('#stage').getBoundingClientRect();
+  const stats=document.querySelector('.early-stats').getBoundingClientRect();
+  const doc=document.documentElement;
+  return {viewport:innerWidth,scrollWidth:doc.scrollWidth,mapWidth:map.width,mapHeight:map.height,mapAboveStats:map.top<stats.top};
+ });
+ result.diagnostics.earlyMobile=mobile;
+ result.checks.push({name:'Early Vote mobile map remains accessible',ok:mobile.mapWidth>=300&&mobile.mapHeight>=300&&mobile.mapAboveStats,actual:mobile});
+ await page.screenshot({path:out+'/early-vote-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:900});
   result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
  await fs.writeFile(out+'/results.json',JSON.stringify(result,null,2));
  if(result.checks.some(x=>!x.ok)){console.error(JSON.stringify(result,null,2));process.exitCode=1}else console.log(JSON.stringify(result,null,2));
