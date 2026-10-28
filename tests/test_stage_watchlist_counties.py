@@ -57,7 +57,10 @@ class WatchlistStagingTests(unittest.TestCase):
         self.assertEqual(result["county_count"],46)
         self.assertTrue(result["coverage_complete"])
         self.assertFalse(result["statewide_reconciled"])
-        self.assertEqual(result["reporting_label"],"Partially reported")
+        self.assertEqual(result["reporting_label"],"Fully reported")
+        self.assertEqual(result["total"],46)
+        self.assertEqual(result["provider_statewide_total"],100)
+        self.assertEqual(result["county_vs_provider_statewide_difference"],-54)
 
     def test_no_observations_does_not_fabricate_state(self):
         p,c=fixture("IA")
