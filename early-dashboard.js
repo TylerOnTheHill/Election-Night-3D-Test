@@ -85,7 +85,10 @@ function render(){
  }
  const national=feed?.national;
  set(0,'Nationwide early ballots',fmt(national?.total),'Sum of reporting states · dates vary');
- const allJurisdictions='AL AK AZ AR CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY'.split(' ');\n const reported=new Set((feed?.states||[]).map(s=>s.state));\n const missing=allJurisdictions.filter(code=>!reported.has(code));\n set(1,'Jurisdictions reporting',reported.size+' / 51',missing.length?'Not reported: '+missing.join(', ')+' · not zero':'All jurisdictions represented');
+ const allJurisdictions='AL AK AZ AR CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY'.split(' ');
+ const reported=new Set((feed?.states||[]).map(s=>s.state));
+ const missing=allJurisdictions.filter(code=>!reported.has(code));
+ set(1,'Jurisdictions reporting',reported.size+' / 51',missing.length?'Not reported: '+missing.join(', ')+' · not zero':'All jurisdictions represented');
  set(2,'Reporting date range',national?.counts_through?.first&&national?.counts_through?.last?national.counts_through.first+' – '+national.counts_through.last:'Unavailable','State reporting dates vary');
  set(3,'Vs 2022 · matched states',national?.compared_with_2022?.change||'Unavailable','Only '+(national?.compared_with_2022?.states?.length||0)+' comparable states; not nationwide');
 }
