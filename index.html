@@ -141,6 +141,28 @@ body.early .early-stat,body.early .right-card{background:var(--ehq-card)!importa
 .ehq-place-label{background:#11171be6;border-color:#68737b99}
 @media(max-width:1000px){.dashboard{grid-template-columns:minmax(0,1fr) 225px!important}}
 @media(max-width:760px){.dashboard{grid-template-columns:minmax(0,1fr)!important}.right-side{display:grid;grid-template-columns:1fr!important}}
+</style><style id="ehq-black-first-palette">
+/* ElectionHQ palette contract: BLACK is the dominant surface; charcoal is an accent. */
+:root{--ehq-shell:#000000;--ehq-card:#090909;--ehq-card-alt:#151515;--ehq-rule:#303030;--ehq-copy:#f0f0f0;--ehq-secondary:#a9a9a9;--ehq-bg:#000;--ehq-surface:#090909;--ehq-raised:#181818;--ehq-line:#303030}
+html,body,body.early,.workspace,.content{background:#000!important;color:#f0f0f0!important}
+header{background:#050505!important;border-bottom-color:#303030!important}
+.rail{background:#080808!important;border-right-color:#303030!important}
+.rail button{color:#bcbcbc!important}
+.rail button.active{background:#292929!important;color:#fff!important}
+.mode-switch{background:#151515!important;border-color:#353535!important}
+.mode-switch button.active{background:#303030!important}
+.toolbar button,.toolbar select,.toolbar input{background:#171717!important;border-color:#3a3a3a!important;color:#f1f1f1!important}
+.summary-card,.right-card,.bottom-races,.mini-race,.panel,.early-stat,.ev-controls,.ev-legend,.ev-counties{background:#090909!important;border-color:#303030!important}
+.stage,body.early .stage{background:#000!important;border-color:#333!important}
+.zoom-panel{background:#171717ed!important;border-color:#454545!important}
+.detail-drawer>summary{background:#151515!important;border-color:#333!important}
+.map-results-panel{background:#111111f5!important;border-color:#444!important}
+.view-options button,.tab-buttons button{background:#1b1b1b!important;border-color:#3d3d3d!important}
+.view-options button.active,.tab-buttons button.active{background:#343434!important}
+body.early .ev-mode{background:#151515!important;border-color:#3d3d3d!important}
+body.early .ev-mode.selected{background:#133123!important;border-color:#27bd75!important}
+body.early .early-stat,body.early .right-card{background:#090909!important}
+.ehq-place-label{background:#090909e8;border-color:#5559}
 </style></head><body>
 <header><h1>✧ ELECTION<span>HQ</span></h1><div class="mode-switch" role="tablist" aria-label="Tracker view"><button id="tab-night" class="active" role="tab" aria-selected="true">Election Night</button><button id="tab-early" role="tab" aria-selected="false">Early Vote</button></div><a href="./battleground.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #668ab4;border-radius:9px;color:#d9ebff;background:#24344a;text-decoration:none;font-size:13px;font-weight:700">Battlegrounds · 19 states</a><div class="header-search">Find a state, county, or race · <strong id="mode-indicator">SYNTHETIC DEMO</strong></div></header>
 <div class="demo-banner" id="demo-banner">ELECTION NIGHT DEMO — Candidate votes, calls and race colors are FICTIONAL. No live election results connected.</div>
