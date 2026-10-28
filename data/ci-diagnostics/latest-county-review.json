@@ -1,17 +1,17 @@
 {
   "schema": "electionhq-ci-failure-summary-v1",
-  "run_id": 40618747216,
-  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40618747216",
-  "head_sha": "3e06fe1da1a0ad12ca1164c879da7fd696ab83f5",
+  "run_id": 40619367569,
+  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40619367569",
+  "head_sha": "bb586bcbff8e438270d5b6c317ec3d099795a1e5",
   "jobs": [
     {
       "job": "nineteen-state-review",
       "conclusion": null,
       "failed_steps": [
         {
-          "name": "Stage current Virginia Iowa Wisconsin South Carolina observations",
+          "name": "Combine all nine official and standard county candidates without additive double counting",
           "conclusion": "failure",
-          "number": 34
+          "number": 38
         }
       ]
     }
