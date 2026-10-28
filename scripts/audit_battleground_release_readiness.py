@@ -37,6 +37,10 @@ def audit(readiness):
                 blockers.append("invalid_county_total")
             if not row.get("county_cutoff"):
                 blockers.append("unverified_reporting_cutoff")
+        # A staged statewide cutoff alone does not establish county-source freshness.
+        # Flag differing or unknown county dates for human review.
+        if row.get("county_staged") and row.get("county_vs_statewide_cutoff") != "matching":
+            blockers.append("county_source_freshness_not_verified")
         if row.get("county_publication_approved") is not True:
             blockers.append("publication_not_approved")
         assessed.append({"state": code, "ready": not blockers, "blockers": blockers,
