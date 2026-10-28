@@ -1,0 +1,300 @@
+{
+  "schema": "electionhq-alaska-house-district-review-v1",
+  "publication_approved": false,
+  "source": "Alaska Division of Elections Combined Ballot Count Report",
+  "as_of": "2026-10-26T10:31:33-08:00",
+  "geographic_count": 40,
+  "nongeographic_district": 99,
+  "geographic_total": 46287,
+  "nongeographic_total": 116,
+  "statewide_total": 46403,
+  "districts": [
+    {
+      "district": 1,
+      "received": 532,
+      "absentee_received": 525,
+      "early_vote_received": 7,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 2,
+      "received": 945,
+      "absentee_received": 919,
+      "early_vote_received": 26,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 3,
+      "received": 1911,
+      "absentee_received": 653,
+      "early_vote_received": 1258,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 4,
+      "received": 1964,
+      "absentee_received": 394,
+      "early_vote_received": 1570,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 5,
+      "received": 429,
+      "absentee_received": 408,
+      "early_vote_received": 21,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 6,
+      "received": 1939,
+      "absentee_received": 418,
+      "early_vote_received": 1521,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 7,
+      "received": 1434,
+      "absentee_received": 357,
+      "early_vote_received": 1077,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 8,
+      "received": 1396,
+      "absentee_received": 473,
+      "early_vote_received": 923,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 9,
+      "received": 1820,
+      "absentee_received": 686,
+      "early_vote_received": 1134,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 10,
+      "received": 1288,
+      "absentee_received": 501,
+      "early_vote_received": 787,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 11,
+      "received": 1489,
+      "absentee_received": 577,
+      "early_vote_received": 912,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 12,
+      "received": 1194,
+      "absentee_received": 466,
+      "early_vote_received": 728,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 13,
+      "received": 1072,
+      "absentee_received": 371,
+      "early_vote_received": 701,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 14,
+      "received": 1354,
+      "absentee_received": 422,
+      "early_vote_received": 932,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 15,
+      "received": 1298,
+      "absentee_received": 474,
+      "early_vote_received": 824,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 16,
+      "received": 1528,
+      "absentee_received": 522,
+      "early_vote_received": 1006,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 17,
+      "received": 1697,
+      "absentee_received": 541,
+      "early_vote_received": 1156,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 18,
+      "received": 402,
+      "absentee_received": 194,
+      "early_vote_received": 208,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 19,
+      "received": 667,
+      "absentee_received": 247,
+      "early_vote_received": 420,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 20,
+      "received": 1002,
+      "absentee_received": 330,
+      "early_vote_received": 672,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 21,
+      "received": 1360,
+      "absentee_received": 599,
+      "early_vote_received": 761,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 22,
+      "received": 601,
+      "absentee_received": 193,
+      "early_vote_received": 408,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 23,
+      "received": 1971,
+      "absentee_received": 559,
+      "early_vote_received": 1412,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 24,
+      "received": 1597,
+      "absentee_received": 479,
+      "early_vote_received": 1118,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 25,
+      "received": 1842,
+      "absentee_received": 398,
+      "early_vote_received": 1444,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 26,
+      "received": 1496,
+      "absentee_received": 302,
+      "early_vote_received": 1194,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 27,
+      "received": 1549,
+      "absentee_received": 309,
+      "early_vote_received": 1240,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 28,
+      "received": 1451,
+      "absentee_received": 310,
+      "early_vote_received": 1141,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 29,
+      "received": 1431,
+      "absentee_received": 391,
+      "early_vote_received": 1040,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 30,
+      "received": 1293,
+      "absentee_received": 762,
+      "early_vote_received": 531,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 31,
+      "received": 1020,
+      "absentee_received": 277,
+      "early_vote_received": 743,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 32,
+      "received": 507,
+      "absentee_received": 153,
+      "early_vote_received": 354,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 33,
+      "received": 815,
+      "absentee_received": 286,
+      "early_vote_received": 529,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 34,
+      "received": 1359,
+      "absentee_received": 359,
+      "early_vote_received": 1000,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 35,
+      "received": 1448,
+      "absentee_received": 308,
+      "early_vote_received": 1140,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 36,
+      "received": 710,
+      "absentee_received": 385,
+      "early_vote_received": 325,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 37,
+      "received": 169,
+      "absentee_received": 118,
+      "early_vote_received": 51,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 38,
+      "received": 62,
+      "absentee_received": 35,
+      "early_vote_received": 27,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 39,
+      "received": 215,
+      "absentee_received": 32,
+      "early_vote_received": 183,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 40,
+      "received": 30,
+      "absentee_received": 18,
+      "early_vote_received": 12,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    },
+    {
+      "district": 99,
+      "received": 116,
+      "absentee_received": 116,
+      "early_vote_received": 0,
+      "as_of": "2026-10-26T10:31:33-08:00"
+    }
+  ]
+}
