@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {createElectionHQControls} from './electionhq-map-controls.js';
 const host=document.getElementById('battleground-map');
-const watch=new Set('AK AZ FL GA IA KS ME MI MN MS NE NV NH NC OH SC TX VA WI'.split(' '));
+const watch=new Set('AK AZ FL GA IA KS ME MI MN MS NE NV NC OH SC TX VA WI'.split(' '));
 const names={Alaska:'AK',Arizona:'AZ',Florida:'FL',Georgia:'GA',Iowa:'IA',Kansas:'KS',Maine:'ME',Michigan:'MI',Minnesota:'MN',Mississippi:'MS',Nebraska:'NE',Nevada:'NV','New Hampshire':'NH','North Carolina':'NC',Ohio:'OH','South Carolina':'SC',Texas:'TX',Virginia:'VA',Wisconsin:'WI'};
 let selected='TX',meshes=[],focusTween=null,far=60,near=5;
 let renderer;
