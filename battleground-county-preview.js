@@ -83,29 +83,59 @@ async function renderAlaskaDistricts(){
  const version=++renderVersion,host=$('battleground-county-preview'),map=$('county-preview-map');
  window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
  host.hidden=false;
- $('county-preview-title').textContent='Alaska House districts';
- $('county-preview-total').textContent='District ballot totals awaiting publication';
+ $('county-preview-title').textContent='Alaska House districts · staging review';
+ $('county-preview-total').textContent='District observations awaiting verification';
  $('county-preview-complete-note').hidden=true;
  $('county-preview-rows').replaceChildren();
- $('county-selected-detail').textContent='District boundaries only. District 99 is a nongeographic ballot bucket and is not mapped.';
- $('county-preview-legend').textContent='40 geographic House districts · District 99 is not a geographic district · No district ballot totals published';
- $('county-preview-status').textContent='House district geography · District ballot totals awaiting publication';
- map.textContent='Loading official Alaska House district boundaries…';
+ $('county-selected-detail').textContent='District 99 is a nongeographic ballot bucket and is not mapped.';
+ $('county-preview-legend').textContent='40 geographic House districts · District 99 is not geographic · Review data, not published live totals';
+ $('county-preview-status').textContent='Official Alaska district geography · Unpublished review';
+ map.textContent='Loading Alaska district review…';
  try{
-  const response=await fetch('./data/staging/alaska-house-districts.geojson',{cache:'no-store'});
-  if(!response.ok)throw Error('Official Alaska district boundaries unavailable');
-  const geo=await response.json();if(version!==renderVersion)return;
+  const [boundaryResponse,dataResponse]=await Promise.all([
+   fetch('./data/staging/alaska-house-districts.geojson',{cache:'no-store'}),
+   fetch('./data/staging/alaska-house-district-review.json',{cache:'no-store'})]);
+  if(!boundaryResponse.ok||!dataResponse.ok)throw Error('Alaska district review data unavailable');
+  const [geo,review]=await Promise.all([boundaryResponse.json(),dataResponse.json()]);
+  if(version!==renderVersion)return;
   if(geo.type!=='FeatureCollection'||!Array.isArray(geo.features)||geo.features.length!==40||!window.d3)throw Error('Invalid Alaska district geography');
   const ids=geo.features.map(f=>f.properties?.HouseDistrict);
   if(new Set(ids).size!==40||ids.some(n=>!Number.isInteger(n)||n<1||n>40))throw Error('Incomplete Alaska House district coverage');
+  if(review.schema!=='electionhq-alaska-house-district-review-v1'||review.publication_approved!==false||review.geographic_count!==40||review.nongeographic_district!==99||!Array.isArray(review.districts)||review.districts.length!==41)throw Error('Invalid Alaska district review');
+  const observations=new Map();
+  let geographicTotal=0,nongeographicTotal=0,absenteeTotal=0,earlyTotal=0;
+  for(const r of review.districts){
+   if(!Number.isInteger(r.district)||!(r.district>=1&&r.district<=40||r.district===99)||observations.has(r.district)||!Number.isSafeInteger(r.received)||r.received<0||!Number.isSafeInteger(r.absentee_received)||!Number.isSafeInteger(r.early_vote_received)||r.absentee_received+r.early_vote_received!==r.received||r.as_of!==review.as_of)throw Error('Invalid Alaska district ballot observation');
+   observations.set(r.district,r);absenteeTotal+=r.absentee_received;earlyTotal+=r.early_vote_received;
+   if(r.district===99)nongeographicTotal+=r.received;else geographicTotal+=r.received;
+  }
+  if(observations.size!==41||ids.some(n=>!observations.has(n))||!observations.has(99)||geographicTotal!==review.geographic_total||nongeographicTotal!==review.nongeographic_total||geographicTotal+nongeographicTotal!==review.statewide_total||absenteeTotal!==15867||earlyTotal!==30536)throw Error('Alaska district/statewide reconciliation failed');
+  const fmtDate=new Date(review.as_of).toLocaleString('en-US',{timeZone:'America/Anchorage',dateStyle:'medium',timeStyle:'short'});
+  $('county-preview-total').textContent='Geographic districts: '+fmt(geographicTotal)+' · District 99: '+fmt(nongeographicTotal)+' · Statewide: '+fmt(review.statewide_total);
+  $('county-preview-status').textContent='Staging review only · 40 of 40 districts · Updated '+fmtDate+' AKDT';
+  $('county-preview-legend').textContent='Unpublished official snapshot · Darker blue means more received ballots, not partisan preference · District 99 is not mapped';
+  const body=$('county-preview-rows'),max=Math.max(...review.districts.map(r=>r.received));
+  for(const r of review.districts.filter(r=>r.district!==99).sort((a,b)=>a.district-b.district)){
+   const tr=document.createElement('tr');tr.dataset.district=String(r.district);tr.tabIndex=0;
+   const name=document.createElement('td');name.textContent='House District '+r.district;
+   const value=document.createElement('td');value.className='num';value.textContent=fmt(r.received);
+   tr.append(name,value);body.append(tr);
+   const choose=()=>{const detail='House District '+r.district+' · '+fmt(r.received)+' received · '+fmt(r.absentee_received)+' absentee · '+fmt(r.early_vote_received)+' early in person · Staging review';
+    $('county-selected-detail').textContent=detail;
+    document.querySelectorAll('#county-preview-map path').forEach(p=>{p.setAttribute('stroke',p.dataset.district===String(r.district)?'#fff':'#273443');p.setAttribute('stroke-width',p.dataset.district===String(r.district)?'2':'.4')});
+    document.querySelectorAll('#county-preview-rows tr').forEach(t=>t.classList.toggle('selected-row',t===tr));};
+   tr.addEventListener('click',choose);tr.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();choose()}});
+  }
   const w=850,h=510,projection=d3.geoMercator().fitExtent([[20,20],[w-20,h-20]],geo),path=d3.geoPath(projection);
   map.replaceChildren();
-  d3.select(map).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('role','img').attr('aria-label','Alaska 40 House district boundaries; no published district totals')
+  d3.select(map).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('role','img').attr('aria-label','Alaska House districts with unpublished reviewed ballot totals')
    .selectAll('path').data(geo.features).join('path').attr('d',path).attr('data-district',f=>f.properties.HouseDistrict)
-   .attr('fill','#414246').attr('stroke','#787a80').attr('stroke-width',.65)
-   .append('title').text(f=>'House District '+f.properties.HouseDistrict+' · Ballot totals awaiting publication');
+   .attr('fill',f=>d3.interpolateRgb('#15345d','#268cff')(0.15+0.85*Math.sqrt(observations.get(f.properties.HouseDistrict).received/max)))
+   .attr('stroke','#273443').attr('stroke-width',.4)
+   .on('click',(e,f)=>body.querySelector('[data-district="'+f.properties.HouseDistrict+'"]')?.click())
+   .append('title').text(f=>'House District '+f.properties.HouseDistrict+': '+fmt(observations.get(f.properties.HouseDistrict).received)+' received · Staging review');
   map.dataset.houseDistrictMeshes='40';
- }catch(e){if(version!==renderVersion)return;map.textContent='Official Alaska House district boundaries unavailable';console.warn('Alaska geography:',e.message);}
+ }catch(e){if(version!==renderVersion)return;map.textContent='Alaska district review unavailable: '+e.message;console.warn('Alaska geography:',e.message);}
 }
 // Geometry-only fallback: display authentic county boundaries when publication is pending.
 async function renderBoundariesOnly(){
