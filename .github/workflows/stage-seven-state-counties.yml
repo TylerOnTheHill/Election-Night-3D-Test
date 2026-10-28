@@ -1,5 +1,6 @@
 name: Validate all 19 battleground states (v7.2)
 on:
+  workflow_call:
   workflow_dispatch:
   schedule:
     - cron: '23 */3 * * *'
