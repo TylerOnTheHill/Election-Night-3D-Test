@@ -94,9 +94,11 @@ try:
             page.close()
         deep=browser.new_page()
         deep.goto("http://127.0.0.1:8766/battleground.html?state=NH",wait_until="domcontentloaded")
-        deep.wait_for_function("document.querySelector('#detail-name').textContent.includes('New Hampshire')",timeout=30000)
-        assert "Not offered" in deep.locator("#detail-inperson").inner_text()
-        assert deep.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=NH"
+        # NH is intentionally outside the battleground explorer; an NH deep link
+        # must fall back to the default watchlist state without removing NH from US.json.
+        deep.wait_for_function("document.querySelector('#detail-name').textContent.includes('Texas')",timeout=30000)
+        assert deep.locator("#detail-share-link").get_attribute("href")=="./battleground.html?state=TX"
+        assert "NH" in by_code
         deep.close()
         # Synthetic fixture: verify staging-only county geography and selection.
         # Values below are test fixtures, not election observations.
