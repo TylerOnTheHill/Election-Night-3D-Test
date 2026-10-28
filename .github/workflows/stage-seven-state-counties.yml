@@ -13,6 +13,8 @@ on:
       - 'scripts/stage_remaining_eleven_counties.py'
       - 'scripts/stage_uf_county_review.py'
       - 'scripts/stage_alaska_official_statewide.py'
+      - 'scripts/stage_alaska_house_districts.py'
+      - 'data/staging/alaska-house-districts-2026-10-26.csv'
       - 'scripts/stage_maine_aggregated_counties.py'
       - 'scripts/probe_maine_official_absentee.py'
       - 'scripts/probe_votehub_l2_early_vote.py'
@@ -88,6 +90,24 @@ jobs:
         run: |
           python -m unittest discover -s tests -p 'test_stage_alaska_official_statewide.py' -v
           python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
+      - name: Validate manually retrieved Alaska official House-district report
+        run: |
+          python scripts/stage_alaska_house_districts.py \
+            --input-csv data/staging/alaska-house-districts-2026-10-26.csv \
+            --source-url https://elections.alaska.gov/wp-content/uploads/2026/10/Combined-Ballot-Report-10_26_2026-10_31_33-AM.html \
+            --output alaska-house-districts-unapproved.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path("alaska-house-districts-unapproved.json").read_text())
+          assert d["geographic_received_ballots"] == 46287
+          assert d["nongeographic_received_ballots"] == 116
+          assert d["total_received_ballots"] == 46403
+          assert d["absentee_received"] == 15867
+          assert d["early_vote_received"] == 30536
+          assert d["publication_approved"] is False
+          print("Alaska: 40 districts + special District 99, official total reconciled")
+          PY
       - name: Ingest Michigan official-dashboard county CSV
         run: python scripts/stage_michigan_counties.py --output michigan-unapproved.json || echo "Michigan CSV schema requires review; do not publish"
       - name: Ingest verified credited statewide early-vote totals for remaining ten
