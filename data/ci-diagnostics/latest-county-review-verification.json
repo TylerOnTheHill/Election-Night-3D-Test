@@ -1,0 +1,13 @@
+{
+  "schema": "electionhq-county-review-verification-v1",
+  "run_id": 40621781444,
+  "run_attempt": 1,
+  "head_sha": "1ac4e232ca42d988bdd824f68127beabfe4dd7c2",
+  "job_steps_status": "success",
+  "required_artifacts": {
+    "nineteen-state-readiness-unapproved.json": true,
+    "eighteen-state-release-gate-unapproved.json": true,
+    "nineteen-state-coverage-audit.json": true
+  },
+  "publication_approved": false
+}
