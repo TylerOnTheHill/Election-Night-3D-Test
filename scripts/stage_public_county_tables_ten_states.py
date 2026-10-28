@@ -14,12 +14,14 @@ class Text(html.parser.HTMLParser):
 def retrieve(code,method):
     url=f"{BASE}{code}?cat={method}"
     req=urllib.request.Request(url,headers={"User-Agent":"ElectionHQ-2026-aggregate-review/1.0"})
-    with urllib.request.urlopen(req,timeout=35) as r:raw=r.read(900000).decode("utf-8","replace")
+    with urllib.request.urlopen(req,timeout=35) as r:
+        raw=r.read(900000).decode("utf-8","replace")
+        checked_at=dt.datetime.now(dt.timezone.utc).isoformat()
     parser=Text();parser.feed(raw)
     lines=[re.sub(r"\s+"," ",x).strip() for x in parser.parts]
     lines=[x for x in lines if x]
     try:start=lines.index("By county")
-    except ValueError:return {"state":code,"method":method,"url":url,"status":"county_table_absent"}
+    except ValueError:return {"state":code,"method":method,"url":url,"status":"county_table_absent","provider_checked_at":checked_at}
     section=lines[start+1:]
     pairs=[];seen=set()
     for i,v in enumerate(section):
@@ -31,6 +33,7 @@ def retrieve(code,method):
             seen.add(name);pairs.append({"name":name,"total":int(v.replace(",",""))})
     return {"state":code,"method":method,"url":url,
             "status":"county_table_found" if pairs else "county_table_unparsed",
+            "provider_checked_at":checked_at,
             "diagnostic_text_sample":section[:36] if not pairs else None,
             "counties":pairs,"county_rows":len(pairs),
             "attribution":"50501 Vets / civicAPI (reported from election sources)",
