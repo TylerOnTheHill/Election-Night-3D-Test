@@ -21,8 +21,8 @@ class ReadinessTests(unittest.TestCase):
         self.assertTrue(all(s["statewide_ballots"] is None for s in missing))
     def test_alaska_official_districts_are_not_fabricated_counties(self):
         review=json.loads(Path("data/staging/alaska-house-district-review.json").read_text())
-        self.assertEqual(review["state"], "AK")
-        self.assertEqual(review["geography"], "state_house_district")
+        self.assertEqual(review["schema"], "electionhq-alaska-house-district-review-v1")
+        self.assertEqual(review["geographic_count"], 40)
         # The review source can differ from the staging parser output; use the validated
         # district fields required by the readiness contract.
         district={"schema":"electionhq-ak-house-district-review-v1",
