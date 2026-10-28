@@ -41,6 +41,8 @@ on:
       - 'scripts/audit_nineteen_state_pipeline.py'
       - 'tests/test_audit_nineteen_state_pipeline.py'
       - 'scripts/audit_battleground_release_readiness.py'
+      - 'scripts/capture_ci_failure.py'
+      - 'tests/test_capture_ci_failure.py'
       - 'tests/test_audit_battleground_release_readiness.py'
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
@@ -58,7 +60,8 @@ concurrency:
   group: nineteen-state-county-review-${{ github.ref }}
   cancel-in-progress: true
 permissions:
-  contents: read
+  contents: write
+  actions: read
 jobs:
   nineteen-state-review:
     runs-on: ubuntu-latest
@@ -237,6 +240,20 @@ jobs:
           COUNTY_REVIEW_DIR: eight-state-interactive-review
           COUNTY_CANDIDATE: eight-states-unapproved.json
         run: python tests/test_watchlist_interactive_review_browser.py
+      - name: Capture failed steps to a repository-readable diagnostic file
+        if: failure()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python scripts/capture_ci_failure.py --output data/ci-diagnostics/latest-county-review.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ci-diagnostics/latest-county-review.json
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: record latest failed county review steps [skip ci]"
+            git push origin HEAD:feature/v7-2-national-county-data
+          fi
       - name: Upload unapproved eight-state interactive review
         if: always()
         uses: actions/upload-artifact@v4
