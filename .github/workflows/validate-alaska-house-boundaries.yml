@@ -7,6 +7,8 @@ on:
       - scripts/fetch_alaska_house_boundaries.py
       - tests/test_alaska_house_boundaries.py
       - .github/workflows/validate-alaska-house-boundaries.yml
+permissions:
+  contents: write
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -25,3 +27,13 @@ jobs:
           name: alaska-house-district-boundaries
           path: data/staging/alaska-house-districts.geojson
           if-no-files-found: error
+      - name: Commit verified boundaries to staging branch
+        if: github.ref == 'refs/heads/feature/v7-2-national-county-data'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/staging/alaska-house-districts.geojson
+          if ! git diff --cached --quiet; then
+            git commit -m "Stage verified official Alaska House district boundaries"
+            git push origin HEAD:feature/v7-2-national-county-data
+          fi
