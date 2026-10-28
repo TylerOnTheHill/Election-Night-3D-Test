@@ -1,0 +1,41 @@
+name: Validate geographic labels and browser preview
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v7-2-national-county-data
+    paths:
+      - prototype.js
+      - scripts/validate_place_labels.py
+      - data/geography/**
+      - .github/workflows/validate-geographic-labels.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+      - name: Check nationwide geographic datasets
+        run: python scripts/validate_place_labels.py
+      - name: Check JavaScript module syntax
+        run: node --check prototype.js
+      - name: Install headless browser
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install --with-deps chromium
+      - name: Run development-branch map browser smoke test
+        run: |
+          python -m http.server 8765 > /tmp/electionhq-preview-server.log 2>&1 &
+          node scripts/smoke_test_place_labels.mjs
+      - name: Upload screenshots and browser results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: electionhq-geographic-browser-preview
+          path: |
+            artifacts/geographic-preview/
+            /tmp/electionhq-preview-server.log
+          if-no-files-found: ignore
