@@ -7,6 +7,7 @@ on:
     paths:
       - prototype.js
       - scripts/validate_place_labels.py
+      - scripts/smoke_test_place_labels.mjs
       - data/geography/**
       - .github/workflows/validate-geographic-labels.yml
 permissions:
@@ -14,6 +15,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
