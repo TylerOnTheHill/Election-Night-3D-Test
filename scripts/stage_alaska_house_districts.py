@@ -13,11 +13,11 @@ from pathlib import Path
 def parse(path, source_url):
     with path.open(newline="", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
-        if not reader.fieldnames or not {"district", "received", "as_of"}.issubset(reader.fieldnames):
+        if not reader.fieldnames or not {"district", "received", "absentee_received", "early_vote_received", "as_of"}.issubset(reader.fieldnames):
             raise ValueError("Expected CSV columns: district, received, as_of")
         rows = list(reader)
-    if len(rows) != 40:
-        raise ValueError("Alaska requires exactly 40 House-district rows")
+    if len(rows) != 41:
+        raise ValueError("Expected 40 geographic districts and special District 99")
     seen = set()
     cutoff = None
     output = []
@@ -25,7 +25,7 @@ def parse(path, source_url):
         raw = row["district"].strip()
         if raw.upper().startswith("HD"):
             raw = raw[2:].strip()
-        if not raw.isdigit() or not 1 <= int(raw) <= 40:
+        if not raw.isdigit() or int(raw) not in (*range(1, 41), 99):
             raise ValueError("Invalid House district")
         district = int(raw)
         if district in seen:
@@ -35,20 +35,33 @@ def parse(path, source_url):
         if not value.isdigit():
             raise ValueError("Invalid received-ballot total")
         received = int(value)
+        absentee = row["absentee_received"].strip().replace(",", "")
+        early = row["early_vote_received"].strip().replace(",", "")
+        if not absentee.isdigit() or not early.isdigit() or received != int(absentee) + int(early):
+            raise ValueError("District method totals do not reconcile")
         stamp = row["as_of"].strip()
-        dt.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        parsed = dt.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise ValueError("Timezone required for cutoff")
         if cutoff is None:
             cutoff = stamp
         if cutoff != stamp:
             raise ValueError("Mixed district reporting cutoffs")
-        output.append({"district": district, "received_ballots": received})
-    if seen != set(range(1, 41)):
+        output.append({"district": district, "received_ballots": received, "absentee_received": int(absentee), "early_vote_received": int(early)})
+    if seen != (set(range(1, 41)) | {99}):
         raise ValueError("Incomplete House-district coverage")
+    output.sort(key=lambda r: r["district"])
+    geographic = sum(r["received_ballots"] for r in output if r["district"] != 99)
+    special = next(r["received_ballots"] for r in output if r["district"] == 99)
     return {"schema": "electionhq-ak-house-district-review-v1",
             "state": "AK", "geography": "state_house_district",
             "geographic_count": 40, "reported_districts": 40,
+            "special_reporting_districts": [99], "geographic_received_ballots": geographic,
+            "nongeographic_received_ballots": special,
             "source_url": source_url, "source_cutoff": cutoff,
-            "total_received_ballots": sum(r["received_ballots"] for r in output),
+            "total_received_ballots": geographic + special,
+            "absentee_received": sum(r["absentee_received"] for r in output),
+            "early_vote_received": sum(r["early_vote_received"] for r in output),
             "districts": sorted(output, key=lambda r: r["district"]),
             "publication_approved": False,
             "county_equivalent_observations": None}
