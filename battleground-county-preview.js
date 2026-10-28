@@ -32,7 +32,7 @@ async function render(){
  if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level ballot totals have not yet been published for '+(COUNTY_STATES[code]?.name||'this state')+'.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
- status.textContent=(s.reporting_label==='Partially reported'?'Partially reported':s.reporting_label==='Fully reported'?'Fully reported':s.coverage_complete?'County geography complete':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff?'Updated '+s.statewide_cutoff:'Update time unavailable');
+ status.textContent=(s.reporting_label==='Partially reported'?'Partially reported':s.reporting_label==='Fully reported'?'Fully reported':s.coverage_complete?'County geography complete':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff?'Updated '+s.statewide_cutoff+(s.provider_checked_at?'*':''):'Update time unavailable');
  if(s.provider_checked_at && !Number.isNaN(Date.parse(s.provider_checked_at))){
   const note=document.createElement('small');
   note.textContent='* Last checked: '+new Date(s.provider_checked_at).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short',timeZone:'UTC'})+' UTC';
