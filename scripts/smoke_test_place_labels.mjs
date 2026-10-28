@@ -61,6 +61,11 @@ try{
  result.checks.push({name:'Early Vote mode activates',ok:early.mode});
  result.checks.push({name:'Early Vote reporting statistics render',ok:early.heading>0&&early.stats>=2&&early.green});
  result.checks.push({name:'Early Vote map canvas remains available',ok:early.canvas});
+ const earlyLayout=await page.evaluate(()=>{const stage=document.querySelector('.stage').getBoundingClientRect(),stats=document.querySelector('.early-stats').getBoundingClientRect(),filters=document.querySelector('.ev-controls').getBoundingClientRect(),card=document.querySelector('.early-stat');return {mapBeforeStats:stage.top<stats.top,filtersBeforeMap:filters.top<stage.top,cardBackground:getComputedStyle(card).backgroundColor}});
+ result.diagnostics.earlyLayout=earlyLayout;
+ result.checks.push({name:'Early Vote map above reporting metrics',ok:earlyLayout.mapBeforeStats});
+ result.checks.push({name:'Early Vote filters above map',ok:earlyLayout.filtersBeforeMap});
+ result.checks.push({name:'Early Vote metric cards use black surface',ok:earlyLayout.cardBackground==='rgb(9, 9, 9)',actual:earlyLayout.cardBackground});
  await page.screenshot({path:out+'/early-vote-national.png',fullPage:true});
   result.checks.push({name:'no browser runtime errors',ok:errors.length===0});
  await fs.writeFile(out+'/results.json',JSON.stringify(result,null,2));
