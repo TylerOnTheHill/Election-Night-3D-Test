@@ -4,7 +4,10 @@ import argparse
 import json
 from pathlib import Path
 
-from stage_alaska_house_districts import parse
+try:
+    from .stage_alaska_house_districts import parse
+except ImportError:
+    from stage_alaska_house_districts import parse
 
 def build(csv_path, source_url):
     parsed = parse(csv_path, source_url)
