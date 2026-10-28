@@ -10,7 +10,7 @@ function stateFromUrl(){
 function selectState(code,updateUrl=true){const x=data.find(v=>v.code===code);if(!x)return;selectedCode=code;if($('explorer-state'))$('explorer-state').value=code;
  if(updateUrl){const url=new URL(window.location.href);url.searchParams.set('state',code);window.history.replaceState(null,'',url);}
  $('detail-share-link').href='./battleground.html?state='+encodeURIComponent(code);for(const [id,value] of Object.entries({'detail-name':x.name+' · '+x.code,'detail-total':fmt(x.total),'detail-date':x.date||'Unavailable','detail-mail':fmt(x.mail),'detail-inperson':x.code==='NH'?'Not offered':fmt(x.inPerson),'detail-credit':x.sourceName||(x.code==='NH'?'NH absentee voting · count not available':'No verified statewide count'),'detail-description':x.code==='NH'?'No regular in-person early voting. Excuse-required absentee voting is available; no verified statewide absentee ballot total is in this feed. Missing is not zero.':x.reported?'Reported early ballots; not candidate votes.':'Missing does not mean zero.'}))$(id).textContent=value;const sum=(x.mail||0)+(x.inPerson||0),valid=x.mail!=null&&x.inPerson!=null&&sum>0;$('method-person').style.width=valid?100*x.inPerson/sum+'%':'0';$('method-mail').style.width=valid?100*x.mail/sum+'%':'0';$('method-note').textContent=valid?'In-person '+(100*x.inPerson/sum).toFixed(1)+'% · mail '+(100*x.mail/sum).toFixed(1)+'%':'Complete breakdown unavailable';const link=$('detail-source-link');link.hidden=!x.sourceUrl;if(x.sourceUrl)link.href=x.sourceUrl;else link.removeAttribute('href');
- $('detail-coverage-note').textContent=x.code==='NH'?'No regular in-person early voting; statewide absentee count unavailable.':!x.reported?'No verified statewide ballot count is available in this snapshot.':x.mail==null||x.inPerson==null?'Statewide total available; method breakdown incomplete.':'Statewide total and method breakdown supplied by the source; reporting cutoff may differ from other states.';
+ $('detail-coverage-note').textContent=x.code==='NH'?'No regular in-person early voting; statewide absentee count unavailable.':!x.reported?'No verified statewide ballot count is available in this snapshot.':x.mail==null||x.inPerson==null?'Statewide total available; method breakdown incomplete.':'Statewide total and method breakdown supplied by the source; updated times may differ from other states.';
  document.querySelectorAll('#rows tr').forEach(tr=>{const active=tr.dataset.code===code;tr.classList.toggle('selected-row',active);if(active)tr.setAttribute('aria-selected','true');else tr.removeAttribute('aria-selected')});
  window.dispatchEvent(new CustomEvent('electionhq:battleground-select',{detail:{code}}));}
 function render(){
@@ -45,7 +45,7 @@ function csvCell(value){
  return '"'+safeValue.replace(/"/g,'""')+'"';
 }
 function exportVisible(){
- const headers=['State','Code','Reported early ballots','Mail / absentee','Early in person','Reporting cutoff','Source','Source URL','Feed checked UTC','Coverage'];
+ const headers=['State','Code','Reported early ballots','Mail / absentee','Early in person','Updated','Source','Source URL','Feed checked UTC','Coverage'];
  const records=visibleRows.map(x=>[x.name,x.code,x.total,x.mail,x.code==='NH'?'Not offered':x.inPerson,x.date,x.sourceName,x.sourceUrl,checked,x.reported?'Reported':'No verified statewide total']);
  const lineEnding=String.fromCharCode(13,10);
  const csv=String.fromCharCode(65279)+[headers,...records].map(row=>row.map(csvCell).join(',')).join(lineEnding)+lineEnding;
