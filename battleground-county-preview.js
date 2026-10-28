@@ -78,10 +78,40 @@ function highlight(fips){
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
+// Alaska is represented by 40 House districts, never county/borough polygons.
+async function renderAlaskaDistricts(){
+ const version=++renderVersion,host=$('battleground-county-preview'),map=$('county-preview-map');
+ window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
+ host.hidden=false;
+ $('county-preview-title').textContent='Alaska House districts';
+ $('county-preview-total').textContent='District ballot totals awaiting publication';
+ $('county-preview-complete-note').hidden=true;
+ $('county-preview-rows').replaceChildren();
+ $('county-selected-detail').textContent='District boundaries only. District 99 is a nongeographic ballot bucket and is not mapped.';
+ $('county-preview-legend').textContent='40 geographic House districts · District 99 is not a geographic district · No district ballot totals published';
+ $('county-preview-status').textContent='House district geography · District ballot totals awaiting publication';
+ map.textContent='Loading official Alaska House district boundaries…';
+ try{
+  const response=await fetch('./data/staging/alaska-house-districts.geojson',{cache:'no-store'});
+  if(!response.ok)throw Error('Official Alaska district boundaries unavailable');
+  const geo=await response.json();if(version!==renderVersion)return;
+  if(geo.type!=='FeatureCollection'||!Array.isArray(geo.features)||geo.features.length!==40||!window.d3)throw Error('Invalid Alaska district geography');
+  const ids=geo.features.map(f=>f.properties?.HouseDistrict);
+  if(new Set(ids).size!==40||ids.some(n=>!Number.isInteger(n)||n<1||n>40))throw Error('Incomplete Alaska House district coverage');
+  const w=850,h=510,projection=d3.geoMercator().fitExtent([[20,20],[w-20,h-20]],geo),path=d3.geoPath(projection);
+  map.replaceChildren();
+  d3.select(map).append('svg').attr('viewBox','0 0 '+w+' '+h).attr('role','img').attr('aria-label','Alaska 40 House district boundaries; no published district totals')
+   .selectAll('path').data(geo.features).join('path').attr('d',path).attr('data-district',f=>f.properties.HouseDistrict)
+   .attr('fill','#414246').attr('stroke','#787a80').attr('stroke-width',.65)
+   .append('title').text(f=>'House District '+f.properties.HouseDistrict+' · Ballot totals awaiting publication');
+  map.dataset.houseDistrictMeshes='40';
+ }catch(e){if(version!==renderVersion)return;map.textContent='Official Alaska House district boundaries unavailable';console.warn('Alaska geography:',e.message);}
+}
 // Geometry-only fallback: display authentic county boundaries when publication is pending.
 async function renderBoundariesOnly(){
  const version=++renderVersion,code=selected,host=$('battleground-county-preview'),status=$('county-preview-status');
  window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));
+ if(code==='AK'){await renderAlaskaDistricts();return;}
  if(!COUNTY_STATES[code]){host.hidden=true;status.textContent='County geography is not yet available for this state.';return;}
  host.hidden=false;
  $('county-preview-title').textContent=COUNTY_STATES[code].name+' county geography';
