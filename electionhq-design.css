@@ -1,0 +1,15 @@
+/* ElectionHQ original visual foundation — Phase 1. No third-party brand assets. */
+:root{--ehq-bg:#0d1217;--ehq-surface:#161e25;--ehq-raised:#1d2931;--ehq-line:#34444e;--ehq-text:#eff6f6;--ehq-muted:#adbdc4;--ehq-accent:#4dd6a0;--ehq-focus:#85ebc4}
+body{background:var(--ehq-bg);color:var(--ehq-text)}
+header{background:#131c23;border-bottom-color:var(--ehq-line)}
+header h1{font-weight:850;letter-spacing:.065em}
+header h1 span{color:var(--ehq-accent)}
+header .mode-switch{border-color:var(--ehq-line)}
+header .mode-switch button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--ehq-focus);outline-offset:3px}
+.workspace .rail,.workspace .right-card,.workspace .panel{border-color:var(--ehq-line)}
+.workspace .right-card{background:var(--ehq-surface)}
+.workspace .right-card h3{letter-spacing:.085em}
+.workspace .right-card .call-row{border-color:var(--ehq-line)}
+body.early .workspace .right-card h3{color:var(--ehq-accent)}
+body.early #mode-indicator{color:var(--ehq-accent)}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
