@@ -282,22 +282,25 @@ function updatePlaceLabels(zoomPct){
  if(key===lastPlaceCamera&&lastPlaceView===view)return;
  if(now-lastPlaceUpdate<90)return;
  lastPlaceUpdate=now;lastPlaceCamera=key;lastPlaceView=view;
- if(view!=='state'||mode.value!=='county'||!placeLabels.length){placeLayer.hidden=true;return}
+ if((view!=='state'&&view!=='national')||(view==='state'&&mode.value!=='county')||!placeLabels.length){placeLayer.hidden=true;return}
  placeLayer.hidden=false;
  const width=stage.clientWidth,height=stage.clientHeight;
  // Density adjusts with zoom, and a screen-space grid reserves room for labels.
- const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0; // Unknown-population communities are eligible only at close zoom.
+ const minimumPopulation=view==='national'?(zoomPct<35?700000:zoomPct<60?350000:150000):(zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0); // Community points without population appear only in close state view.
  const cellSize=100,grid=new Set();let shown=0;
  const cap=Math.min(MAX_PLACE_NODES,Math.max(8,Math.floor(width*height/6000)));
  // High-population places first; unknown-population communities only appear at close zoom.
  for(const [name,state,pop,lat,lon] of placeLabels){
   if(shown>=cap)break;
-  if(state!==activeState||pop<minimumPopulation)continue;
-  placeVector.set((lon-projection.lon)*projection.sx,(lat-projection.lat)*projection.sy,.35).project(camera);
+  if((view==='state'&&state!==activeState)||pop<minimumPopulation)continue;
+  // National geometry uses a continental projection with separate Alaska/Hawaii insets.
+  const projected=view==='national'?(state==='Alaska'?[(lon+153)*.132-12.8,(lat-64)*.235-12.15]:state==='Hawaii'?[(lon+157)*.60-6.1,(lat-20.5)*.60-12.65]:[(lon+98)*.62,(lat-38)*.76]):[(lon-projection.lon)*projection.sx,(lat-projection.lat)*projection.sy];
+  placeVector.set(projected[0],projected[1],.35).project(camera);
   if(placeVector.z< -1||placeVector.z>1)continue;
   const x=(placeVector.x+1)*width/2,y=(1-placeVector.y)*height/2;
   const w=Math.max(40,name.length*7+12),h=19;
-  if(x<w/2+8||x>width-w/2-8||y<h||y>height-h)continue;
+  // Keep labels clear of the right-side zoom rail, map footer and edges.
+  if(x<w/2+12||x>width-w/2-96||y<h+12||y>height-h-40)continue;
   const minX=Math.floor((x-w/2-7)/cellSize),maxX=Math.floor((x+w/2+7)/cellSize),minY=Math.floor((y-h/2-5)/cellSize),maxY=Math.floor((y+h/2+5)/cellSize);
   let blocked=false;for(let gx=minX;gx<=maxX&&!blocked;gx++)for(let gy=minY;gy<=maxY;gy++)if(grid.has(gx+':'+gy)){blocked=true;break}
   if(blocked)continue;
