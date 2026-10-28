@@ -29,3 +29,9 @@
 - Frontend `index.html` embeds dark styles and loads Three.js 0.170 via import map. Review `prototype.js`, `unified-ui.js`, and existing geometry/camera coordinate systems before placing geographic labels.
 - Keep the base WebGL map functional if external map or label resources fail. Prefer locally bundled, attribution-compliant place-name datasets and zoom-aware sprite/HTML overlays that do not interfere with pointer selection.
 - Implement incremental testable changes, inspect results, and do not infer functionality from CI green alone.
+
+## Approved color semantics (2026-10-27)
+- Neutral near-black, charcoal and gray UI chrome; **champagne gold `#C9A45C`** reserved solely for selective premium/special-feature indicators when such a feature is explicitly approved. Do not introduce paid features or badges to justify gold.
+- **Early Vote:** green intensity belongs to the map **and corresponding data**. A county shaded light green on the map uses that exact light green in its associated sidebar/table/selection highlight. Do not use green for decorative navigation, branding or generic headings.
+- **Election Night:** red and blue follow the same rule: the electoral colors of a map region or race must be carried through consistently to its corresponding detail panel, candidate/race row, table and selection highlight. Color communicates data, not party preference or decorative UI styling.
+- Maintain sufficient text contrast and non-color indicators so meaning remains accessible.
