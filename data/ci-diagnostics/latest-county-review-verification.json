@@ -1,13 +1,13 @@
 {
   "schema": "electionhq-county-review-verification-v1",
-  "run_id": 40622616854,
+  "run_id": 40622873714,
   "run_attempt": 1,
-  "head_sha": "17becff103f98e39f558880d94fbd14c7b68f80c",
-  "job_steps_status": "failure",
+  "head_sha": "f3c8ddd153bdbc76f94d610e33a81221af033fd0",
+  "job_steps_status": "success",
   "required_artifacts": {
-    "nineteen-state-readiness-unapproved.json": false,
-    "eighteen-state-release-gate-unapproved.json": false,
-    "nineteen-state-coverage-audit.json": false
+    "nineteen-state-readiness-unapproved.json": true,
+    "eighteen-state-release-gate-unapproved.json": true,
+    "nineteen-state-coverage-audit.json": true
   },
   "publication_approved": false
 }
