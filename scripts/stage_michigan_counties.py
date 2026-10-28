@@ -44,8 +44,10 @@ def parse(raw,geo):
         "states":{"MI":{"status":"candidate_pending_publication_approval",
         "provider":"Michigan Department of State (aggregated by Michigan Republican Primary)",
         "credit":"Michigan Department of State / Michigan Republican Primary",
-        "statewide_cutoff":"2026-10-27","county_count":len(counties),"geographic_count":83,
-        "coverage_complete":True,"reporting_label":"Partially reported",
+        "statewide_cutoff":"2026-10-27",
+        "census_geography_source":"US county GeoJSON FIPS crosswalk (Plotly mirror; official Census verification pending)",
+        "census_geography_url":CENSUS,"county_count":len(counties),"geographic_count":83,
+        "coverage_complete":True,"reporting_label":"Fully reported",
         "statewide_reconciled":False,"total":sum(c["total"] for c in counties),
         "total_basis":"sum_of_reported_counties","provider_statewide_total":None,"counties":counties}}}
 def main():
