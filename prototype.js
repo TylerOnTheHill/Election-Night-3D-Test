@@ -270,7 +270,7 @@ async function loadPlacesForCurrentView(){
 }
 let lastPlaceUpdate=0,lastPlaceCamera='',lastPlaceView='';
 function updatePlaceLabels(zoomPct){
- // Throttle DOM layout: 1,000 cities should not be reprojected at 60 fps.
+ // Throttle DOM layout while the camera moves.
  const now=performance.now(),key=view+'|'+activeState+'|'+mode.value+'|'+zoomPct+'|'+camera.position.toArray().map(v=>v.toFixed(2)).join(',')+'|'+controls.target.toArray().map(v=>v.toFixed(2)).join(',');
  if(key===lastPlaceCamera&&lastPlaceView===view)return;
  if(now-lastPlaceUpdate<90)return;
@@ -279,7 +279,7 @@ function updatePlaceLabels(zoomPct){
  placeLayer.hidden=false;
  const width=stage.clientWidth,height=stage.clientHeight;
  // Density adjusts with zoom, and a screen-space grid reserves room for labels.
- const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0;
+ const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0; // Unknown-population communities are eligible only at close zoom.
  const cellSize=100,grid=new Set();let shown=0;
  for(let i=0;i<placeLabels.length;i++){
   const [name,state,pop,lat,lon]=placeLabels[i],el=placeNodes[i];
