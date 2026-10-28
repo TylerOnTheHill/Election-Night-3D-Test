@@ -78,7 +78,7 @@ def parse(html,census):
         "provider":"Minnesota Secretary of State","credit":CREDIT,
         "statewide_cutoff":cutoff,"census_geography_source":"US county GeoJSON FIPS crosswalk (Plotly mirror; official Census verification pending)",
         "census_geography_url":CENSUS,"county_count":len(counties),"geographic_count":87,
-        "coverage_complete":len(counties)==87,"reporting_label":"Fully reported" if len(counties)==87 and reconciled else "Partially reported",
+        "coverage_complete":len(counties)==87,"reporting_label":"Fully reported" if len(counties)==87 else "Partially reported",
         "statewide_reconciled":reconciled,"total":total,"total_basis":"sum_of_reported_counties",
         "provider_statewide_total":statewide,"counties":counties}}}
 
