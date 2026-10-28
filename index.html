@@ -189,6 +189,24 @@ body.early .early-stat,body.early .right-card{background:#090909!important}
 @media(max-width:1000px){.dashboard>.right-side{position:static}}
 @media(max-width:760px){.dashboard>.main-area>.stage{min-height:450px}.dashboard>.main-area>.summary-strip{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.dashboard>.main-area>.summary-strip{grid-template-columns:1fr}.dashboard>.main-area>.stage{min-height:390px}}
+</style><style id="ehq-early-vote-map-first">
+/* DDHQ-style black-first early-vote workspace: filters -> map -> reporting metrics. */
+body.early .dashboard>.main-area>.early-heading{order:-3!important;padding:5px 2px 3px!important;border:0}
+body.early .dashboard>.main-area>.ev-controls{order:-2!important;margin:0!important;padding:10px 12px!important;background:#0a0a0a!important;border:1px solid #333!important}
+body.early .dashboard>.main-area>.stage{order:0!important;min-height:610px}
+body.early .dashboard>.main-area>.view-options{order:1!important}
+body.early .dashboard>.main-area>.early-stats{order:2!important;margin:0!important;gap:8px}
+body.early .dashboard>.main-area>.ev-legend{order:3!important}
+body.early .dashboard>.main-area>.ev-counties{order:4!important}
+body.early .dashboard>.main-area>.ev-timeline{order:5!important}
+body.early .early-stat{background:#090909!important;border:1px solid #343434!important;border-radius:5px!important;min-height:90px!important;padding:10px 12px!important}
+body.early .early-stat b{color:#f1f1f1!important}
+body.early .early-stat span,body.early .early-stat small{color:#a9a9a9!important}
+body.early .ev-legend,body.early .ev-counties,body.early .ev-timeline{background:#080808!important;border-color:#333!important}
+body.early .ev-mode:not(.selected){background:#151515!important;border-color:#383838!important}
+body.early .ev-mode.selected{background:#0c2619!important;border-color:#24a866!important}
+@media(max-width:760px){body.early .dashboard>.main-area>.stage{min-height:450px}}
+@media(max-width:520px){body.early .dashboard>.main-area>.stage{min-height:390px}body.early .early-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 </style></head><body>
 <header><h1>✧ ELECTION<span>HQ</span></h1><div class="mode-switch" role="tablist" aria-label="Tracker view"><button id="tab-night" class="active" role="tab" aria-selected="true">Election Night</button><button id="tab-early" role="tab" aria-selected="false">Early Vote</button></div><a href="./battleground.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #668ab4;border-radius:9px;color:#d9ebff;background:#24344a;text-decoration:none;font-size:13px;font-weight:700">Battlegrounds · 19 states</a><div class="header-search">Find a state, county, or race · <strong id="mode-indicator">SYNTHETIC DEMO</strong></div></header>
 <div class="demo-banner" id="demo-banner">ELECTION NIGHT DEMO — Candidate votes, calls and race colors are FICTIONAL. No live election results connected.</div>
