@@ -35,6 +35,14 @@ def audit(readiness, discovery):
                 raise ValueError("Staged county subtotal missing or invalid: "+row["state"])
             if type(row.get("county_reported")) is not int or row["county_reported"] < 1:
                 raise ValueError("Staged reported county count missing or invalid: "+row["state"])
+            expected = row.get("county_expected")
+            if expected is not None and (type(expected) is not int or expected < 1 or row["county_reported"] > expected):
+                raise ValueError("Invalid staged county coverage denominator: "+row["state"])
+            label = row.get("county_reporting_label")
+            if label is not None and label not in ("Fully reported", "Partially reported"):
+                raise ValueError("Invalid staged county reporting label: "+row["state"])
+            if expected is not None and label == "Fully reported" and row["county_reported"] != expected:
+                raise ValueError("Incomplete county coverage cannot be fully reported: "+row["state"])
     return {"schema":"electionhq-nineteen-state-coverage-audit-v1",
             "publication_approved":False,"states_checked":len(rows),
             "staged_count":len(staged),"source_discovery_count":len(set(WATCH)-staged),
