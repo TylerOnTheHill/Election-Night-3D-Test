@@ -220,8 +220,8 @@ async function districtFeatures(){const meta=await json(census+'?f=pjson');const
 function stateProjection(name){const feat=stateMap.get(name);if(!feat)return;const pts=[];eachPoly(feat,rings=>rings[0].forEach(p=>pts.push(p)));if(!pts.length)return;const xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);const lon=(Math.min(...xs)+Math.max(...xs))/2,lat=(Math.min(...ys)+Math.max(...ys))/2;const spanX=Math.max(...xs)-Math.min(...xs),spanY=Math.max(...ys)-Math.min(...ys);const scale=Math.min(28/Math.max(spanX,1),20/Math.max(spanY,1),name==='Texas'?1.05:5);projection={lon,lat,sx:scale*Math.max(.35,Math.cos(lat*Math.PI/180)),sy:scale};if(name==='Texas')projection={lon:-99.5,lat:31,sx:.85,sy:1.05};}
 function resetGroup(){for(const m of meshes){if(m.userData.originalTopMaterial){m.material[0]=m.userData.originalTopMaterial;m.userData.earlyTopMaterial.dispose();delete m.userData.originalTopMaterial;delete m.userData.earlyTopMaterial;}}scene.remove(group);group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material&&o.material!==metalTop&&o.material!==metalSide){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose())}});group=new THREE.Group();scene.add(group);meshes=[];selected=null;}
 function finishBuild(data,{preserveCamera=false}={}){resetGroup();data.forEach(({feature,name})=>makeRegion(feature,name));regionNames=data.map(d=>d.name).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));search.value='';suggestions.hidden=true;choose(null,{focus:false});if(!preserveCamera)cameraView(false);load.style.display='none';$('national').hidden=view==='national';$('state-name').textContent=view==='national'?'United States':activeState;$('mode-control').hidden=view==='national';$('race-select').value='all';setMapColor();refreshPanel();}
-async function showNational(){view='national';load.style.display='flex';load.textContent='Loading all 50 state outlines…';try{if(!stateFeatures){const [raw,proj]=await Promise.all([json(statesURL),json(projectedStatesURL)]);stateFeatures=raw.features.filter(f=>statesList.includes(f.properties.name));projectedStates=proj.features.filter(f=>statesList.includes(f.properties.name));if(stateFeatures.length!==50||projectedStates.length!==50)throw Error('Expected 50 states');stateMap=new Map(stateFeatures.map(f=>[f.properties.name,f]));}backdropNames.clear();finishBuild(projectedStates.map(feature=>({feature,name:feature.properties.name})));}catch(e){load.textContent='Unable to load national map: '+e.message;console.error(e)}}
-async function enterState(name){focusTween=null;transitionLock=view==='national';activeState=name;activeStateFips=stateFips.get(name);view='state';mode.value='county';await show()}
+async function showNational(){view='national';void loadPlacesForCurrentView();load.style.display='flex';load.textContent='Loading all 50 state outlines…';try{if(!stateFeatures){const [raw,proj]=await Promise.all([json(statesURL),json(projectedStatesURL)]);stateFeatures=raw.features.filter(f=>statesList.includes(f.properties.name));projectedStates=proj.features.filter(f=>statesList.includes(f.properties.name));if(stateFeatures.length!==50||projectedStates.length!==50)throw Error('Expected 50 states');stateMap=new Map(stateFeatures.map(f=>[f.properties.name,f]));}backdropNames.clear();finishBuild(projectedStates.map(feature=>({feature,name:feature.properties.name})));}catch(e){load.textContent='Unable to load national map: '+e.message;console.error(e)}}
+async function enterState(name){focusTween=null;transitionLock=view==='national';activeState=name;activeStateFips=stateFips.get(name);view='state';mode.value='county';void loadPlacesForCurrentView();await show()}
 async function show(){view='state';load.style.display='flex';load.textContent='Building '+activeState+' county geography…';try{
  if(!countyFeatures){const raw=await json(countyURL);countyFeatures=raw.features;}
  const data=mode.value==='county'?countyFeatures.filter(f=>String(f.properties.STATE).padStart(2,'0')===activeStateFips).map(f=>({feature:f,name:clean(f.properties.NAME)})):activeState==='Texas'?await districtFeatures():[];
@@ -253,11 +253,21 @@ $('race-select').addEventListener('change',()=>{setMapColor();refreshPanel();$('
 // One nationwide city-label engine. Data bundled locally and sorted by population.
 const placeLayer=document.createElement('div');placeLayer.className='ehq-place-labels';placeLayer.setAttribute('aria-hidden','true');stage.append(placeLayer);
 const placeVector=new THREE.Vector3();let placeLabels=[],placeNodes=[];
-fetch('./data/geography/us-cities-top-1000.json').then(r=>{if(!r.ok)throw Error('City reference data unavailable');return r.json()}).then(d=>{
- if(d.schema!=='electionhq-place-points-v1'||!Array.isArray(d.places))throw Error('Unexpected city dataset');
- placeLabels=d.places.filter(p=>p.length===5&&Number.isFinite(p[2])&&Number.isFinite(p[3])&&Number.isFinite(p[4])).sort((a,b)=>b[2]-a[2]);
- placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;el.hidden=true;placeLayer.append(el);return el});
-}).catch(e=>console.warn('City labels unavailable:',e.message));
+// Keep the bundled top-1k fallback; optional expanded state files can be added in one batch.
+const statePlaceCache=new Map();let placeLoadToken=0;
+async function readPlaceFile(path){const r=await fetch(path);if(!r.ok)throw Error('Place data '+r.status);const d=await r.json();if(d.schema!=='electionhq-place-points-v1'||!Array.isArray(d.places))throw Error('Unexpected place dataset');return d.places.filter(p=>p.length===5&&typeof p[0]==='string'&&typeof p[1]==='string'&&p.slice(2).every(Number.isFinite)&&Math.abs(p[3])<=90&&Math.abs(p[4])<=180)}
+let nationalPlacePromise=readPlaceFile('./data/geography/us-cities-top-1000.json').catch(e=>{console.warn('City labels unavailable:',e.message);return []});
+function installPlaceLabels(rows){placeLayer.replaceChildren();placeLabels=rows.sort((a,b)=>b[2]-a[2]);placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;el.hidden=true;placeLayer.append(el);return el});lastPlaceCamera='';}
+async function loadPlacesForCurrentView(){
+ const token=++placeLoadToken,base=await nationalPlacePromise;if(token!==placeLoadToken)return;
+ if(view!=='state'||!activeState){installPlaceLabels(base);return}
+ const code=stateFips.get(activeState); // Use existing state identifier; missing optional files are normal.
+ if(!code){installPlaceLabels(base);return}
+ if(!statePlaceCache.has(code))statePlaceCache.set(code,readPlaceFile('./data/geography/places-by-state/'+code+'.json').catch(()=>[]));
+ const expanded=await statePlaceCache.get(code);if(token!==placeLoadToken)return;
+ const unique=new Map();for(const p of base.filter(p=>p[1]===activeState).concat(expanded)){unique.set(p[1]+'|'+p[0].toLowerCase()+'|'+p[3].toFixed(3)+'|'+p[4].toFixed(3),p)}
+ installPlaceLabels([...unique.values()]);
+}
 let lastPlaceUpdate=0,lastPlaceCamera='',lastPlaceView='';
 function updatePlaceLabels(zoomPct){
  // Throttle DOM layout: 1,000 cities should not be reprojected at 60 fps.
