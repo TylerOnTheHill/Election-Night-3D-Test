@@ -231,7 +231,7 @@ jobs:
           python scripts/audit_watchlist_county_reconciliation.py --candidate eight-states-unapproved.json --output eight-state-reconciliation-audit.json
       - name: Build single 19-state readiness report
         run: |
-          python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --output nineteen-state-readiness-unapproved.json
+          python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --alaska-district-review alaska-house-districts-unapproved.json --output nineteen-state-readiness-unapproved.json
       - name: Audit all 19 states have explicit county coverage status
         run: python scripts/audit_nineteen_state_pipeline.py --readiness nineteen-state-readiness-unapproved.json --discovery eleven-state-discovery-unapproved.json --output nineteen-state-coverage-audit.json
       - name: Audit 18-state battleground release readiness (NH excluded, not deleted)
