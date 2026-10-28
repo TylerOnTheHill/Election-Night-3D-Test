@@ -14,6 +14,7 @@ on:
       - 'scripts/stage_uf_county_review.py'
       - 'scripts/stage_alaska_official_statewide.py'
       - 'scripts/stage_alaska_house_districts.py'
+      - 'tests/test_stage_alaska_house_districts.py'
       - 'data/staging/alaska-house-districts-2026-10-26.csv'
       - 'scripts/stage_maine_aggregated_counties.py'
       - 'scripts/probe_maine_official_absentee.py'
@@ -92,6 +93,7 @@ jobs:
           python scripts/stage_alaska_official_statewide.py --output alaska-official-statewide-review.json
       - name: Validate manually retrieved Alaska official House-district report
         run: |
+          python -m unittest discover -s tests -p 'test_stage_alaska_house_districts.py' -v
           python scripts/stage_alaska_house_districts.py \
             --input-csv data/staging/alaska-house-districts-2026-10-26.csv \
             --source-url https://elections.alaska.gov/wp-content/uploads/2026/10/Combined-Ballot-Report-10_26_2026-10_31_33-AM.html \
