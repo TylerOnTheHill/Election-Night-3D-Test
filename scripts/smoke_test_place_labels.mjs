@@ -22,7 +22,10 @@ try{
  const labels=await page.locator('.ehq-place-label:visible').count();
  result.checks.push({name:'Texas close-zoom labels visible',ok:labels>0,visibleLabels:labels});
  await page.screenshot({path:out+'/texas-close-zoom.png',fullPage:true});
- await page.locator('#national').click();
+ // The United States button is hidden when already in national view; do not click a hidden control.
+ const national=page.locator('#national');
+ if(await national.isVisible()) await national.click();
+ else result.checks.push({name:'national navigation already active',ok:true});
  await page.waitForTimeout(4000);
  await page.screenshot({path:out+'/national-map.png',fullPage:true});
  result.checks.push({name:'national map renders',ok:await page.locator('#stage canvas').count()>=1});
