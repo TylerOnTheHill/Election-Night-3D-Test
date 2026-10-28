@@ -12,7 +12,8 @@ def fixture():
             "states": [{"state": code, "county_staged": True,
                         "county_reported": 2, "county_expected": 2,
                         "county_ballots": 100, "county_cutoff": "2026-10-27",
-                        "county_publication_approved": False}
+                        "county_publication_approved": False,
+                        "county_vs_statewide_cutoff": "matching"}
                        for code in ("AK","AZ","FL","GA","IA","KS","ME","MI","MN",
                                     "MS","NE","NV","NH","NC","OH","SC","TX","VA","WI")]}
 
@@ -45,6 +46,13 @@ class BattlegroundReleaseGateTests(unittest.TestCase):
         nh = next(s for s in doc["states"] if s["state"] == "NH")
         nh.update(county_staged=False, county_ballots=None)
         self.assertEqual(audit(doc), baseline)
+
+    def test_unverified_county_freshness_blocks_release(self):
+        doc = fixture()
+        va = next(s for s in doc["states"] if s["state"] == "VA")
+        va["county_vs_statewide_cutoff"] = "mixed_or_unknown"
+        row = next(s for s in audit(doc)["states"] if s["state"] == "VA")
+        self.assertIn("county_source_freshness_not_verified", row["blockers"])
 
     def test_missing_cutoff_blocks_staged_state(self):
         doc = fixture()
