@@ -250,27 +250,29 @@ renderer.domElement.addEventListener('pointerleave',()=>hover.hidden=true);
 $('race-select').addEventListener('change',()=>{setMapColor();refreshPanel();$('race-note').textContent='DEMO DATA · Entirely fictional returns · Map colors represent the selected simulated race';});
 // Geographic place labels: locally bundled reference points, no paid map API.
 // Coordinates are approximate WGS84 city centers; map display is informational.
-const placeLabels=[
- ['Houston',-95.3698,29.7604,0],['Dallas',-96.7970,32.7767,0],['San Antonio',-98.4936,29.4241,0],['Austin',-97.7431,30.2672,0],['El Paso',-106.4850,31.7619,0],
- ['Fort Worth',-97.3308,32.7555,1],['Arlington',-97.1081,32.7357,1],['Plano',-96.6989,33.0198,1],['Irving',-96.9489,32.8140,1],['McKinney',-96.6153,33.1972,1],
- ['Katy',-95.8245,29.7858,2],['Sugar Land',-95.6349,29.6197,2],['Pasadena',-95.2091,29.6911,2],['Baytown',-94.9774,29.7355,2],['The Woodlands',-95.4613,30.1658,2],['Pearland',-95.2860,29.5636,2],['Cypress',-95.6972,29.9691,2],['Humble',-95.2622,29.9988,2]
-];
+// One nationwide city-label engine. Data bundled locally and sorted by population.
 const placeLayer=document.createElement('div');placeLayer.className='ehq-place-labels';placeLayer.setAttribute('aria-hidden','true');stage.append(placeLayer);
-const placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;placeLayer.append(el);return el});
-const placeVector=new THREE.Vector3();
+const placeVector=new THREE.Vector3();let placeLabels=[],placeNodes=[];
+fetch('./data/geography/us-cities-top-1000.json').then(r=>{if(!r.ok)throw Error('City reference data unavailable');return r.json()}).then(d=>{
+ if(d.schema!=='electionhq-place-points-v1'||!Array.isArray(d.places))throw Error('Unexpected city dataset');
+ placeLabels=d.places.filter(p=>p.length===5&&Number.isFinite(p[2])&&Number.isFinite(p[3])&&Number.isFinite(p[4])).sort((a,b)=>b[2]-a[2]);
+ placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;el.hidden=true;placeLayer.append(el);return el});
+}).catch(e=>console.warn('City labels unavailable:',e.message));
 function updatePlaceLabels(zoomPct){
- // Texas-only initial geographic reference coverage; never misplace points on other states.
- if(view!=='state'||activeState!=='Texas'||mode.value!=='county'){placeLayer.hidden=true;return}
+ // National state meshes are already reprojected into custom Alaska/Hawaii insets;
+ // do not place raw longitude/latitude labels on those meshes until their inverse projection is available.
+ if(view!=='state'||mode.value!=='county'||!placeLabels.length){placeLayer.hidden=true;return}
  placeLayer.hidden=false;
- const rect=stage.getBoundingClientRect(),used=[];
+ const width=stage.clientWidth,height=stage.clientHeight,used=[];
+ const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0;
  for(let i=0;i<placeLabels.length;i++){
-  const [name,lon,lat,tier]=placeLabels[i],el=placeNodes[i];
-  if((tier===1&&zoomPct<43)||(tier===2&&zoomPct<69)){el.hidden=true;continue}
+  const [name,state,pop,lat,lon]=placeLabels[i],el=placeNodes[i];
+  if(state!==activeState||pop<minimumPopulation){el.hidden=true;continue}
   placeVector.set((lon-projection.lon)*projection.sx,(lat-projection.lat)*projection.sy,.35).project(camera);
   if(placeVector.z< -1||placeVector.z>1){el.hidden=true;continue}
-  const x=(placeVector.x+1)*rect.width/2,y=(1-placeVector.y)*rect.height/2;
-  const w=Math.max(40,name.length*7+12),h=19;
-  if(x<w/2+8||x>rect.width-w/2-8||y<18||y>rect.height-20||used.some(b=>Math.abs(b.x-x)<(b.w+w)/2+8&&Math.abs(b.y-y)<20)){el.hidden=true;continue}
+  const x=(placeVector.x+1)*width/2,y=(1-placeVector.y)*height/2;
+  const w=Math.max(40,name.length*7+12);
+  if(x<w/2+8||x>width-w/2-8||y<18||y>height-20||used.some(b=>Math.abs(b.x-x)<(b.w+w)/2+8&&Math.abs(b.y-y)<20)){el.hidden=true;continue}
   used.push({x,y,w});el.hidden=false;el.style.left=x+'px';el.style.top=y+'px';
  }
 }
