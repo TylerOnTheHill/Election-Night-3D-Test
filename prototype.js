@@ -265,7 +265,7 @@ async function loadPlacesForCurrentView(){
  if(!code){installPlaceLabels(base);return}
  if(!statePlaceCache.has(code))statePlaceCache.set(code,readPlaceFile('./data/geography/places-by-state/'+code+'.json').catch(()=>[]));
  const expanded=await statePlaceCache.get(code);if(token!==placeLoadToken)return;
- const unique=new Map();for(const p of base.filter(p=>p[1]===activeState).concat(expanded)){unique.set(p[1]+'|'+p[0].toLowerCase()+'|'+p[3].toFixed(3)+'|'+p[4].toFixed(3),p)}
+ const unique=new Map();for(const p of expanded.concat(base.filter(p=>p[1]===activeState))){const key=p[1]+'|'+p[0].toLowerCase();const existing=unique.get(key);if(!existing||p[2]>existing[2])unique.set(key,p)}
  installPlaceLabels([...unique.values()]);
 }
 let lastPlaceUpdate=0,lastPlaceCamera='',lastPlaceView='';
