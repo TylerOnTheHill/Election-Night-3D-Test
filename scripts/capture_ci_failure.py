@@ -11,11 +11,16 @@ from pathlib import Path
 import urllib.request
 
 def summarize(jobs):
-    return [{"job": j.get("name"), "conclusion": j.get("conclusion"),
-             "failed_steps": [{"name": s.get("name"), "conclusion": s.get("conclusion"),
-                               "number": s.get("number")}
-                              for s in j.get("steps", []) if s.get("conclusion") == "failure"]}
-            for j in jobs if j.get("conclusion") == "failure"]
+    result = []
+    for job in jobs:
+        failed = [{"name": s.get("name"), "conclusion": s.get("conclusion"),
+                   "number": s.get("number")}
+                  for s in job.get("steps", []) if s.get("conclusion") == "failure"]
+        # The current job is still running while this final step executes.
+        if failed or job.get("conclusion") == "failure":
+            result.append({"job": job.get("name"), "conclusion": job.get("conclusion"),
+                           "failed_steps": failed})
+    return result
 
 def main():
     p = argparse.ArgumentParser()
