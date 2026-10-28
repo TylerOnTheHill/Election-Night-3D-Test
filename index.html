@@ -207,6 +207,22 @@ body.early .ev-mode:not(.selected){background:#151515!important;border-color:#38
 body.early .ev-mode.selected{background:#0c2619!important;border-color:#24a866!important}
 @media(max-width:760px){body.early .dashboard>.main-area>.stage{min-height:450px}}
 @media(max-width:520px){body.early .dashboard>.main-area>.stage{min-height:390px}body.early .early-stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+</style><style id="ehq-responsive-map-refinement">
+/* Preserve map prominence on medium screens; minimize controls on phones. */
+@media (min-width:721px) and (max-width:1150px){
+ .dashboard{grid-template-columns:minmax(0,1fr)!important}
+ .right-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .dashboard>.main-area>.stage{min-height:540px}
+}
+@media (max-width:720px){
+ .zoom-panel{right:6px!important;bottom:46px!important;gap:4px!important;padding:5px!important;border-radius:8px!important}
+ .zoom-panel input[type="range"]{height:80px!important;width:19px!important}
+ .zoom-panel button{padding:2px 7px!important;min-height:28px!important}
+ .zoom-panel .zoom-edit input{max-width:38px!important}
+ .stage .over{font-size:9px!important;line-height:1.4!important;max-width:calc(100% - 18px)}
+ .stage .hint{right:62px!important;font-size:9px!important;line-height:1.35!important}
+ .ehq-place-label{max-width:115px}
+}
 </style></head><body>
 <header><h1>✧ ELECTION<span>HQ</span></h1><div class="mode-switch" role="tablist" aria-label="Tracker view"><button id="tab-night" class="active" role="tab" aria-selected="true">Election Night</button><button id="tab-early" role="tab" aria-selected="false">Early Vote</button></div><a href="./battleground.html" style="display:inline-flex;align-items:center;justify-content:center;padding:10px 14px;border:1px solid #668ab4;border-radius:9px;color:#d9ebff;background:#24344a;text-decoration:none;font-size:13px;font-weight:700">Battlegrounds · 19 states</a><div class="header-search">Find a state, county, or race · <strong id="mode-indicator">SYNTHETIC DEMO</strong></div></header>
 <div class="demo-banner" id="demo-banner">ELECTION NIGHT DEMO — Candidate votes, calls and race colors are FICTIONAL. No live election results connected.</div>
