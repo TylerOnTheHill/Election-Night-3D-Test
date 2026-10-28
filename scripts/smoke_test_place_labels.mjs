@@ -8,10 +8,13 @@ const errors=[];
 const result={url:'http://127.0.0.1:8765/',checks:[],errors};
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
- page.on('pageerror',e=>errors.push(e.message));
+ page.on('pageerror',e=>errors.push('pageerror: '+(e.stack||e.message)));
+ page.on('response',r=>{if(!r.ok()&&r.url().startsWith(result.url))errors.push('HTTP '+r.status()+' '+r.url())});
+ page.on('requestfailed',r=>errors.push('requestfailed: '+r.url()+' '+r.failure()?.errorText));
  page.on('console',m=>{if(m.type()==='error')errors.push('console: '+m.text())});
  for(let i=0;i<20;i++){try{await page.goto(result.url,{waitUntil:'domcontentloaded',timeout:12000});break}catch(e){if(i===19)throw e;await page.waitForTimeout(500)}}
  await page.waitForTimeout(12000);
+ result.diagnostics=await page.evaluate(()=>({ready:!!window.__mapWebGLReady,loading:document.getElementById('loading')?.textContent,mode:document.getElementById('mode')?.value,nationalHidden:document.getElementById('national')?.hidden,scripts:[...document.scripts].map(s=>({src:s.src,type:s.type}))}));
  result.checks.push({name:'stage exists',ok:await page.locator('#stage').count()===1});
  result.checks.push({name:'canvas exists',ok:await page.locator('#stage canvas').count()>=1});
  result.checks.push({name:'bounded label pool',ok:(await page.locator('.ehq-place-label').count())<=120});
@@ -20,6 +23,7 @@ try{
  await page.locator('#zoom-number').dispatchEvent('change');
  await page.waitForTimeout(1800);
  const labels=await page.locator('.ehq-place-label:visible').count();
+ result.diagnostics.closeZoom={zoom:await page.locator('#zoom-number').inputValue(),labelNodes:await page.locator('.ehq-place-label').count(),visible:labels};
  result.checks.push({name:'Texas close-zoom labels visible',ok:labels>0,visibleLabels:labels});
  await page.screenshot({path:out+'/texas-close-zoom.png',fullPage:true});
  // The United States button is hidden when already in national view; do not click a hidden control.
