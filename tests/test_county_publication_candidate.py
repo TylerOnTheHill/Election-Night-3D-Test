@@ -37,14 +37,17 @@ class CandidateGateTests(unittest.TestCase):
         c["states"]["FL"] = fl
         self.assertEqual(validate(c)["FL"]["reported_counties"],1)
 
-    def test_full_county_coverage_with_statewide_mismatch_is_partial(self):
+    def test_full_county_coverage_with_statewide_mismatch_keeps_county_total(self):
         c = candidate()
         tx = c["states"]["TX"]
-        tx["provider_statewide_total"] = tx["total"] + 50
-        with self.assertRaisesRegex(ValueError, "reporting label"):
-            validate(c)
-        tx["reporting_label"] = "Partially reported"
-        self.assertEqual(validate(c)["TX"]["reported_counties"], 254)
+        county_total = tx["total"]
+        tx["provider_statewide_total"] = county_total - 50
+        tx["statewide_reconciled"] = False
+        result = validate(c)["TX"]
+        self.assertEqual(result["reporting_label"], "Fully reported")
+        self.assertEqual(result["reported_counties"], 254)
+        self.assertEqual(result["reported_ballots"], county_total)
+        self.assertNotEqual(tx["provider_statewide_total"], county_total)
 
     def test_full_county_coverage_matching_statewide_remains_full(self):
         c = candidate()
