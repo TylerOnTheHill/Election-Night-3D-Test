@@ -38,6 +38,8 @@ on:
       - 'tests/test_stage_minnesota_counties.py'
       - 'scripts/audit_nineteen_state_pipeline.py'
       - 'tests/test_audit_nineteen_state_pipeline.py'
+      - 'scripts/audit_battleground_release_readiness.py'
+      - 'tests/test_audit_battleground_release_readiness.py'
       - 'scripts/build_watchlist_readiness.py'
       - 'tests/test_build_watchlist_readiness.py'
       - 'tests/test_stage_georgia_counties.py'
@@ -79,6 +81,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_audit_nineteen_state_pipeline.py' -v
       - name: Test concurrent discovery of the remaining 11 states
         run: python -m unittest discover -s tests -p 'test_audit_remaining_watchlist_county_sources.py' -v
+      - name: Test 18-state battleground release gate without changing NH data
+        run: python -m unittest discover -s tests -p 'test_audit_battleground_release_readiness.py' -v
       - name: Discover all 11 remaining county feeds in parallel
         run: python scripts/audit_remaining_watchlist_county_sources.py --output eleven-state-discovery-unapproved.json
       - name: Batch-ingest remaining eleven county sources
@@ -218,6 +222,8 @@ jobs:
           python scripts/build_watchlist_readiness.py --candidate eight-states-unapproved.json --output nineteen-state-readiness-unapproved.json
       - name: Audit all 19 states have explicit county coverage status
         run: python scripts/audit_nineteen_state_pipeline.py --readiness nineteen-state-readiness-unapproved.json --discovery eleven-state-discovery-unapproved.json --output nineteen-state-coverage-audit.json
+      - name: Audit 18-state battleground release readiness (NH excluded, not deleted)
+        run: python scripts/audit_battleground_release_readiness.py --readiness nineteen-state-readiness-unapproved.json --output eighteen-state-release-gate-unapproved.json
       - name: Build watermarked nine-state interactive dashboard
         run: python scripts/build_local_battleground_preview.py --candidate eight-states-unapproved.json --output eight-state-interactive-review
       - name: Install Chromium
@@ -236,6 +242,7 @@ jobs:
           name: eight-state-interactive-review-not-for-publication
           path: |
             nineteen-state-readiness-unapproved.json
+            eighteen-state-release-gate-unapproved.json
             eleven-state-discovery-unapproved.json
             remaining-eleven-unapproved.json
             remaining-eleven-gaps.json
