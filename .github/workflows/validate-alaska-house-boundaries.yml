@@ -35,5 +35,7 @@ jobs:
           git add data/staging/alaska-house-districts.geojson
           if ! git diff --cached --quiet; then
             git commit -m "Stage verified official Alaska House district boundaries"
+            git fetch origin feature/v7-2-national-county-data
+            git rebase origin/feature/v7-2-national-county-data
             git push origin HEAD:feature/v7-2-national-county-data
           fi
