@@ -258,22 +258,32 @@ fetch('./data/geography/us-cities-top-1000.json').then(r=>{if(!r.ok)throw Error(
  placeLabels=d.places.filter(p=>p.length===5&&Number.isFinite(p[2])&&Number.isFinite(p[3])&&Number.isFinite(p[4])).sort((a,b)=>b[2]-a[2]);
  placeNodes=placeLabels.map(([name])=>{const el=document.createElement('span');el.className='ehq-place-label';el.textContent=name;el.hidden=true;placeLayer.append(el);return el});
 }).catch(e=>console.warn('City labels unavailable:',e.message));
+let lastPlaceUpdate=0,lastPlaceCamera='',lastPlaceView='';
 function updatePlaceLabels(zoomPct){
- // National state meshes are already reprojected into custom Alaska/Hawaii insets;
- // do not place raw longitude/latitude labels on those meshes until their inverse projection is available.
+ // Throttle DOM layout: 1,000 cities should not be reprojected at 60 fps.
+ const now=performance.now(),key=view+'|'+activeState+'|'+mode.value+'|'+zoomPct+'|'+camera.position.toArray().map(v=>v.toFixed(2)).join(',')+'|'+controls.target.toArray().map(v=>v.toFixed(2)).join(',');
+ if(key===lastPlaceCamera&&lastPlaceView===view)return;
+ if(now-lastPlaceUpdate<90)return;
+ lastPlaceUpdate=now;lastPlaceCamera=key;lastPlaceView=view;
  if(view!=='state'||mode.value!=='county'||!placeLabels.length){placeLayer.hidden=true;return}
  placeLayer.hidden=false;
- const width=stage.clientWidth,height=stage.clientHeight,used=[];
+ const width=stage.clientWidth,height=stage.clientHeight;
+ // Density adjusts with zoom, and a screen-space grid reserves room for labels.
  const minimumPopulation=zoomPct<35?250000:zoomPct<55?100000:zoomPct<75?50000:0;
+ const cellSize=100,grid=new Set();let shown=0;
  for(let i=0;i<placeLabels.length;i++){
   const [name,state,pop,lat,lon]=placeLabels[i],el=placeNodes[i];
   if(state!==activeState||pop<minimumPopulation){el.hidden=true;continue}
   placeVector.set((lon-projection.lon)*projection.sx,(lat-projection.lat)*projection.sy,.35).project(camera);
   if(placeVector.z< -1||placeVector.z>1){el.hidden=true;continue}
   const x=(placeVector.x+1)*width/2,y=(1-placeVector.y)*height/2;
-  const w=Math.max(40,name.length*7+12);
-  if(x<w/2+8||x>width-w/2-8||y<18||y>height-20||used.some(b=>Math.abs(b.x-x)<(b.w+w)/2+8&&Math.abs(b.y-y)<20)){el.hidden=true;continue}
-  used.push({x,y,w});el.hidden=false;el.style.left=x+'px';el.style.top=y+'px';
+  const w=Math.max(40,name.length*7+12),h=19;
+  if(x<w/2+8||x>width-w/2-8||y<h||y>height-h){el.hidden=true;continue}
+  const minX=Math.floor((x-w/2-7)/cellSize),maxX=Math.floor((x+w/2+7)/cellSize),minY=Math.floor((y-h/2-5)/cellSize),maxY=Math.floor((y+h/2+5)/cellSize);
+  let blocked=false;for(let gx=minX;gx<=maxX&&!blocked;gx++)for(let gy=minY;gy<=maxY;gy++)if(grid.has(gx+':'+gy)){blocked=true;break}
+  if(blocked||shown>=Math.min(100,Math.max(8,Math.floor(width*height/6000)))){el.hidden=true;continue}
+  for(let gx=minX;gx<=maxX;gx++)for(let gy=minY;gy<=maxY;gy++)grid.add(gx+':'+gy);
+  shown++;el.hidden=false;el.style.left=x+'px';el.style.top=y+'px';
  }
 }
 function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(stage);resize();function tick(){requestAnimationFrame(tick);if(focusTween){controls.enabled=false;const t=Math.min(1,(performance.now()-focusTween.start)/focusTween.duration);const k=t*t*(3-2*t);camera.position.lerpVectors(focusTween.fromCamera,focusTween.toCamera,k);controls.target.lerpVectors(focusTween.fromTarget,focusTween.toTarget,k);if(t===1){focusTween=null;controls.enabled=true;}}for(const mesh of meshes){const t=mesh.userData.target;mesh.userData.level+=(t-mesh.userData.level)*ease();mesh.position.z=mesh.userData.level;if(!mesh.userData.selected&&mesh.userData.level<.012)mesh.userData.cavity.visible=false;}controls.update();const d=camera.position.distanceTo(controls.target);const z=Math.round(THREE.MathUtils.clamp((zoomFar-d)/(zoomFar-zoomNear)*100,0,100));syncZoom(z);updatePlaceLabels(z);zoomLabel.textContent='%';for(const mesh of meshes){if(mesh.userData.sheen)mesh.userData.sheen.material.uniforms.uTime.value=performance.now()/1000;}renderer.render(scene,camera);if(meshes.length && !window.__mapWebGLReady){window.__mapWebGLReady=true;document.getElementById('fallback-map')?.classList.add('webgl-ready');}}tick();
