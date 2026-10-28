@@ -57,6 +57,11 @@ try:
             assert status.startswith(state["reporting_label"]), (code, status)
             assert f'{state["county_count"]} of {expected}' in status
             assert f'{state["total"]:,}' in page.locator("#county-preview-total").inner_text()
+            if state.get("provider_checked_at"):
+                assert "Last checked:" in status, (code, status)
+                assert "Updated " in status and "*" in status, (code, status)
+            else:
+                assert "Last checked:" not in status, (code, status)
             assert page.locator("input[type=file]").count() == 0
             assert not errors, (code, errors)
             page.close()
