@@ -1,7 +1,21 @@
 {
   "schema": "electionhq-ci-failure-summary-v1",
-  "run_id": 40618303012,
-  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40618303012",
-  "head_sha": "2832c30b9d7e65d0386de7b2510f4686ba7b09d8",
-  "jobs": []
+  "run_id": 40618747216,
+  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40618747216",
+  "head_sha": "3e06fe1da1a0ad12ca1164c879da7fd696ab83f5",
+  "jobs": [
+    {
+      "job": "nineteen-state-review",
+      "conclusion": null,
+      "failed_steps": [
+        {
+          "name": "Stage current Virginia Iowa Wisconsin South Carolina observations",
+          "conclusion": "failure",
+          "number": 34
+        }
+      ]
+    }
+  ],
+  "failure_details_pending": false,
+  "diagnostic_note": null
 }
