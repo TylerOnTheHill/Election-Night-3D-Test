@@ -32,7 +32,7 @@ async function render(){
  if(!preview.states[code]){window.electionhqCounty3dPayload=null;window.dispatchEvent(new Event('electionhq:county-3d-clear'));host.hidden=true;status.textContent='County-level ballot totals have not yet been published for '+(COUNTY_STATES[code]?.name||'this state')+'.';return;}
  const s=preview.states[code];host.hidden=false;
  $('county-selected-detail').textContent='Select a county to see its reported early-ballot total.';
- status.textContent=(s.reporting_label==='Partially reported'?'Partially reported':s.reporting_label==='Fully reported'?'Fully reported':s.coverage_complete?'County geography complete':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff||'Reporting cutoff unavailable');
+ status.textContent=(s.reporting_label==='Partially reported'?'Partially reported':s.reporting_label==='Fully reported'?'Fully reported':s.coverage_complete?'County geography complete':'Partially reported')+' · '+s.counties.length+' of '+s.geographic_count+' counties · '+(s.statewide_cutoff?'Updated '+s.statewide_cutoff:'Update time unavailable');
  $('county-preview-title').textContent=COUNTY_STATES[code].name+' counties';
  $('county-preview-total').textContent='County ballots reported: '+fmt(s.total);
  // County observations are a geographic subset; never present their sum as a statewide total.
@@ -74,7 +74,7 @@ function highlight(fips){
  const row=preview?.states?.[selected]?.counties?.find(r=>r.fips===fips);
  if(!row)return;
  window.dispatchEvent(new CustomEvent('electionhq:county-map-highlight',{detail:{fips}}));
- $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots'+(row.file_as_of?' · As of '+row.file_as_of:' · County reporting cutoff unavailable');
+ $('county-selected-detail').textContent=row.name+' · '+fmt(row.total)+' reported early ballots'+(row.file_as_of?' · Updated '+row.file_as_of:' · Update time unavailable');
  document.querySelectorAll('#county-preview-map path').forEach(p=>{const on=p.dataset.fips===fips;p.setAttribute('stroke',on?'#fff':'#273443');p.setAttribute('stroke-width',on?'2':'.4');});
  document.querySelectorAll('#county-preview-rows tr').forEach(tr=>{tr.classList.toggle('selected-row',tr.dataset.fips===fips);});
 }
