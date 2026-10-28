@@ -1,0 +1,17 @@
+name: Temporary five-minute county staging scheduler
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  actions: read
+concurrency:
+  group: temporary-county-staging-scheduler
+  cancel-in-progress: false
+jobs:
+  refresh:
+    uses: TylerOnTheHill/ElectionHQ/.github/workflows/stage-seven-state-counties.yml@feature/v7-2-national-county-data
+    permissions:
+      contents: write
+      actions: read
