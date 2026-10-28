@@ -63,8 +63,9 @@ try:
                 assert page.locator("#detail-total").inner_text()==f"{by_code['FL']['total']:,}"
             page.get_by_role("tab",name="National overview").click()
             page.locator("#search").fill("New Hampshire")
-            assert page.locator("#rows tr").count()==0
-            # NH remains available through its direct state link, but is not in the watchlist.
+            assert page.locator("#rows tr[data-code=NH]").count()==0
+            assert "No matching states" in page.locator("#rows").inner_text()
+            # NH remains in the national snapshot, but not the battleground watchlist.
             page.locator("#search").fill("Texas")
             assert page.locator("#rows tr").count()==1
             page.locator("#rows tr").click()
