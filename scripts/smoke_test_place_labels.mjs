@@ -19,6 +19,19 @@ try{
  result.checks.push({name:'canvas exists',ok:await page.locator('#stage canvas').count()>=1});
  result.checks.push({name:'bounded label pool',ok:(await page.locator('.ehq-place-label').count())<=120});
  await page.screenshot({path:out+'/initial-texas.png',fullPage:true});
+ // Enter Texas using the real state-map navigation instead of testing labels on the national map.
+ await page.locator('#stage canvas').dblclick({position:{x:520,y:340}}).catch(()=>{});
+ await page.waitForTimeout(1400);
+ if(!(await page.locator('#national').isVisible())){
+   // The national view uses click-to-select, double-click-to-enter; use the search if needed.
+   await page.locator('#search').fill('Texas');
+   await page.waitForTimeout(300);
+   await page.locator('#search').press('Enter');
+   await page.waitForTimeout(300);
+   await page.locator('#stage canvas').dblclick({position:{x:520,y:340}}).catch(()=>{});
+   await page.waitForTimeout(1500);
+ }
+ result.checks.push({name:'entered a state-level map',ok:await page.locator('#national').isVisible()});
  await page.locator('#zoom-number').fill('90');
  await page.locator('#zoom-number').dispatchEvent('change');
  await page.waitForTimeout(1800);
