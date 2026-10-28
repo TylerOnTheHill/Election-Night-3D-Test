@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import urllib.request
+import time
 
 def summarize(jobs):
     result = []
@@ -33,11 +34,22 @@ def main():
     request = urllib.request.Request(url, headers={
         "Authorization": "Bearer " + token, "Accept": "application/vnd.github+json",
         "User-Agent": "ElectionHQ-CI-diagnostics"})
-    with urllib.request.urlopen(request, timeout=20) as response:
-        jobs = json.load(response).get("jobs", [])
+    # GitHub can lag behind the currently running job's step conclusions.
+    # Retry before reporting that no failed step was visible.
+    failures = []
+    for attempt in range(4):
+        with urllib.request.urlopen(request, timeout=20) as response:
+            jobs = json.load(response).get("jobs", [])
+        failures = summarize(jobs)
+        if failures:
+            break
+        if attempt < 3:
+            time.sleep(3)
     result = {"schema": "electionhq-ci-failure-summary-v1", "run_id": int(run_id),
               "run_url": f"https://github.com/{repo}/actions/runs/{run_id}",
-              "head_sha": os.environ.get("GITHUB_SHA"), "jobs": summarize(jobs)}
+              "head_sha": os.environ.get("GITHUB_SHA"), "jobs": failures,
+              "failure_details_pending": not bool(failures),
+              "diagnostic_note": ("GitHub has not exposed failed steps yet; open run_url for full logs" if not failures else None)}
     target = Path(args.output)
     if target.resolve().is_relative_to((Path.cwd() / "data/early-vote").resolve()):
         raise ValueError("Diagnostics cannot be written into public vote data")
