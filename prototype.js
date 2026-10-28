@@ -139,13 +139,32 @@ function choose(name,{focus=true}={}){
 window.addEventListener('electionhq:select-county',e=>{const name=clean(e.detail?.county);if(trackerMode!=='early')return;if(view==='state'&&activeState==='Texas'){if(meshes.some(m=>m.userData.name===name&&!m.userData.isBackdrop)){if(selected!==name)choose(name,{focus:true});else{const active=meshes.find(m=>m.userData.name===name&&!m.userData.isBackdrop);if(active)frameRegion(active);}}}else{enterState('Texas').then(()=>choose(name,{focus:true}));}});
 let panelRace=null;
 const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content');
+function syncGeographyResults(){
+ const section=$('ehq-geography-results'),data=$('ehq-results-data'),heading=$('ehq-results-heading'),context=$('ehq-results-context');
+ if(!section||!data)return;
+ section.hidden=!selected;
+ if(!selected){data.replaceChildren();return;}
+ heading.textContent=(view==='state'?selected+' COUNTY':selected.toUpperCase())+' · '+(trackerMode==='early'?'EARLY VOTE':'ELECTION NIGHT');
+ context.textContent=trackerMode==='early'?'Reported data where available · check dates and sources':'SIMULATED · no live election results';
+ // Reuse the exact same selected-geography data as the map panel, but not its
+ // interactive controls or duplicate IDs. The stable panel is always visible below the map.
+ const copy=floatingContent.cloneNode(true);
+ copy.querySelectorAll('button,select,label').forEach(el=>el.remove());
+ copy.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+ const fragment=document.createDocumentFragment();
+ const wrapper=document.createElement('div');
+ wrapper.className='ehq-result-section';
+ while(copy.firstChild)wrapper.appendChild(copy.firstChild);
+ fragment.appendChild(wrapper);
+ data.replaceChildren(fragment);
+}
 function updateFloatingPanel(){
  // The tab is the authoritative UI mode even if the module loaded after the tab switched.
  trackerMode=document.body.classList.contains('early')?'early':'night';
  const open=!!selected;
  floatingPanel.hidden=!open;
- if(!open){panelRace=null;return;}
- if(trackerMode==='early'&&view==='national'){floatingContent.innerHTML=`<h2>${selected}</h2>${earlyStateMarkup(selected)}<button type="button" class="panel-back" id="panel-explore">Explore counties</button>`;const b=floatingContent.querySelector('#panel-explore');if(b)b.onclick=()=>enterState(selected);return;}
+ if(!open){panelRace=null;syncGeographyResults();return;}
+ if(trackerMode==='early'&&view==='national'){floatingContent.innerHTML=`<h2>${selected}</h2>${earlyStateMarkup(selected)}<button type="button" class="panel-back" id="panel-explore">Explore counties</button>`;const b=floatingContent.querySelector('#panel-explore');if(b)b.onclick=()=>enterState(selected);syncGeographyResults();return;}
  if(trackerMode==='early'){
   const row=view==='state'&&activeState==='Texas'?rows.get(clean(selected)):null;
   const ballots=row?Number(row.cumulative_total):null;
@@ -154,7 +173,7 @@ function updateFloatingPanel(){
   const statewide=statewidePct();
   floatingContent.innerHTML=`<h2>${view==='state'?selected+' County':selected}</h2><p class="muted">${activeState==='Texas'?'Texas official county snapshot · October 23, 2026':'County participation not connected for '+activeState}</p>${row?`<div class="call-row"><span>Early ballots</span><b>${number(ballots)}</b></div><div class="call-row"><span>Registered</span><b>${number(registered)}</b></div><div class="call-row"><span>Participation</span><b>${pct.toFixed(2)}%</b></div><div class="call-row"><span>Vs 2024 (same point)</span><b>Unavailable</b></div>`:'<p>County-level details are available for Texas only.</p>'}${view==='national'&&selected==='Texas'?'<button type="button" class="panel-back" id="panel-explore">Explore counties</button>':''}`;
   const explore=floatingContent.querySelector('#panel-explore');if(explore)explore.onclick=()=>enterState('Texas');
-  return;
+  syncGeographyResults();return;
  }
  if(!panelRace)panelRace=raceChoice();
  const options=[['senate','U.S. Senate'],['governor','Governor'],['house','U.S. House']];
@@ -163,6 +182,7 @@ function updateFloatingPanel(){
  floatingContent.innerHTML=`<h2>${label}</h2><label for="panel-race-select" class="sub">Race results</label><select id="panel-race-select" class="panel-race-select">${options.map(([key,name])=>`<option value="${key}" ${panelRace===key?'selected':''}>${name}</option>`).join('')}</select><p class="muted">Fictional demonstration · No live returns</p>${resultsMarkup(selected,panelRace)}${level==='state'?`<button type="button" class="panel-back" id="panel-explore">Explore counties</button>`:''}`;
  floatingContent.querySelector('#panel-race-select').onchange=e=>{panelRace=e.target.value;updateFloatingPanel()};
  const explore=floatingContent.querySelector('#panel-explore');if(explore)explore.onclick=()=>enterState(selected);
+ syncGeographyResults();
 }
 $('map-panel-close').onclick=()=>{choose(null,{focus:false});cameraView(false)};
 let zoomNear=1.5,zoomFar=78;
