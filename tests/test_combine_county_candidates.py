@@ -27,6 +27,29 @@ class CombinedCountyReviewTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,"Overlapping"):
             combine([original,copy.deepcopy(original)])
 
+    def test_combination_order_does_not_change_county_totals(self):
+        original=candidate()
+        pieces=[]
+        for code,state in original["states"].items():
+            part=copy.deepcopy(original)
+            part["states"]={code:copy.deepcopy(state)}
+            pieces.append(part)
+        forward=combine(pieces)
+        reverse=combine(list(reversed(pieces)))
+        self.assertEqual(forward,reverse)
+        for code in original["states"]:
+            self.assertEqual(forward["states"][code]["counties"],original["states"][code]["counties"])
+
+    def test_rejects_overlapping_snapshot_even_if_counts_differ(self):
+        original=candidate()
+        revised=copy.deepcopy(original)
+        code=next(iter(revised["states"]))
+        revised["states"]={code:revised["states"][code]}
+        revised["states"][code]["counties"][0]["total"]+=10
+        revised["states"][code]["total"]+=10
+        with self.assertRaisesRegex(ValueError,"Overlapping"):
+            combine([original,revised])
+
     def test_approved_input_cannot_be_laundered_into_review(self):
         original=candidate()
         original["publication_approved"]=True
