@@ -14,7 +14,7 @@ permissions:
   contents: read
 jobs:
   verify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -39,5 +39,4 @@ jobs:
           name: electionhq-geographic-browser-preview
           path: |
             artifacts/geographic-preview/
-            /tmp/electionhq-preview-server.log
           if-no-files-found: ignore
