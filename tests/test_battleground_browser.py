@@ -92,6 +92,25 @@ try:
             assert "awaiting publication" in page.locator("#county-preview-total").inner_text()
             page.screenshot(path=f"/tmp/electionhq-state-explorer-{width}.png",full_page=True)
             page.close()
+        # Alaska's official House districts must display validated review totals,
+        # with the nongeographic District 99 excluded from the 40 map polygons.
+        alaska=browser.new_page()
+        alaska_errors=[]
+        alaska.on("pageerror",lambda e:alaska_errors.append(str(e)))
+        alaska.goto("http://127.0.0.1:8766/battleground.html?state=AK",wait_until="domcontentloaded")
+        alaska.wait_for_function("document.querySelector('#county-preview-map')?.dataset.houseDistrictMeshes==='40'",timeout=45000)
+        assert alaska.locator("#county-preview-map path[data-district]").count()==40
+        assert alaska.locator("#county-preview-map path[data-district='99']").count()==0
+        assert alaska.locator("#county-preview-rows tr[data-district]").count()==40
+        assert "46,287" in alaska.locator("#county-preview-total").inner_text()
+        assert "116" in alaska.locator("#county-preview-total").inner_text()
+        assert "46,403" in alaska.locator("#county-preview-total").inner_text()
+        assert "Staging review only" in alaska.locator("#county-preview-status").inner_text()
+        alaska.locator("#county-preview-rows tr[data-district='1']").click()
+        assert "House District 1" in alaska.locator("#county-selected-detail").inner_text()
+        assert "532 received" in alaska.locator("#county-selected-detail").inner_text()
+        assert not alaska_errors,alaska_errors
+        alaska.close()
         deep=browser.new_page()
         deep.goto("http://127.0.0.1:8766/battleground.html?state=NH",wait_until="domcontentloaded")
         # NH is intentionally outside the battleground explorer; an NH deep link
