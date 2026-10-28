@@ -33,11 +33,14 @@ def validate(candidate):
             raise ValueError(code + ": incorrect completeness flag")
         statewide = state.get("provider_statewide_total")
         reconciled = statewide is not None and state.get("total") == statewide
-        expected_label = "Fully reported" if len(rows) == expected and (state.get("statewide_reconciled") is True or (state.get("statewide_reconciled") is None and (statewide is None or reconciled))) else "Partially reported"
+        # Geographic coverage is independent of statewide reconciliation.
+        expected_label = "Fully reported" if len(rows) == expected else "Partially reported"
         if state.get("reporting_label") != expected_label:
             raise ValueError(code + ": incorrect reporting label")
         if "statewide_reconciled" in state and state["statewide_reconciled"] is not reconciled:
             raise ValueError(code + ": invalid statewide reconciliation flag")
+        # A differing statewide observation is a disclosure, never a replacement
+        # for the sum of actual county observations.
         if state.get("total_basis") != "sum_of_reported_counties":
             raise ValueError(code + ": incorrect total basis")
         if not all(isinstance(state.get(k), str) and state[k].strip() for k in
