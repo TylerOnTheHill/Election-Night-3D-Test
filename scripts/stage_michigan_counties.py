@@ -25,7 +25,7 @@ def parse(raw,geo):
     counties=[];seen=set()
     def count(v):
         v=str(v).strip().replace(",","")
-        if not re.fullmatch(r"\\d+",v):raise ValueError("Suppressed or invalid count: "+repr(v))
+        if not re.fullmatch(r"\d+",v):raise ValueError("Suppressed or invalid count: "+repr(v))
         return int(v)
     for row in rows:
         name=row[county_key].strip().removesuffix(" County")
