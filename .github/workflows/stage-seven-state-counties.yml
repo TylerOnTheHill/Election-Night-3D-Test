@@ -72,6 +72,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Test CI failure diagnostic parser
+        run: python -m unittest discover -s tests -p 'test_capture_ci_failure.py' -v
       - name: Validate consolidated 19-state readiness semantics
         run: python -m unittest discover -s tests -p 'test_build_watchlist_readiness.py' -v
       - name: Validate Florida official TSV timestamp handling
