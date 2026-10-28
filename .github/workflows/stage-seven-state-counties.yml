@@ -14,6 +14,7 @@ on:
       - 'scripts/stage_uf_county_review.py'
       - 'scripts/stage_alaska_official_statewide.py'
       - 'scripts/stage_alaska_house_districts.py'
+      - 'scripts/build_alaska_house_review.py'
       - 'tests/test_stage_alaska_house_districts.py'
       - 'data/staging/alaska-house-districts-2026-10-26.csv'
       - 'scripts/stage_maine_aggregated_counties.py'
@@ -109,6 +110,21 @@ jobs:
           assert d["early_vote_received"] == 30536
           assert d["publication_approved"] is False
           print("Alaska: 40 districts + special District 99, official total reconciled")
+          PY
+      - name: Rebuild and reconcile Alaska district map review from source CSV
+        run: |
+          python scripts/build_alaska_house_review.py \
+            --input-csv data/staging/alaska-house-districts-2026-10-26.csv \
+            --source-url https://elections.alaska.gov/wp-content/uploads/2026/10/Combined-Ballot-Report-10_26_2026-10_31_33-AM.html \
+            --output alaska-house-district-review-generated.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          actual=json.loads(Path("alaska-house-district-review-generated.json").read_text())
+          checked_in=json.loads(Path("data/staging/alaska-house-district-review.json").read_text())
+          assert actual == checked_in, "Alaska review is out of sync with validated CSV"
+          assert actual["publication_approved"] is False
+          print("Alaska browser review matches validated source CSV")
           PY
       - name: Ingest Michigan official-dashboard county CSV
         run: python scripts/stage_michigan_counties.py --output michigan-unapproved.json || echo "Michigan CSV schema requires review; do not publish"
