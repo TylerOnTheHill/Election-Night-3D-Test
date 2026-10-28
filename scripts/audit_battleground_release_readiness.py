@@ -27,7 +27,15 @@ def audit(readiness):
         if code in EXCLUDED:
             continue
         blockers = []
-        if not row.get("county_staged"):
+        if code == "AK" and row.get("district_review_staged"):
+            if (row.get("district_review_geography") != "state_house_district"
+                or row.get("district_review_reported") != 40
+                or row.get("district_review_expected") != 40
+                or type(row.get("district_review_ballots")) is not int
+                or row["district_review_ballots"] < 0
+                or not row.get("district_review_cutoff")):
+                blockers.append("invalid_alaska_district_review")
+        elif not row.get("county_staged"):
             blockers.append("county_source_not_staged")
         else:
             reported, expected = row.get("county_reported"), row.get("county_expected")
@@ -44,6 +52,7 @@ def audit(readiness):
         if row.get("county_publication_approved") is not True:
             blockers.append("publication_not_approved")
         assessed.append({"state": code, "ready": not blockers, "blockers": blockers,
+                         "district_review_staged":code=="AK" and row.get("district_review_staged") is True,
                          "county_reported": row.get("county_reported"),
                          "county_expected": row.get("county_expected")})
     return {"schema": "electionhq-battleground-release-gate-v1",
