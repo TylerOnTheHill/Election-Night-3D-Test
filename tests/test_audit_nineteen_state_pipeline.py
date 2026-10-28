@@ -64,6 +64,26 @@ class UnifiedPipelineTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError,"reported county"):
                     audit(r,d)
 
+    def test_reject_reported_counties_above_expected(self):
+        r,d=fixtures()
+        row=next(x for x in r["states"] if x["state"]=="TX")
+        row.update({"county_expected":254,"county_reported":255,"county_reporting_label":"Partially reported"})
+        with self.assertRaisesRegex(ValueError,"coverage denominator"):
+            audit(r,d)
+
+    def test_partial_counties_cannot_be_labeled_fully_reported(self):
+        r,d=fixtures()
+        row=next(x for x in r["states"] if x["state"]=="TX")
+        row.update({"county_expected":254,"county_reported":150,"county_reporting_label":"Fully reported"})
+        with self.assertRaisesRegex(ValueError,"cannot be fully reported"):
+            audit(r,d)
+
+    def test_valid_partial_county_reporting_preserved(self):
+        r,d=fixtures()
+        row=next(x for x in r["states"] if x["state"]=="TX")
+        row.update({"county_expected":254,"county_reported":150,"county_reporting_label":"Partially reported"})
+        self.assertEqual(audit(r,d)["states_checked"],19)
+
     def test_reject_unapproved_state_promoted(self):
         r,d=fixtures()
         r["states"][0]["county_publication_approved"]=True
