@@ -17,6 +17,7 @@ on:
       - 'scripts/build_alaska_house_review.py'
       - 'tests/test_stage_alaska_house_districts.py'
       - 'data/staging/alaska-house-districts-2026-10-26.csv'
+      - 'data/staging/alaska-house-district-review.json'
       - 'scripts/stage_maine_aggregated_counties.py'
       - 'scripts/probe_maine_official_absentee.py'
       - 'scripts/probe_votehub_l2_early_vote.py'
