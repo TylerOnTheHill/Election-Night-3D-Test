@@ -18,6 +18,18 @@ def fixture():
                                     "MS","NE","NV","NH","NC","OH","SC","TX","VA","WI")]}
 
 class BattlegroundReleaseGateTests(unittest.TestCase):
+    def test_verified_alaska_districts_clear_source_blocker_without_publication(self):
+        doc=fixture()
+        ak=next(s for s in doc["states"] if s["state"]=="AK")
+        ak.update(county_staged=False,county_ballots=None,county_cutoff=None,
+                  district_review_staged=True,district_review_geography="state_house_district",
+                  district_review_reported=40,district_review_expected=40,
+                  district_review_ballots=100,district_review_cutoff="2026-10-26")
+        row=next(s for s in audit(doc)["states"] if s["state"]=="AK")
+        self.assertNotIn("county_source_not_staged",row["blockers"])
+        self.assertIn("publication_not_approved",row["blockers"])
+        self.assertFalse(row["ready"])
+
     def test_nh_excluded_without_deleting_original_record(self):
         original = fixture()
         result = audit(original)
