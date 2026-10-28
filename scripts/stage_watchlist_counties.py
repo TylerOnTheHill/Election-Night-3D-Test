@@ -121,7 +121,7 @@ def stage(code,payload,census):
         "census_geography_url":GEOJSON_MIRROR,
         "county_count":count,"geographic_count":expected,
         "coverage_complete":count==expected,
-        "reporting_label":"Fully reported" if count==expected and reconciled else "Partially reported",
+        "reporting_label":"Fully reported" if count==expected else "Partially reported",
         "statewide_reconciled":reconciled,
         "reporting_status_note":("County rows cover all geographic units but do not reconcile to provider statewide total; county totals may have different cutoffs or scope." if count==expected and not reconciled else None),
         "total":total,"total_basis":"sum_of_reported_counties",
