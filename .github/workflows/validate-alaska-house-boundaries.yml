@@ -1,0 +1,27 @@
+name: Validate Alaska House district geography
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/v7-2-national-county-data]
+    paths:
+      - scripts/fetch_alaska_house_boundaries.py
+      - tests/test_alaska_house_boundaries.py
+      - .github/workflows/validate-alaska-house-boundaries.yml
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate boundary parser with synthetic fixtures
+        run: python -m unittest discover -s tests -p test_alaska_house_boundaries.py
+      - name: Retrieve 40 official Alaska House districts
+        run: python scripts/fetch_alaska_house_boundaries.py --output data/staging/alaska-house-districts.geojson
+      - name: Archive verified geographic boundaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: alaska-house-district-boundaries
+          path: data/staging/alaska-house-districts.geojson
+          if-no-files-found: error
