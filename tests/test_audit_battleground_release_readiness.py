@@ -46,6 +46,34 @@ class BattlegroundReleaseGateTests(unittest.TestCase):
         nh.update(county_staged=False, county_ballots=None)
         self.assertEqual(audit(doc), baseline)
 
+    def test_missing_cutoff_blocks_staged_state(self):
+        doc = fixture()
+        ak = next(s for s in doc["states"] if s["state"] == "AK")
+        ak["county_cutoff"] = None
+        result = audit(doc)
+        row = next(s for s in result["states"] if s["state"] == "AK")
+        self.assertIn("unverified_reporting_cutoff", row["blockers"])
+
+    def test_county_sum_zero_is_valid_observation_not_missing(self):
+        doc = fixture()
+        tx = next(s for s in doc["states"] if s["state"] == "TX")
+        tx["county_ballots"] = 0
+        row = next(s for s in audit(doc)["states"] if s["state"] == "TX")
+        self.assertNotIn("invalid_county_total", row["blockers"])
+
+    def test_rejects_county_count_over_denominator(self):
+        doc = fixture()
+        tx = next(s for s in doc["states"] if s["state"] == "TX")
+        tx["county_reported"] = 3
+        row = next(s for s in audit(doc)["states"] if s["state"] == "TX")
+        self.assertIn("invalid_county_coverage", row["blockers"])
+
+    def test_no_mutation_of_source_readiness(self):
+        doc = fixture()
+        before = copy.deepcopy(doc)
+        audit(doc)
+        self.assertEqual(doc, before)
+
     def test_rejects_missing_nh_from_original_watchlist(self):
         doc = fixture()
         doc["states"] = [s for s in doc["states"] if s["state"] != "NH"]
