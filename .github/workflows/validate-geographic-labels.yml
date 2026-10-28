@@ -6,6 +6,7 @@ on:
       - feature/v7-2-national-county-data
     paths:
       - prototype.js
+      - index.html
       - early-dashboard.js
       - unified-ui.js
       - county-dashboard-bridge.js
