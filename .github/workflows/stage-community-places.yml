@@ -1,0 +1,48 @@
+name: Stage nationwide community place labels
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/v7-2-national-county-data
+    paths:
+      - .github/workflows/stage-community-places.yml
+permissions:
+  contents: write
+concurrency:
+  group: stage-community-places
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/v7-2-national-county-data
+          persist-credentials: true
+      - name: Fetch MIT-licensed source CSV
+        run: |
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 120 \
+            https://raw.githubusercontent.com/kelvins/US-Cities-Database/master/csv/us_cities.csv \
+            -o /tmp/us_cities.csv
+          test -s /tmp/us_cities.csv
+      - name: Generate and validate all states together
+        run: |
+          python scripts/build_community_places.py /tmp/us_cities.csv data/geography/places-by-state | tee /tmp/places-report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report=json.loads(Path('/tmp/places-report.json').read_text())
+          assert report['source_records']==29880, report
+          assert report['invalid_records']==0, report
+          assert report['state_and_territory_shards']==52, report
+          assert report['accepted_records']==29876, report
+          assert len(list(Path('data/geography/places-by-state').glob('[0-9][0-9].json')))==52
+          PY
+      - name: Commit staged geographic files to development branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/geography/places-by-state/
+          if git diff --cached --quiet; then echo "No geographic data changes"; exit 0; fi
+          git commit -m "Stage validated nationwide community labels for all states"
+          git push origin HEAD:feature/v7-2-national-county-data
