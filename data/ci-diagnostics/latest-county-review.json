@@ -1,17 +1,17 @@
 {
   "schema": "electionhq-ci-failure-summary-v1",
-  "run_id": 40622616854,
-  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40622616854",
-  "head_sha": "17becff103f98e39f558880d94fbd14c7b68f80c",
+  "run_id": 40771559371,
+  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/40771559371",
+  "head_sha": "09cf8f125e31f6f8ce5efb53c081073df3be65b2",
   "jobs": [
     {
-      "job": "nineteen-state-review",
+      "job": "refresh / nineteen-state-review",
       "conclusion": null,
       "failed_steps": [
         {
-          "name": "Validate consolidated 19-state readiness semantics",
+          "name": "Aggregate Maine municipal observations into county candidates",
           "conclusion": "failure",
-          "number": 5
+          "number": 28
         }
       ]
     }
