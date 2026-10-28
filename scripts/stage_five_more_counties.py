@@ -27,14 +27,14 @@ def build(source,geo):
         rows=[]
         for c in sorted(counts.values(),key=lambda c:c["fips"]):
             rows.append({**c,"total":c["mail"]+c["in_person"],
-                "file_as_of":"2026-10-27","source_url":BASE+code+"?cat=returned",
+                "file_as_of":None,"source_url":BASE+code+"?cat=returned",
                 "credit":"50501 Vets / civicAPI"})
         total=sum(r["total"] for r in rows)
         states[code]={"status":"candidate_pending_publication_approval",
             "provider":"50501 Vets / civicAPI","credit":"50501 Vets / civicAPI",
             "census_geography_source":"Plotly US Census county GeoJSON",
             "census_geography_url":CENSUS,
-            "statewide_cutoff":"2026-10-27",
+            "statewide_cutoff":None,
             "county_count":expected,"geographic_count":expected,
             "coverage_complete":True,"reporting_label":"Fully reported",
             "statewide_reconciled":True,"provider_statewide_total":total,
