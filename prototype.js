@@ -142,8 +142,17 @@ const floatingPanel=$('map-results-panel'),floatingContent=$('map-panel-content'
 function syncGeographyResults(){
  const section=$('ehq-geography-results'),data=$('ehq-results-data'),heading=$('ehq-results-heading'),context=$('ehq-results-context');
  if(!section||!data)return;
- section.hidden=!selected;
- if(!selected){data.replaceChildren();return;}
+ section.hidden=false;
+ if(!selected){
+  heading.textContent=trackerMode==='early'?'NATIONAL EARLY VOTE · GEOGRAPHY DETAILS':'ELECTION NIGHT · GEOGRAPHY DETAILS';
+  context.textContent=trackerMode==='early'?'Reported data · dates vary':'SIMULATED · no live results';
+  data.replaceChildren();
+  const intro=document.createElement('div');intro.className='ehq-result-section';
+  const title=document.createElement('strong');title.textContent='Select a state or county on the map';
+  const detail=document.createElement('p');detail.className='muted';detail.textContent='Available vote totals, reporting coverage and geographic breakdowns will appear here. Unavailable figures are not estimated.';
+  intro.append(title,detail);data.append(intro);
+  return;
+ }
  heading.textContent=(view==='state'?selected+' COUNTY':selected.toUpperCase())+' · '+(trackerMode==='early'?'EARLY VOTE':'ELECTION NIGHT');
  context.textContent=trackerMode==='early'?'Reported data where available · check dates and sources':'SIMULATED · no live election results';
  // Reuse the exact same selected-geography data as the map panel, but not its
