@@ -1,7 +1,7 @@
 {
   "schema": "electionhq-ci-failure-summary-v1",
-  "run_id": 41176229435,
-  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/41176229435",
+  "run_id": 41203100503,
+  "run_url": "https://github.com/TylerOnTheHill/ElectionHQ/actions/runs/41203100503",
   "head_sha": "cda44f9055afde2e7151cf8bf38402cf9b437cbe",
   "jobs": [
     {
